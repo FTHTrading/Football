@@ -287,3 +287,233 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* ══════════════════════════════════════════════════════
+   THEME OVERRIDES — applied via data-theme on <html>
+   ══════════════════════════════════════════════════════ */
+
+/* ── MIDNIGHT ─────────────────────────────────────── */
+/* Deep navy, softer blue accents, professional feel  */
+[data-theme="midnight"] {
+  --color-uc-black: #0B1120;
+  --color-uc-panel: #111827;
+  --color-uc-surface: #1E293B;
+  --color-uc-cyan: #5B8DEF;
+  --color-uc-cyan-dim: #3B6BC4;
+  --color-uc-green: #34D399;
+  --color-uc-red: #F87171;
+  --color-uc-silver: #94A3B8;
+  --color-uc-gray-400: #94A3B8;
+  --color-uc-gray-600: #475569;
+}
+[data-theme="midnight"] body {
+  background: #0B1120;
+}
+[data-theme="midnight"] .glass {
+  background: rgba(17, 24, 39, 0.6);
+  border-color: rgba(91, 141, 239, 0.08);
+}
+[data-theme="midnight"] .glass-heavy {
+  background: rgba(17, 24, 39, 0.85);
+  border-color: rgba(91, 141, 239, 0.1);
+}
+[data-theme="midnight"] .glow {
+  box-shadow: 0 0 24px rgba(91, 141, 239, 0.15);
+}
+[data-theme="midnight"] .glow-strong {
+  box-shadow: 0 0 40px rgba(91, 141, 239, 0.25), 0 0 80px rgba(91, 141, 239, 0.08);
+}
+[data-theme="midnight"] .glow-green {
+  box-shadow: 0 0 24px rgba(52, 211, 153, 0.15);
+}
+[data-theme="midnight"] .gradient-text {
+  background: linear-gradient(135deg, #FFFFFF 0%, #5B8DEF 100%);
+  -webkit-background-clip: text; background-clip: text;
+}
+[data-theme="midnight"] .gradient-text-dna {
+  background: linear-gradient(135deg, #5B8DEF 0%, #34D399 50%, #818CF8 100%);
+  -webkit-background-clip: text; background-clip: text;
+}
+[data-theme="midnight"] .gradient-text-green {
+  background: linear-gradient(135deg, #34D399 0%, #5B8DEF 100%);
+  -webkit-background-clip: text; background-clip: text;
+}
+[data-theme="midnight"] .genome-scan {
+  background: linear-gradient(90deg, transparent 0%, rgba(91,141,239,0.05) 45%, rgba(52,211,153,0.08) 50%, rgba(91,141,239,0.05) 55%, transparent 100%);
+  background-size: 200% 100%;
+}
+[data-theme="midnight"] ::-webkit-scrollbar-track { background: #0B1120; }
+[data-theme="midnight"] ::-webkit-scrollbar-thumb:hover { background: #5B8DEF; }
+
+/* ── SLATE ────────────────────────────────────────── */
+/* Cool gray minimalism, muted tones, editorial      */
+[data-theme="slate"] {
+  --color-uc-black: #0F172A;
+  --color-uc-panel: #1E293B;
+  --color-uc-surface: #334155;
+  --color-uc-cyan: #94A3B8;
+  --color-uc-cyan-dim: #64748B;
+  --color-uc-green: #86EFAC;
+  --color-uc-red: #FCA5A5;
+  --color-uc-silver: #CBD5E1;
+  --color-uc-gray-400: #94A3B8;
+  --color-uc-gray-600: #475569;
+}
+[data-theme="slate"] body {
+  background: #0F172A;
+}
+[data-theme="slate"] .glass {
+  background: rgba(30, 41, 59, 0.55);
+  border-color: rgba(148, 163, 184, 0.08);
+}
+[data-theme="slate"] .glass-heavy {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(148, 163, 184, 0.1);
+}
+[data-theme="slate"] .glow {
+  box-shadow: 0 0 24px rgba(148, 163, 184, 0.1);
+}
+[data-theme="slate"] .glow-strong {
+  box-shadow: 0 0 40px rgba(148, 163, 184, 0.15);
+}
+[data-theme="slate"] .gradient-text {
+  background: linear-gradient(135deg, #F8FAFC 0%, #94A3B8 100%);
+  -webkit-background-clip: text; background-clip: text;
+}
+[data-theme="slate"] .gradient-text-dna {
+  background: linear-gradient(135deg, #CBD5E1 0%, #86EFAC 50%, #94A3B8 100%);
+  -webkit-background-clip: text; background-clip: text;
+}
+[data-theme="slate"] .genome-scan {
+  background: linear-gradient(90deg, transparent 0%, rgba(148,163,184,0.04) 45%, rgba(134,239,172,0.06) 50%, rgba(148,163,184,0.04) 55%, transparent 100%);
+  background-size: 200% 100%;
+}
+[data-theme="slate"] ::-webkit-scrollbar-track { background: #0F172A; }
+[data-theme="slate"] ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+/* ── IVORY (LIGHT MODE) ──────────────────────────── */
+/* Cream backgrounds, dark text, warm gold accents   */
+[data-theme="ivory"] {
+  --color-uc-black: #FAFAF5;
+  --color-uc-panel: #F5F5F0;
+  --color-uc-surface: #EBEBDF;
+  --color-uc-cyan: #B8860B;
+  --color-uc-cyan-dim: #8B6508;
+  --color-uc-green: #059669;
+  --color-uc-red: #DC2626;
+  --color-uc-silver: #57534E;
+  --color-uc-white: #1A1A1A;
+  --color-uc-gray-400: #57534E;
+  --color-uc-gray-600: #A8A29E;
+}
+[data-theme="ivory"] body {
+  background: #FAFAF5;
+  color: #1A1A1A;
+}
+[data-theme="ivory"] .glass {
+  background: rgba(245, 245, 240, 0.7);
+  backdrop-filter: blur(16px);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+[data-theme="ivory"] .glass-heavy {
+  background: rgba(245, 245, 240, 0.9);
+  backdrop-filter: blur(24px);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+[data-theme="ivory"] .glow {
+  box-shadow: 0 0 24px rgba(184, 134, 11, 0.12);
+}
+[data-theme="ivory"] .glow-strong {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+[data-theme="ivory"] .glow-green {
+  box-shadow: 0 0 24px rgba(5, 150, 105, 0.12);
+}
+[data-theme="ivory"] .gradient-text {
+  background: linear-gradient(135deg, #1A1A1A 0%, #B8860B 100%);
+  -webkit-background-clip: text; background-clip: text;
+}
+[data-theme="ivory"] .gradient-text-dna {
+  background: linear-gradient(135deg, #B8860B 0%, #059669 50%, #92400E 100%);
+  -webkit-background-clip: text; background-clip: text;
+}
+[data-theme="ivory"] .gradient-text-green {
+  background: linear-gradient(135deg, #059669 0%, #B8860B 100%);
+  -webkit-background-clip: text; background-clip: text;
+}
+[data-theme="ivory"] .gradient-text-silver {
+  background: linear-gradient(135deg, #1A1A1A 0%, #57534E 100%);
+  -webkit-background-clip: text; background-clip: text;
+}
+[data-theme="ivory"] .genome-scan {
+  background: linear-gradient(90deg, transparent 0%, rgba(184,134,11,0.04) 45%, rgba(5,150,105,0.06) 50%, rgba(184,134,11,0.04) 55%, transparent 100%);
+  background-size: 200% 100%;
+}
+[data-theme="ivory"] .dna-bg-pattern {
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(184,134,11,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(5,150,105,0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 20%, rgba(146,64,14,0.03) 0%, transparent 50%);
+}
+[data-theme="ivory"] ::-webkit-scrollbar-track { background: #FAFAF5; }
+[data-theme="ivory"] ::-webkit-scrollbar-thumb { background: #D6D3D1; }
+[data-theme="ivory"] ::-webkit-scrollbar-thumb:hover { background: #B8860B; }
+
+/* ── EMBER ────────────────────────────────────────── */
+/* Dark base, warm orange/red accents, athletic      */
+[data-theme="ember"] {
+  --color-uc-black: #0C0A09;
+  --color-uc-panel: #1C1917;
+  --color-uc-surface: #292524;
+  --color-uc-cyan: #F97316;
+  --color-uc-cyan-dim: #C2410C;
+  --color-uc-green: #FACC15;
+  --color-uc-red: #EF4444;
+  --color-uc-silver: #D6D3D1;
+  --color-uc-gray-400: #A8A29E;
+  --color-uc-gray-600: #57534E;
+}
+[data-theme="ember"] body {
+  background: #0C0A09;
+}
+[data-theme="ember"] .glass {
+  background: rgba(28, 25, 23, 0.6);
+  border-color: rgba(249, 115, 22, 0.08);
+}
+[data-theme="ember"] .glass-heavy {
+  background: rgba(28, 25, 23, 0.85);
+  border-color: rgba(249, 115, 22, 0.1);
+}
+[data-theme="ember"] .glow {
+  box-shadow: 0 0 24px rgba(249, 115, 22, 0.15);
+}
+[data-theme="ember"] .glow-strong {
+  box-shadow: 0 0 40px rgba(249, 115, 22, 0.25), 0 0 80px rgba(239, 68, 68, 0.1);
+}
+[data-theme="ember"] .glow-green {
+  box-shadow: 0 0 24px rgba(250, 204, 21, 0.15);
+}
+[data-theme="ember"] .gradient-text {
+  background: linear-gradient(135deg, #FFFFFF 0%, #F97316 100%);
+  -webkit-background-clip: text; background-clip: text;
+}
+[data-theme="ember"] .gradient-text-dna {
+  background: linear-gradient(135deg, #F97316 0%, #FACC15 50%, #EF4444 100%);
+  -webkit-background-clip: text; background-clip: text;
+}
+[data-theme="ember"] .gradient-text-green {
+  background: linear-gradient(135deg, #FACC15 0%, #F97316 100%);
+  -webkit-background-clip: text; background-clip: text;
+}
+[data-theme="ember"] .genome-scan {
+  background: linear-gradient(90deg, transparent 0%, rgba(249,115,22,0.05) 45%, rgba(250,204,21,0.08) 50%, rgba(249,115,22,0.05) 55%, transparent 100%);
+  background-size: 200% 100%;
+}
+[data-theme="ember"] .dna-bg-pattern {
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(249,115,22,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(250,204,21,0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 20%, rgba(239,68,68,0.03) 0%, transparent 50%);
+}
+[data-theme="ember"] ::-webkit-scrollbar-track { background: #0C0A09; }
+[data-theme="ember"] ::-webkit-scrollbar-thumb:hover { background: #F97316; }

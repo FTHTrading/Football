@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Dna, ChevronDown } from "lucide-react";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -109,6 +110,8 @@ export default function Navigation() {
             </AnimatePresence>
           </div>
 
+          <ThemeSwitcher />
+
           <Link
             href="/pricing"
             className="px-5 py-2 rounded-lg text-sm font-semibold tracking-wider uppercase bg-uc-cyan/10 text-uc-cyan border border-uc-cyan/20 hover:bg-uc-cyan/20 hover:shadow-[0_0_20px_rgba(0,194,255,0.2)] transition-all duration-250"
@@ -153,6 +156,9 @@ export default function Navigation() {
                 <Link href="/card-generator" onClick={() => setIsOpen(false)} className="text-sm tracking-wider uppercase text-uc-cyan hover:text-uc-cyan/80">
                   Card Lab
                 </Link>
+                <div className="pt-2">
+                  <ThemeSwitcher />
+                </div>
               </div>
             </div>
           </motion.div>
