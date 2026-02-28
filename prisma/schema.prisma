@@ -1,0 +1,271 @@
+// Prisma Schema for Under Center — QB Identity Engine
+// Run `npx prisma migrate dev --name init` after configuring DATABASE_URL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ─────────────────────────────────────────────
+
+enum Role {
+  ATHLETE
+  COACH
+  PARENT
+  ADMIN
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  SUSPENDED
+}
+
+enum EventType {
+  OFFER
+  VISIT
+  COMMITMENT
+  CAMP
+  CONTACT
+}
+
+enum CardTheme {
+  DARK
+  HOLOGRAPHIC
+}
+
+// ─── Users ─────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  role          Role      @default(ATHLETE)
+  avatar        String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  athlete       Athlete?
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ─── Athletes ──────────────────────────────────────────
+
+model Athlete {
+  id                 String             @id @default(cuid())
+  userId             String             @unique
+  slug               String             @unique
+  firstName          String
+  lastName           String
+  school             String
+  gradYear           Int
+  state              String
+  heightInches       Int
+  weightLbs          Int
+  position           String             @default("QB")
+  profileImage       String?
+  bio                String?            @db.Text
+  starRating         Float              @default(0)
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+  stripePaymentId    String?
+  verifiedAt         DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  metrics            AthleteMetrics?
+  films              Film[]
+  timelineEvents     TimelineEvent[]
+  cards              Card[]
+  nilProfile         NilProfile?
+  profileViews       ProfileView[]
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([gradYear])
+  @@index([state])
+  @@index([verificationStatus])
+  @@map("athletes")
+}
+
+// ─── Metrics ───────────────────────────────────────────
+
+model AthleteMetrics {
+  id           String @id @default(cuid())
+  athleteId    String @unique
+  velocity     Float  // mph
+  spiral       Float  // 0-100 efficiency
+  accuracy     Float  // completion %
+  releaseTime  Float  // seconds
+  decisionTime Float  // seconds
+  mechanics    Float  // 0-100
+  footwork     Float  // 0-100 percentile
+  poise        Float  // 0-100 percentile
+  armStrength  Float  // 0-100 percentile
+  fieldVision  Float  // 0-100 percentile
+  clutchFactor Float  // 0-100 percentile
+  leadership   Float  // 0-100 percentile
+
+  // NFL Pro Comparison
+  comparisonPlayer      String?
+  comparisonSimilarity  Float?
+
+  measuredAt DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  athlete Athlete @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@map("athlete_metrics")
+}
+
+// ─── Film / Video ──────────────────────────────────────
+
+model Film {
+  id          String   @id @default(cuid())
+  athleteId   String
+  title       String
+  url         String
+  thumbnail   String?
+  duration    Int?     // seconds
+  plays       Int      @default(0)
+  coachViews  Int      @default(0)
+  highlighted Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  athlete Athlete @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@map("films")
+}
+
+// ─── Recruiting Timeline ───────────────────────────────
+
+model TimelineEvent {
+  id        String    @id @default(cuid())
+  athleteId String
+  type      EventType
+  title     String
+  school    String?
+  date      DateTime
+  note      String?   @db.Text
+  createdAt DateTime  @default(now())
+
+  athlete Athlete @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, date])
+  @@map("timeline_events")
+}
+
+// ─── Shareable Cards ───────────────────────────────────
+
+model Card {
+  id        String    @id @default(cuid())
+  athleteId String
+  theme     CardTheme @default(DARK)
+  imageUrl  String?
+  qrUrl     String?
+  downloads Int       @default(0)
+  shares    Int       @default(0)
+  createdAt DateTime  @default(now())
+
+  athlete Athlete @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@map("cards")
+}
+
+// ─── NIL ───────────────────────────────────────────────
+
+model NilProfile {
+  id               String   @id @default(cuid())
+  athleteId        String   @unique
+  estimatedValue   Float    @default(0)
+  interestScore    Int      @default(0) // 0-100
+  socialFollowers  Int      @default(0)
+  engagementRate   Float    @default(0)
+  availableForDeals Boolean @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  athlete   Athlete     @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  nilDeals  NilDeal[]
+
+  @@map("nil_profiles")
+}
+
+model NilDeal {
+  id           String   @id @default(cuid())
+  nilProfileId String
+  brandName    String
+  dealType     String   // sponsorship, appearance, content, merchandise
+  value        Float
+  status       String   @default("pending") // pending, active, completed, rejected
+  startDate    DateTime?
+  endDate      DateTime?
+  createdAt    DateTime @default(now())
+
+  nilProfile NilProfile @relation(fields: [nilProfileId], references: [id], onDelete: Cascade)
+
+  @@map("nil_deals")
+}
+
+// ─── Analytics ─────────────────────────────────────────
+
+model ProfileView {
+  id        String   @id @default(cuid())
+  athleteId String
+  viewerIp  String?
+  source    String?  // direct, search, card, embed
+  createdAt DateTime @default(now())
+
+  athlete Athlete @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId, createdAt])
+  @@map("profile_views")
+}
