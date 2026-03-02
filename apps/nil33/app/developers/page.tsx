@@ -8,8 +8,9 @@ export default function DevelopersPage() {
   return (
     <>
       {/* ═══ Hero ═══ */}
-      <section className="pt-32 sm:pt-40 pb-24 px-6 hero-glow">
-        <div className="max-w-[1200px] mx-auto text-center">
+      <section className="relative pt-44 pb-24 px-6 hero-glow overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(34,197,94,0.06)_0%,transparent_70%)] pointer-events-none" />
+        <div className="max-w-[1200px] mx-auto text-center relative z-10">
           <p className="text-overline mb-5">Developers</p>
           <h1 className="text-display text-nil-white max-w-2xl mx-auto">
             How NIL33 works
@@ -72,7 +73,7 @@ export default function DevelopersPage() {
           title="The 33 factors."
           subtitle="Every athlete is scored across 33 weighted factors in four categories. Each factor has a defined input type, normalization method, and weight. The composite score is the weighted sum, normalized to 0–99."
         />
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-6 stagger">
           {[
             {
               category: "Social Reach", color: "var(--color-nil-green)", weight: "25%",
@@ -116,7 +117,7 @@ export default function DevelopersPage() {
           title="Deterministic scoring."
           subtitle="NIL33 produces deterministic scores: the same inputs always produce the same output. This is a design requirement for auditability."
         />
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-6 stagger">
           <Card>
             <h3 className="text-nil-white font-semibold mb-4">Why Rust?</h3>
             <ul className="space-y-2.5 text-sm text-nil-muted">
@@ -197,7 +198,7 @@ export default function DevelopersPage() {
           title="Cryptographic deal receipts."
           subtitle="Every scored deal produces a receipt signed with Ed25519. Receipts are tamper-evident: any modification invalidates the signature."
         />
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-6 stagger">
           <div>
             <h3 className="text-nil-white font-semibold mb-4">Receipt Contents</h3>
             <ul className="space-y-2 text-sm text-nil-muted">
@@ -325,9 +326,11 @@ export default function DevelopersPage() {
       </Section>
 
       {/* ═══ Open Source CTA ═══ */}
-      <section className="py-32 sm:py-40 px-6 border-t border-nil-border/40">
-        <div className="max-w-[1200px] mx-auto text-center">
-          <h2 className="text-h1 text-nil-white mb-4">Built in the open.</h2>
+      <section className="relative py-32 sm:py-40 px-6 border-t border-nil-border/40 overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[radial-gradient(ellipse,rgba(34,197,94,0.08)_0%,transparent_70%)] pointer-events-none" />
+        <div className="max-w-[1200px] mx-auto text-center relative z-10">
+          <p className="text-overline mb-5">Open Source</p>
+          <h2 className="text-display text-nil-white mb-4">Built in the open.</h2>
           <p className="text-nil-muted text-body-lg mb-10 max-w-lg mx-auto">
             NIL33&apos;s scoring engine and compliance rulesets are designed
             for auditability. We believe the best way to earn trust is
@@ -335,7 +338,7 @@ export default function DevelopersPage() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Button href="https://github.com/FTHTrading" variant="secondary" size="lg" external>
-              GitHub →
+              GitHub &rarr;
             </Button>
             <Button href="mailto:developers@nil33.com?subject=NIL33%20Technical%20Inquiry" variant="ghost" size="lg" external>
               Contact Engineering

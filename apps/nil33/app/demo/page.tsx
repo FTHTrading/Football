@@ -120,15 +120,17 @@ export default function DemoPage() {
   }
 
   return (
-    <section className="pt-32 sm:pt-40 pb-24 px-6">
-      <div className="max-w-[1200px] mx-auto">
+    <>
+    <section className="relative pt-44 pb-24 px-6 hero-glow overflow-hidden">
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(34,197,94,0.06)_0%,transparent_70%)] pointer-events-none" />
+      <div className="max-w-[1200px] mx-auto relative z-10">
 
         {!result ? (
           <>
             {/* ═══ Form ═══ */}
             <div className="max-w-md mx-auto mb-10 text-center">
               <p className="text-overline mb-5">Live Demo</p>
-              <h1 className="text-h1 text-nil-white mb-3">Run a valuation.</h1>
+              <h1 className="text-display text-nil-white mb-3">Run a <span className="gradient-text">valuation.</span></h1>
               <p className="text-body-lg text-nil-muted">
                 Enter the deal details. Get a score, compliance check, and receipt.
               </p>
@@ -204,7 +206,7 @@ export default function DemoPage() {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-6 stagger">
               {/* Valuation */}
               <Card>
                 <p className="text-overline mb-5">Valuation</p>
@@ -291,5 +293,22 @@ export default function DemoPage() {
         )}
       </div>
     </section>
+
+    {/* ═══ Bottom CTA ═══ */}
+    <section className="relative py-32 px-6 border-t border-nil-border/40 overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[radial-gradient(ellipse,rgba(34,197,94,0.08)_0%,transparent_70%)] pointer-events-none" />
+      <div className="max-w-[1200px] mx-auto text-center relative z-10">
+        <p className="text-overline mb-5">Ready to scale?</p>
+        <h2 className="text-display text-nil-white mb-4">See what NIL33 can do for your program.</h2>
+        <p className="text-nil-muted text-body-lg mb-10 max-w-lg mx-auto">
+          From single valuations to full collective infrastructure &mdash; NIL33 scores, validates, and receipts every deal.
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <Button href="/pricing" variant="primary" size="lg">View Pricing &rarr;</Button>
+          <Button href="/collectives" variant="ghost" size="lg">Learn More</Button>
+        </div>
+      </div>
+    </section>
+    </>
   );
 }

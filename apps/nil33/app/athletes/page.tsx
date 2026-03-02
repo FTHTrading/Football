@@ -242,11 +242,12 @@ export default function AthletesPage() {
   return (
     <>
       {/* ═══ Hero ═══ */}
-      <section className="relative pt-32 sm:pt-40 pb-20 px-6 overflow-hidden">
+      <section className="relative pt-32 sm:pt-44 pb-24 px-6 overflow-hidden">
         <div className="absolute inset-0">
           <Image src="/images/hero-stadium.png" alt="" fill className="object-cover object-center" />
           <div className="absolute inset-0 bg-gradient-to-b from-nil-black/90 via-nil-black/80 to-nil-black" />
         </div>
+        <div className="absolute inset-0 hero-glow" />
         <div className="relative z-10 max-w-[1200px] mx-auto">
           <p className="text-overline mb-5">Verified Roster</p>
           <h1 className="text-display text-nil-white max-w-2xl">
@@ -260,23 +261,18 @@ export default function AthletesPage() {
           </p>
 
           {/* Summary stats */}
-          <div className="mt-10 flex flex-wrap gap-6">
-            <div>
-              <p className="text-nil-green font-mono text-3xl font-bold">{ATHLETES.length}</p>
-              <p className="text-nil-muted text-xs uppercase">Verified Athletes</p>
-            </div>
-            <div>
-              <p className="text-nil-cyan font-mono text-3xl font-bold">${(totalValue / 1000).toFixed(0)}K</p>
-              <p className="text-nil-muted text-xs uppercase">Total Portfolio Value</p>
-            </div>
-            <div>
-              <p className="text-nil-gold font-mono text-3xl font-bold">91</p>
-              <p className="text-nil-muted text-xs uppercase">Highest Composite</p>
-            </div>
-            <div>
-              <p className="text-nil-purple font-mono text-3xl font-bold">6</p>
-              <p className="text-nil-muted text-xs uppercase">States Covered</p>
-            </div>
+          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-px bg-nil-border/20 rounded-2xl overflow-hidden border border-nil-border/40">
+            {[
+              { value: String(ATHLETES.length), label: "Verified Athletes", color: "text-nil-green" },
+              { value: `$${(totalValue / 1000).toFixed(0)}K`, label: "Total Portfolio Value", color: "text-nil-cyan" },
+              { value: "91", label: "Highest Composite", color: "text-nil-gold" },
+              { value: "6", label: "States Covered", color: "text-nil-purple" },
+            ].map((s) => (
+              <div key={s.label} className="bg-nil-dark/80 backdrop-blur-sm p-6 text-center">
+                <p className={`font-mono text-3xl font-extrabold ${s.color}`}>{s.value}</p>
+                <p className="text-nil-muted text-xs uppercase tracking-wider mt-1">{s.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -375,7 +371,7 @@ export default function AthletesPage() {
 
       {/* ═══ Pipeline CTA ═══ */}
       <Section dark>
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-center stagger">
           <div>
             <SectionHeader
               overline="The Pipeline"
@@ -384,7 +380,7 @@ export default function AthletesPage() {
             />
             <div className="mt-8 flex flex-wrap gap-4">
               <Button href="/demo" size="lg">Score a Deal</Button>
-              <Button href="/developers" variant="ghost" size="lg">Technical Specs →</Button>
+              <Button href="/developers" variant="ghost" size="lg">Technical Specs &rarr;</Button>
             </div>
           </div>
           <CodePreview title="pipeline.txt">
