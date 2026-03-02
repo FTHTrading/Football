@@ -12,8 +12,10 @@
     "lint": "turbo lint",
     "dev:qbdna": "cd apps/qbdna && npm run dev",
     "dev:nil33": "cd apps/nil33 && npm run dev",
+    "dev:uc": "cd apps/under-center && npm run dev",
     "build:qbdna": "cd apps/qbdna && npm run build",
-    "build:nil33": "cd apps/nil33 && npm run build"
+    "build:nil33": "cd apps/nil33 && npm run build",
+    "build:uc": "cd apps/under-center && npm run build"
   },
   "devDependencies": {
     "turbo": "^2.5.0"

@@ -1,0 +1,524 @@
+"use client";
+
+import type { Athlete } from "@/lib/athletes";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+
+/* ─── Reveal hook ─── */
+function useReveal(threshold = 0.12) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
+      },
+      { threshold }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, visible };
+}
+
+function Reveal({
+  children,
+  delay = 0,
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const { ref, visible } = useReveal();
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(20px)",
+        transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ─── Grade Bar ─── */
+function GradeBar({
+  label,
+  value,
+  max = 99,
+  color,
+  visible,
+  delay = 0,
+}: {
+  label: string;
+  value: number;
+  max?: number;
+  color: string;
+  visible: boolean;
+  delay?: number;
+}) {
+  const pct = Math.round((value / max) * 100);
+  return (
+    <div className="group">
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="text-xs uppercase tracking-wider text-uc-muted group-hover:text-uc-light transition-colors">
+          {label}
+        </span>
+        <span className="text-sm font-mono font-bold text-uc-white">
+          {value}
+        </span>
+      </div>
+      <div className="h-2 bg-uc-border rounded-full overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all duration-1000 ease-out"
+          style={{
+            width: visible ? `${pct}%` : "0%",
+            background: `linear-gradient(90deg, ${color}88, ${color})`,
+            transitionDelay: `${delay}s`,
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ─── Stars ─── */
+function Stars({ count }: { count: number }) {
+  return (
+    <div className="flex gap-1">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <span
+          key={i}
+          className={`text-lg ${i < count ? "text-uc-gold" : "text-uc-border"}`}
+        >
+          ★
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/*  ATHLETE PROFILE                                              */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+export default function AthleteProfile({ athlete }: { athlete: Athlete }) {
+  const metricsRef = useRef<HTMLDivElement>(null);
+  const [metricsVisible, setMetricsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = metricsRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setMetricsVisible(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  const completionPct = Math.round(
+    (athlete.seasonStats.completions / athlete.seasonStats.attempts) * 100
+  );
+
+  return (
+    <>
+      {/* ─── Nav ─── */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-uc-black/90 backdrop-blur-xl border-b border-uc-border">
+        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
+          >
+            <div className="w-7 h-7 rounded-lg bg-uc-gold/10 border border-uc-gold/20 flex items-center justify-center">
+              <span className="text-uc-gold font-bold text-xs">UC</span>
+            </div>
+            <span className="text-uc-white font-semibold text-sm tracking-tight">
+              Under Center
+            </span>
+          </Link>
+          <Link
+            href={`/card/${athlete.slug}`}
+            className="text-xs bg-uc-gold/10 text-uc-gold border border-uc-gold/20 px-4 py-1.5 rounded-lg hover:bg-uc-gold/20 transition-colors"
+          >
+            Share Card
+          </Link>
+        </div>
+      </nav>
+
+      {/* ─── Hero ─── */}
+      <section className="pt-28 pb-12 px-6 relative">
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full blur-[150px] opacity-[0.04]"
+          style={{ background: athlete.accentColor }}
+        />
+
+        <div className="max-w-5xl mx-auto relative">
+          <Reveal>
+            <div className="flex flex-col md:flex-row items-start gap-6">
+              {/* Avatar */}
+              <div
+                className="w-24 h-24 rounded-2xl flex items-center justify-center text-3xl font-bold text-white shrink-0"
+                style={{
+                  background: `${athlete.accentColor}15`,
+                  border: `2px solid ${athlete.accentColor}40`,
+                }}
+              >
+                {athlete.avatarInitials}
+              </div>
+
+              {/* Info */}
+              <div className="flex-1">
+                <div className="flex flex-wrap items-center gap-3 mb-2">
+                  <h1 className="text-3xl sm:text-4xl font-extrabold text-uc-white">
+                    {athlete.name}
+                  </h1>
+                  {athlete.verified && (
+                    <span className="inline-flex items-center gap-1.5 bg-uc-gold/10 border border-uc-gold/30 text-uc-gold text-xs font-semibold px-3 py-1 rounded-full animate-verified">
+                      ✓ Verified
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-uc-light text-base mb-3">
+                  {athlete.position} · Class of {athlete.class} ·{" "}
+                  {athlete.height} · {athlete.weight} lbs
+                </p>
+                <p className="text-uc-muted text-sm mb-4">
+                  {athlete.highSchool} — {athlete.city}, {athlete.state}
+                </p>
+
+                <div className="flex items-center gap-4">
+                  <Stars count={athlete.starRating} />
+                  <span className="text-xs text-uc-muted uppercase tracking-wider">
+                    {athlete.starRating}-Star · GPA {athlete.gpa}
+                  </span>
+                </div>
+              </div>
+
+              {/* Recruiting Status Badge */}
+              <div className="shrink-0 text-center">
+                <div
+                  className="px-6 py-3 rounded-xl border text-sm font-semibold"
+                  style={{
+                    background: `${athlete.accentColor}08`,
+                    borderColor: `${athlete.accentColor}30`,
+                    color: athlete.accentColor,
+                  }}
+                >
+                  {athlete.recruitingStatus}
+                </div>
+                <p className="text-[10px] text-uc-muted mt-2 uppercase tracking-wider">
+                  Recruiting Status
+                </p>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ─── Season Stats Bar ─── */}
+      <section className="py-8 px-6 bg-uc-dark border-y border-uc-border">
+        <div className="max-w-5xl mx-auto">
+          <Reveal>
+            <div className="grid grid-cols-3 md:grid-cols-7 gap-6">
+              {[
+                { label: "Games", value: athlete.seasonStats.games },
+                { label: "Comp %", value: `${completionPct}%` },
+                {
+                  label: "Comp/Att",
+                  value: `${athlete.seasonStats.completions}/${athlete.seasonStats.attempts}`,
+                },
+                {
+                  label: "Yards",
+                  value: athlete.seasonStats.yards.toLocaleString(),
+                },
+                { label: "TD", value: athlete.seasonStats.touchdowns },
+                { label: "INT", value: athlete.seasonStats.interceptions },
+                { label: "QBR", value: athlete.seasonStats.qbr },
+              ].map((s) => (
+                <div key={s.label} className="text-center">
+                  <div className="text-lg md:text-xl font-mono font-bold text-uc-white">
+                    {s.value}
+                  </div>
+                  <div className="text-[10px] text-uc-muted uppercase tracking-wider mt-0.5">
+                    {s.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ─── Metrics Grid ─── */}
+      <section className="py-20 px-6" ref={metricsRef}>
+        <div className="max-w-5xl mx-auto">
+          <Reveal>
+            <h2 className="text-2xl font-bold text-uc-white mb-2">
+              Verified Metrics
+            </h2>
+            <p className="text-uc-muted text-sm mb-10">
+              Verified on{" "}
+              {new Date(athlete.verifiedDate).toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </p>
+          </Reveal>
+
+          <div className="grid md:grid-cols-2 gap-x-12 gap-y-6">
+            {[
+              { label: "Arm Strength", value: athlete.metrics.armStrength },
+              { label: "Release Time", value: athlete.metrics.releaseTime, max: 1, invert: true },
+              { label: "Accuracy", value: athlete.metrics.accuracy },
+              { label: "Decision Speed", value: Math.round(100 - (athlete.metrics.decisionSpeed / 3)), max: 99 },
+              { label: "Pocket Presence", value: athlete.metrics.pocketPresence },
+              { label: "Athleticism", value: athlete.metrics.athleticism },
+              { label: "Film Grade", value: athlete.metrics.filmGrade },
+              { label: "Mechanics Grade", value: athlete.metrics.mechanicsGrade },
+            ].map((m, i) => (
+              <GradeBar
+                key={m.label}
+                label={m.label}
+                value={typeof m.value === "number" && m.value < 1 ? m.value : Math.round(m.value as number)}
+                max={m.max || 99}
+                color={athlete.accentColor}
+                visible={metricsVisible}
+                delay={i * 0.08}
+              />
+            ))}
+          </div>
+
+          {/* Quick-read metrics below */}
+          <Reveal delay={0.3}>
+            <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-uc-dark border border-uc-border rounded-xl p-5 text-center">
+                <div className="text-2xl font-mono font-bold text-uc-white">
+                  {athlete.metrics.releaseTime}s
+                </div>
+                <div className="text-[10px] text-uc-muted uppercase tracking-wider mt-1">
+                  Release Time
+                </div>
+              </div>
+              <div className="bg-uc-dark border border-uc-border rounded-xl p-5 text-center">
+                <div className="text-2xl font-mono font-bold text-uc-white">
+                  {athlete.metrics.decisionSpeed}ms
+                </div>
+                <div className="text-[10px] text-uc-muted uppercase tracking-wider mt-1">
+                  Decision Speed
+                </div>
+              </div>
+              <div className="bg-uc-dark border border-uc-border rounded-xl p-5 text-center">
+                <div className="text-2xl font-mono font-bold text-uc-white">
+                  {athlete.metrics.accuracy}%
+                </div>
+                <div className="text-[10px] text-uc-muted uppercase tracking-wider mt-1">
+                  Accuracy Rate
+                </div>
+              </div>
+              <div className="bg-uc-dark border border-uc-border rounded-xl p-5 text-center">
+                <div className="text-2xl font-mono font-bold text-uc-white">
+                  {athlete.metrics.armStrength}
+                </div>
+                <div className="text-[10px] text-uc-muted uppercase tracking-wider mt-1">
+                  Arm Grade
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ─── NFL Comparisons ─── */}
+      <section className="py-20 px-6 bg-uc-dark border-y border-uc-border">
+        <div className="max-w-5xl mx-auto">
+          <Reveal>
+            <h2 className="text-2xl font-bold text-uc-white mb-2">
+              NFL Comparisons
+            </h2>
+            <p className="text-uc-muted text-sm mb-10">
+              Based on verified mechanics, arm data, and play style analysis.
+            </p>
+          </Reveal>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {athlete.nflComparisons.map((comp, i) => (
+              <Reveal key={comp.name} delay={i * 0.1}>
+                <div className="bg-uc-panel border border-uc-border rounded-2xl p-6 hover:border-uc-gold/20 transition-colors">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-uc-white font-semibold text-lg">
+                      {comp.name}
+                    </h3>
+                    <span
+                      className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg"
+                      style={{
+                        background: `${athlete.accentColor}15`,
+                        color: athlete.accentColor,
+                      }}
+                    >
+                      {comp.similarity}%
+                    </span>
+                  </div>
+                  <p className="text-uc-light text-sm">{comp.trait}</p>
+                  <div className="mt-4 h-1.5 bg-uc-border rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${comp.similarity}%`,
+                        background: `linear-gradient(90deg, ${athlete.accentColor}66, ${athlete.accentColor})`,
+                      }}
+                    />
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Offers ─── */}
+      <section className="py-20 px-6">
+        <div className="max-w-5xl mx-auto">
+          <Reveal>
+            <h2 className="text-2xl font-bold text-uc-white mb-2">Offers</h2>
+            <p className="text-uc-muted text-sm mb-10">
+              {athlete.offers.length} program
+              {athlete.offers.length !== 1 ? "s" : ""}
+            </p>
+          </Reveal>
+
+          <div className="space-y-3">
+            {athlete.offers.map((offer, i) => (
+              <Reveal key={offer.school} delay={i * 0.06}>
+                <div className="flex items-center justify-between bg-uc-dark border border-uc-border rounded-xl px-6 py-4 hover:border-uc-gold/15 transition-colors">
+                  <div>
+                    <span className="text-uc-white font-semibold">
+                      {offer.school}
+                    </span>
+                    <span className="text-uc-muted text-sm ml-3">
+                      {offer.conference}
+                    </span>
+                  </div>
+                  <span
+                    className={`text-xs font-semibold px-3 py-1 rounded-full ${
+                      offer.status === "committed"
+                        ? "bg-uc-green/10 text-uc-green border border-uc-green/20"
+                        : offer.status === "offered"
+                          ? "bg-uc-gold/10 text-uc-gold border border-uc-gold/20"
+                          : "bg-uc-blue/10 text-uc-blue border border-uc-blue/20"
+                    }`}
+                  >
+                    {offer.status === "committed"
+                      ? "✓ Committed"
+                      : offer.status === "offered"
+                        ? "Offered"
+                        : "Interested"}
+                  </span>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Film ─── */}
+      <section className="py-20 px-6 bg-uc-dark border-y border-uc-border">
+        <div className="max-w-5xl mx-auto">
+          <Reveal>
+            <h2 className="text-2xl font-bold text-uc-white mb-2">Film</h2>
+            <p className="text-uc-muted text-sm mb-10">
+              Verified game film and evaluation clips.
+            </p>
+          </Reveal>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {athlete.filmClips.map((clip, i) => (
+              <Reveal key={clip.title} delay={i * 0.1}>
+                <div className="bg-uc-panel border border-uc-border rounded-2xl overflow-hidden hover:border-uc-gold/20 transition-colors group">
+                  {/* Film placeholder */}
+                  <div className="aspect-video bg-uc-black flex items-center justify-center relative">
+                    <div className="w-14 h-14 rounded-full bg-uc-white/10 flex items-center justify-center group-hover:bg-uc-white/20 transition-colors">
+                      <span className="text-uc-white text-xl ml-1">▶</span>
+                    </div>
+                    <span className="absolute bottom-2 right-3 text-[10px] text-uc-muted bg-uc-black/80 px-2 py-0.5 rounded">
+                      {clip.plays} plays
+                    </span>
+                  </div>
+                  <div className="p-5">
+                    <h3 className="text-uc-white font-semibold text-sm mb-1">
+                      {clip.title}
+                    </h3>
+                    <p className="text-uc-muted text-xs">
+                      {new Date(clip.date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Share CTA ─── */}
+      <section className="py-20 px-6">
+        <div className="max-w-2xl mx-auto text-center">
+          <Reveal>
+            <p className="text-uc-muted text-xs uppercase tracking-widest mb-4">
+              Share This Profile
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-uc-white mb-6">
+              Get {athlete.firstName}&apos;s verified card
+            </h2>
+            <Link
+              href={`/card/${athlete.slug}`}
+              className="inline-flex items-center gap-2 bg-uc-gold text-black font-semibold px-7 py-3 rounded-xl hover:bg-uc-gold/90 transition-colors text-sm"
+            >
+              View Shareable Card
+              <span className="text-base">→</span>
+            </Link>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ─── Footer ─── */}
+      <footer className="border-t border-uc-border py-10 px-6">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <Link
+            href="/"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
+            <div className="w-6 h-6 rounded bg-uc-gold/10 border border-uc-gold/20 flex items-center justify-center">
+              <span className="text-uc-gold font-bold text-[10px]">UC</span>
+            </div>
+            <span className="text-uc-white font-medium text-sm">
+              Under Center
+            </span>
+          </Link>
+          <p className="text-xs text-uc-muted">
+            © {new Date().getFullYear()} Under Center. All rights reserved.
+          </p>
+        </div>
+      </footer>
+    </>
+  );
+}

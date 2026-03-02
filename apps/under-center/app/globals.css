@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+  --color-uc-black: #050505;
+  --color-uc-dark: #0a0a0a;
+  --color-uc-panel: #111111;
+  --color-uc-border: #1a1a1a;
+  --color-uc-muted: #666666;
+  --color-uc-light: #999999;
+  --color-uc-text: #e5e5e5;
+  --color-uc-white: #fafafa;
+  --color-uc-gold: #d4a843;
+  --color-uc-green: #22c55e;
+  --color-uc-blue: #3b82f6;
+  --color-uc-red: #ef4444;
+
+  --font-sans: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", monospace;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-uc-black);
+  color: var(--color-uc-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(212, 168, 67, 0.3);
+  color: #fff;
+}
+
+/* Verified badge pulse */
+@keyframes verified-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 168, 67, 0.4); }
+  50% { box-shadow: 0 0 12px 4px rgba(212, 168, 67, 0.15); }
+}
+
+.animate-verified {
+  animation: verified-pulse 3s ease-in-out infinite;
+}
+
+/* Grade bar fill */
+@keyframes fill-bar {
+  from { width: 0%; }
+}
+
+.animate-fill {
+  animation: fill-bar 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Fade in up */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+/* Subtle glow */
+.glow-gold {
+  box-shadow: 0 0 40px rgba(212, 168, 67, 0.08);
+}
