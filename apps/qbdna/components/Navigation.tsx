@@ -6,9 +6,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Dna } from "lucide-react";
 
 const navLinks = [
+  { href: "/system", label: "System" },
+  { href: "/training", label: "Development" },
+  { href: "/team", label: "Team" },
   { href: "/search", label: "Prospects" },
-  { href: "/profile/1", label: "Profile" },
-  { href: "/graphics", label: "Verified Card" },
 ];
 
 export default function Navigation() {

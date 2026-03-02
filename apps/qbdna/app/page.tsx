@@ -1,10 +1,9 @@
 "use client";
 
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { PLACEHOLDER_ATHLETES } from "@/lib/placeholder-data";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import RadialGauge from "@/components/RadialGauge";
 import StarRating from "@/components/StarRating";
@@ -12,13 +11,21 @@ import {
   ChevronRight,
   ArrowRight,
   Dna,
-  Share2,
   CheckCircle2,
   Target,
+  Apple,
+  Dumbbell,
+  BarChart3,
+  Eye,
+  Users,
+  Crosshair,
   Shield,
+  UserCheck,
 } from "lucide-react";
 
-/* ── Animated counter ── */
+/* ═══════════════════════════════════════════
+   COUNTER — animated number
+   ═══════════════════════════════════════════ */
 function Counter({
   target,
   decimals = 0,
@@ -30,60 +37,65 @@ function Counter({
   suffix?: string;
   duration?: number;
 }) {
-  const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true });
+  const inView = useInView(ref, { once: true });
+  const [value, setValue] = useState(0);
 
   useEffect(() => {
-    if (!isInView) return;
-    let frame: number;
+    if (!inView) return;
     const start = performance.now();
     const animate = (now: number) => {
-      const elapsed = (now - start) / 1000;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(eased * target);
-      if (progress < 1) frame = requestAnimationFrame(animate);
+      const progress = Math.min((now - start) / (duration * 1000), 1);
+      const eased = 1 - Math.pow(1 - progress, 4);
+      setValue(eased * target);
+      if (progress < 1) requestAnimationFrame(animate);
     };
-    frame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(frame);
-  }, [isInView, target, duration]);
+    requestAnimationFrame(animate);
+  }, [inView, target, duration]);
 
   return (
     <span ref={ref}>
-      {count.toFixed(decimals)}{suffix}
+      {value.toFixed(decimals)}
+      {suffix}
     </span>
   );
 }
 
-/* ── Rotating words ── */
+/* ═══════════════════════════════════════════
+   ROTATING WORDS — cycling text
+   ═══════════════════════════════════════════ */
 function RotatingWords({ words }: { words: string[] }) {
-  const [index, setIndex] = useState(0);
-
+  const [idx, setIdx] = useState(0);
   useEffect(() => {
-    const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % words.length);
-    }, 2500);
-    return () => clearInterval(timer);
+    const t = setInterval(() => setIdx((p) => (p + 1) % words.length), 2400);
+    return () => clearInterval(t);
   }, [words.length]);
-
   return (
-    <AnimatePresence mode="wait">
-      <motion.span
-        key={index}
-        initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        exit={{ opacity: 0, y: -20, filter: "blur(4px)" }}
-        transition={{ duration: 0.5 }}
-        className="inline-block text-uc-cyan"
-      >
-        {words[index]}
-      </motion.span>
-    </AnimatePresence>
+    <span className="inline-block relative h-[1.2em] overflow-hidden align-bottom min-w-[200px]">
+      {words.map((w, i) => (
+        <motion.span
+          key={w}
+          className="absolute left-0 gradient-text whitespace-nowrap"
+          initial={{ y: "100%", opacity: 0 }}
+          animate={
+            i === idx
+              ? { y: 0, opacity: 1 }
+              : i === (idx - 1 + words.length) % words.length
+                ? { y: "-100%", opacity: 0 }
+                : { y: "100%", opacity: 0 }
+          }
+          transition={{ duration: 0.45, ease: "easeOut" }}
+        >
+          {w}
+        </motion.span>
+      ))}
+    </span>
   );
 }
 
-/* ── Scroll-reveal wrapper ── */
+/* ═══════════════════════════════════════════
+   REVEAL SECTION — scroll reveal wrapper
+   ═══════════════════════════════════════════ */
 function RevealSection({
   children,
   className = "",
@@ -92,14 +104,13 @@ function RevealSection({
   className?: string;
 }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
-
+  const inView = useInView(ref, { once: true, margin: "-80px" });
   return (
     <motion.section
       ref={ref}
-      initial={{ opacity: 0, y: 60 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+      initial={{ opacity: 0, y: 30 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7, ease: "easeOut" }}
       className={className}
     >
       {children}
@@ -107,145 +118,302 @@ function RevealSection({
   );
 }
 
-/* ── Data ── */
-const featured =
-  PLACEHOLDER_ATHLETES.find((a) => a.id === "6") || PLACEHOLDER_ATHLETES[0];
-const verifiedAthletes = PLACEHOLDER_ATHLETES.filter((a) => a.verified).slice(0, 3);
-
-const marqueeItems = [
-  "VEL: 63.4 MPH",
-  "RELEASE: 0.35s",
-  "ACCURACY: 93%",
-  "SPIN: 710 RPM",
-  "MECHANICS: 95",
-  "DECISION: 91",
-  "FOOTWORK: 90",
-  "POISE: 93",
-  "VISION: 89",
-  "CLUTCH: 94",
-];
-
-const howItWorks = [
+/* ═══════════════════════════════════════════
+   PIPELINE DATA
+   ═══════════════════════════════════════════ */
+const pipelineSteps = [
   {
     step: "01",
-    title: "Capture",
-    desc: "Film throws with any camera. Our system extracts velocity, spin, release time, and 12+ biomechanical markers from every rep.",
+    label: "Train",
+    title: "Mechanics & Arm Strength",
+    desc: "D1-level quarterback development with Cole Northrup. Arm slot optimization, footwork progression, pocket presence — built rep by rep.",
     Icon: Target,
-    gradient: "from-uc-cyan/20 to-transparent",
+    color: "#00C2FF",
+    person: "Cole Northrup",
+    role: "QB Development",
   },
   {
     step: "02",
-    title: "Verify",
-    desc: "Metrics are validated against our QB genome model. Each data point is cross-referenced, percentiled, and stamped as verified.",
-    Icon: Shield,
-    gradient: "from-uc-green/20 to-transparent",
+    label: "Fuel",
+    title: "Sports Nutrition & Body Comp",
+    desc: "NFL Combine-level nutrition programming with Jenna Braddock, CSSD. Body composition, hydration protocols, and performance fueling.",
+    Icon: Apple,
+    color: "#00FF88",
+    person: "Jenna Braddock",
+    role: "Sports Dietitian",
   },
   {
     step: "03",
-    title: "Share",
-    desc: "Your verified profile goes live — searchable by coaches, shareable as social cards, backed by real data instead of hype.",
-    Icon: Share2,
-    gradient: "from-uc-cyan/20 to-transparent",
+    label: "Track",
+    title: "Velocity · Spin · Speed · Weight",
+    desc: "Every session logged. Throwing velocity, spin rate, 40 time, body weight trend, and training load tracked over time.",
+    Icon: BarChart3,
+    color: "#A855F7",
+    person: "Data Layer",
+    role: "Under Center",
+  },
+  {
+    step: "04",
+    label: "Evaluate",
+    title: "National Recruiting Assessment",
+    desc: "Regional and national recruiting directors assess positioning, film grade, and college-level readiness across the country.",
+    Icon: Eye,
+    color: "#FACC15",
+    person: "Brian Herny",
+    role: "National Recruiting",
+  },
+  {
+    step: "05",
+    label: "Verify",
+    title: "Verified Athlete Profile",
+    desc: "Under Center publishes verified, objective metrics into a cinematic QB identity — built for coaches and scouts.",
+    Icon: CheckCircle2,
+    color: "#00C2FF",
+    person: "Under Center",
+    role: "Verified Index",
+  },
+  {
+    step: "06",
+    label: "Recruit",
+    title: "Coach Visibility & Exposure",
+    desc: "Verified data cards, searchable profiles, and recruiting intelligence — coaches see objective development trajectory.",
+    Icon: Users,
+    color: "#00FF88",
+    person: "Recruiting Team",
+    role: "Jared Tucker · Abu Turay",
   },
 ];
 
-/* ════════════════════════════════════════════════ */
-export default function Home() {
-  return (
-    <main className="relative overflow-x-hidden">
+const fourPillars = [
+  {
+    icon: Dumbbell,
+    title: "Development System",
+    desc: "Lifting, speed, mechanics, and arm strength — a structured physical foundation built by coaches.",
+    href: "/training",
+    gradient: "from-cyan-500/20 to-blue-500/10",
+  },
+  {
+    icon: Crosshair,
+    title: "Verified Measurement",
+    desc: "Wilson QBX, radar tracking, GAI scoring — every throw captured with objective data.",
+    href: "/search",
+    gradient: "from-green-500/20 to-emerald-500/10",
+  },
+  {
+    icon: Shield,
+    title: "Athlete Profile",
+    desc: "Cinematic verified QB identity with metrics, film, offers, and development timeline.",
+    href: "/profile/1",
+    gradient: "from-purple-500/20 to-violet-500/10",
+  },
+  {
+    icon: UserCheck,
+    title: "Recruiting Visibility",
+    desc: "Searchable profiles, verified cards, and direct recruiting intelligence for college coaches.",
+    href: "/system",
+    gradient: "from-yellow-500/20 to-orange-500/10",
+  },
+];
 
-      {/* ═══ SECTION 1 — CINEMATIC HERO ═══ */}
+const featured = {
+  id: "6",
+  name: "Andre Mitchell",
+  school: "IMG Academy",
+  gradYear: 2026,
+  height: '6\'5"',
+  weight: 225,
+  rating: 5.0,
+  metrics: {
+    velocity: 63.4,
+    releaseTime: 0.35,
+    spinRate: 710,
+    mechanics: 95,
+    accuracy: 93,
+    decisionSpeed: 91,
+  },
+  offers: [
+    "Alabama",
+    "Georgia",
+    "Ohio State",
+    "Clemson",
+    "Texas",
+    "USC",
+    "Oregon",
+    "Notre Dame",
+  ],
+};
+
+const verifiedAthletes = [
+  {
+    id: "1",
+    name: "Jaxon Smith",
+    school: "Westlake HS",
+    metrics: { velocity: 61.8, releaseTime: 0.38, accuracy: 88 },
+  },
+  {
+    id: "4",
+    name: "Dylan Park",
+    school: "Arch. Moeller",
+    metrics: { velocity: 60.1, releaseTime: 0.36, accuracy: 91 },
+  },
+  {
+    id: "5",
+    name: "Kai Nakamura",
+    school: "Saint Louis",
+    metrics: { velocity: 56.5, releaseTime: 0.42, accuracy: 86 },
+  },
+];
+
+const marqueeItems = [
+  "VEL 63.4 MPH",
+  "RELEASE 0.35s",
+  "ACCURACY 93%",
+  "SPIN 710 RPM",
+  "MECHANICS 95",
+  "DECISION 91",
+  "FOOTWORK 90",
+  "POISE 93",
+  "VISION 89",
+  "CLUTCH 94",
+];
+
+/* ═══════════════════════════════════════════
+   HOMEPAGE
+   ═══════════════════════════════════════════ */
+export default function HomePage() {
+  return (
+    <main className="min-h-screen bg-uc-black text-white overflow-hidden">
+      {/* ═══ SECTION 1 — HERO ═══ */}
       <section className="relative min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden">
-        {/* Multi-layer cinematic background */}
+        {/* Background */}
         <div className="absolute inset-0 -z-10">
           <Image
             src="/images/qb.png"
-            alt=""
+            alt="Quarterback under center"
             fill
-            className="object-cover object-top scale-110"
+            className="object-cover object-top opacity-30"
             priority
             quality={90}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-uc-black" />
-          <div className="absolute inset-0 bg-gradient-to-r from-uc-black via-transparent to-uc-black/90" />
-          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-uc-cyan/[0.06]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-uc-black via-black/50 to-uc-black" />
+          <div className="absolute inset-0 bg-gradient-to-r from-uc-black/70 via-transparent to-uc-black/70" />
         </div>
 
-        {/* Content */}
-        <div className="relative z-10 flex flex-col items-center text-center max-w-5xl">
-          {/* Badge */}
+        {/* Hero content */}
+        <div className="relative z-10 text-center max-w-5xl mx-auto">
+          {/* Tag */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-            className="mb-10 px-6 py-2.5 rounded-full glass-heavy text-[10px] tracking-[0.5em] uppercase text-uc-cyan font-bold border border-uc-cyan/20"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-full glass border border-uc-cyan/20 text-[10px] tracking-[0.4em] uppercase text-uc-cyan mb-8"
           >
-            The Verified Quarterback Index
+            <Dna size={12} />
+            Quarterback Development Infrastructure
           </motion.div>
 
-          {/* Massive stacked headline */}
-          <h1 className="mb-8">
-            {["EVERY", "THROW", "MEASURED."].map((word, i) => (
-              <motion.span
+          {/* Stacked headline */}
+          <div className="mb-6">
+            {["TRAIN.", "MEASURE.", "VERIFY."].map((word, i) => (
+              <motion.h1
                 key={word}
-                initial={{ opacity: 0, y: 40, skewY: 2 }}
-                animate={{ opacity: 1, y: 0, skewY: 0 }}
+                initial={{ opacity: 0, x: -60, skewX: -4 }}
+                animate={{ opacity: 1, x: 0, skewX: 0 }}
                 transition={{
                   delay: 0.5 + i * 0.15,
-                  duration: 0.7,
-                  ease: [0.16, 1, 0.3, 1],
+                  type: "spring",
+                  stiffness: 80,
+                  damping: 20,
                 }}
-                className={`block text-7xl sm:text-8xl md:text-9xl lg:text-[10rem] font-black tracking-tighter leading-[0.85] ${
-                  word === "MEASURED." ? "gradient-text" : "text-white"
-                }`}
+                className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.85] text-white"
               >
                 {word}
-              </motion.span>
+              </motion.h1>
             ))}
-          </h1>
+            <motion.h1
+              initial={{ opacity: 0, x: -60, skewX: -4 }}
+              animate={{ opacity: 1, x: 0, skewX: 0 }}
+              transition={{
+                delay: 0.95,
+                type: "spring",
+                stiffness: 80,
+                damping: 20,
+              }}
+              className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.85] gradient-text"
+            >
+              GET RECRUITED.
+            </motion.h1>
+          </div>
 
-          {/* Subtext with rotating word */}
+          {/* Sub-headline */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2 }}
-            className="text-lg md:text-xl text-uc-gray-400 mb-14 font-light tracking-wide max-w-md"
+            className="text-sm md:text-base text-uc-gray-400 max-w-xl mx-auto mb-6 leading-relaxed"
           >
-            Objective metrics for{" "}
+            The only system that connects{" "}
             <RotatingWords
               words={[
-                "velocity",
-                "accuracy",
-                "release time",
-                "decision speed",
-                "every throw",
+                "arm strength",
+                "nutrition",
+                "film grade",
+                "recruiting",
+                "verified data",
               ]}
-            />
+            />{" "}
+            to a verified quarterback identity.
           </motion.p>
 
-          {/* Animated metric tiles */}
+          {/* Pipeline mini-strip */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.4 }}
+            className="flex items-center justify-center gap-2 md:gap-4 mb-10 flex-wrap"
+          >
+            {pipelineSteps.map((step, i) => (
+              <div key={step.label} className="flex items-center gap-2 md:gap-4">
+                <div className="flex items-center gap-1.5">
+                  <div
+                    className="w-7 h-7 rounded-lg flex items-center justify-center border border-white/10"
+                    style={{ backgroundColor: step.color + "15" }}
+                  >
+                    <step.Icon size={13} style={{ color: step.color }} />
+                  </div>
+                  <span className="text-[9px] font-bold tracking-wider uppercase text-uc-gray-400 hidden sm:inline">
+                    {step.label}
+                  </span>
+                </div>
+                {i < pipelineSteps.length - 1 && (
+                  <ChevronRight size={10} className="text-white/10 shrink-0" />
+                )}
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Metric tiles */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5, duration: 0.6 }}
-            className="flex flex-wrap justify-center gap-4 md:gap-6 mb-14"
+            transition={{ delay: 1.6 }}
+            className="flex justify-center gap-3 md:gap-6 mb-10 flex-wrap"
           >
             {[
-              { label: "MPH", value: 63.4, decimals: 1, suffix: "" },
-              { label: "RELEASE", value: 0.35, decimals: 2, suffix: "s" },
-              { label: "ACCURACY", value: 93, decimals: 0, suffix: "%" },
-            ].map((metric, i) => (
+              { value: 63.4, dec: 1, suffix: "", label: "MPH" },
+              { value: 0.35, dec: 2, suffix: "s", label: "RELEASE" },
+              { value: 93, dec: 0, suffix: "%", label: "ACCURACY" },
+              { value: 710, dec: 0, suffix: "", label: "RPM" },
+            ].map((metric) => (
               <motion.div
                 key={metric.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.6 + i * 0.1 }}
-                className="glass-heavy rounded-xl px-6 py-4 text-center min-w-[100px] border border-white/[0.06] hover:border-uc-cyan/20 transition-colors duration-500"
+                whileHover={{ scale: 1.08, y: -3 }}
+                className="glass rounded-xl px-5 py-3 border border-white/[0.06] cursor-default"
               >
-                <p className="text-2xl md:text-3xl font-black font-mono text-white mb-0.5">
+                <p className="text-xl md:text-2xl font-black font-mono text-white">
                   <Counter
                     target={metric.value}
-                    decimals={metric.decimals}
+                    decimals={metric.dec}
                     suffix={metric.suffix}
                   />
                 </p>
@@ -261,13 +429,13 @@ export default function Home() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.9 }}
-            className="flex flex-col sm:flex-row gap-4"
+            className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <Link
-              href="/search"
+              href="/system"
               className="group flex items-center justify-center gap-2 px-10 py-4 rounded-xl bg-uc-cyan text-uc-black font-bold text-sm tracking-wider uppercase hover:shadow-[0_0_40px_rgba(0,194,255,0.5)] transition-all duration-300"
             >
-              View Verified QBs
+              See The System
               <ChevronRight
                 size={16}
                 className="group-hover:translate-x-1 transition-transform"
@@ -302,60 +470,132 @@ export default function Home() {
               key={i}
               className="mx-8 text-xs font-mono font-bold tracking-wider text-uc-gray-400"
             >
-              <span className="text-uc-cyan mr-2">■</span>
+              <span className="text-uc-cyan mr-2">&#9632;</span>
               {item}
             </span>
           ))}
         </div>
       </div>
 
-      {/* ═══ SECTION 3 — HOW IT WORKS ═══ */}
+      {/* ═══ SECTION 3 — THE FOUR PILLARS ═══ */}
       <RevealSection className="py-32 px-6">
         <div className="max-w-6xl mx-auto">
           <p className="text-[10px] tracking-[0.5em] uppercase text-uc-cyan mb-4 text-center font-bold">
-            How It Works
+            The Infrastructure
           </p>
           <h2 className="text-3xl md:text-5xl font-black text-center mb-6 tracking-tight">
-            Three steps. <span className="gradient-text">Zero guesswork.</span>
+            One system. <span className="gradient-text">Four pillars.</span>
           </h2>
-          <p className="text-sm text-uc-gray-500 text-center max-w-md mx-auto mb-20">
-            From raw throws to verified QB identity — built for coaches,
-            scouts, and athletes.
+          <p className="text-sm text-uc-gray-500 text-center max-w-lg mx-auto mb-20">
+            Under Center isn&apos;t a training company. It&apos;s measurable quarterback
+            development infrastructure — from the weight room to the recruiting
+            board.
           </p>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {howItWorks.map((item, i) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {fourPillars.map((pillar, i) => (
               <motion.div
-                key={item.step}
+                key={pillar.title}
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.15, duration: 0.6 }}
-                className="group relative glass rounded-2xl p-8 border border-white/[0.04] hover:border-uc-cyan/20 transition-all duration-500"
+                transition={{ delay: i * 0.1, duration: 0.6 }}
               >
-                <span className="absolute -top-4 -left-2 text-7xl font-black text-white/[0.03] select-none pointer-events-none">
-                  {item.step}
-                </span>
-
-                <div
-                  className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center mb-6 border border-white/[0.06]`}
+                <Link
+                  href={pillar.href}
+                  className="group block glass rounded-2xl p-7 border border-white/[0.04] hover:border-uc-cyan/20 transition-all duration-500 h-full"
                 >
-                  <item.Icon size={20} className="text-uc-cyan" />
-                </div>
-
-                <h3 className="text-xl font-bold mb-3 tracking-tight">
-                  {item.title}
-                </h3>
-                <p className="text-sm text-uc-gray-400 leading-relaxed">
-                  {item.desc}
-                </p>
+                  <div
+                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${pillar.gradient} flex items-center justify-center mb-5 border border-white/[0.06]`}
+                  >
+                    <pillar.icon size={20} className="text-uc-cyan" />
+                  </div>
+                  <h3 className="text-lg font-bold mb-2 tracking-tight group-hover:text-uc-cyan transition-colors">
+                    {pillar.title}
+                  </h3>
+                  <p className="text-xs text-uc-gray-400 leading-relaxed">
+                    {pillar.desc}
+                  </p>
+                </Link>
               </motion.div>
             ))}
           </div>
         </div>
       </RevealSection>
 
-      {/* ═══ SECTION 4 — FEATURED PROSPECT ═══ */}
+      {/* ═══ SECTION 4 — DEVELOPMENT PIPELINE ═══ */}
+      <RevealSection className="py-32 px-6 border-y border-white/[0.04]">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-[10px] tracking-[0.5em] uppercase text-uc-cyan mb-4 text-center font-bold">
+            The Pipeline
+          </p>
+          <h2 className="text-3xl md:text-5xl font-black text-center mb-6 tracking-tight">
+            From first rep to{" "}
+            <span className="gradient-text">first offer.</span>
+          </h2>
+          <p className="text-sm text-uc-gray-500 text-center max-w-lg mx-auto mb-16">
+            Every quarterback enters a structured pipeline. Each stage has a
+            person, a purpose, and a measurable output.
+          </p>
+
+          <div className="space-y-4">
+            {pipelineSteps.map((step, i) => (
+              <motion.div
+                key={step.step}
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08, duration: 0.5 }}
+                className="group glass rounded-xl p-5 md:p-6 border border-white/[0.04] hover:border-white/10 transition-all flex items-start gap-5"
+              >
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border border-white/10"
+                  style={{ backgroundColor: step.color + "12" }}
+                >
+                  <step.Icon size={20} style={{ color: step.color }} />
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-1">
+                    <span
+                      className="text-[9px] font-black tracking-[0.3em] uppercase"
+                      style={{ color: step.color }}
+                    >
+                      {step.step} — {step.label}
+                    </span>
+                  </div>
+                  <h3 className="text-base md:text-lg font-bold mb-1 tracking-tight">
+                    {step.title}
+                  </h3>
+                  <p className="text-xs text-uc-gray-400 leading-relaxed">
+                    {step.desc}
+                  </p>
+                </div>
+
+                <div className="hidden md:flex flex-col items-end shrink-0">
+                  <span className="text-[10px] font-bold text-white/80">
+                    {step.person}
+                  </span>
+                  <span className="text-[8px] text-uc-gray-500">
+                    {step.role}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link
+              href="/system"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-uc-cyan/10 border border-uc-cyan/20 text-uc-cyan font-bold text-sm tracking-wider uppercase hover:bg-uc-cyan/20 transition-all"
+            >
+              Full System Breakdown <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+      </RevealSection>
+
+      {/* ═══ SECTION 5 — FEATURED PROSPECT ═══ */}
       <RevealSection className="py-32 px-6">
         <div className="max-w-6xl mx-auto">
           <p className="text-[10px] tracking-[0.5em] uppercase text-uc-cyan mb-4 text-center font-bold">
@@ -366,11 +606,10 @@ export default function Home() {
             like.
           </h2>
           <p className="text-sm text-uc-gray-500 text-center max-w-lg mx-auto mb-16">
-            Every verified QB gets a cinematic data profile — metrics captured,
-            film graded, identity built for coaches.
+            Every QB in the system gets a verified data profile — metrics
+            captured, development tracked, identity built for coaches.
           </p>
 
-          {/* Editorial athlete card */}
           <motion.div
             initial={{ opacity: 0, y: 40, scale: 0.98 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -378,7 +617,6 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="rounded-2xl overflow-hidden relative"
           >
-            {/* Large background image — taller for impact */}
             <div className="relative h-72 md:h-96">
               <Image
                 src="/images/athlete-action.png"
@@ -389,7 +627,6 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-t from-uc-black via-uc-black/50 to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-uc-black/70 via-transparent to-uc-black/40" />
 
-              {/* Identity overlay */}
               <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
                 <div className="flex items-end justify-between">
                   <div>
@@ -400,8 +637,8 @@ export default function Home() {
                       <VerifiedBadge size="lg" />
                     </div>
                     <p className="text-sm text-uc-gray-300 mb-2">
-                      {featured.school} · Class of {featured.gradYear} ·{" "}
-                      {featured.height} · {featured.weight} lbs
+                      {featured.school} &middot; Class of {featured.gradYear} &middot;{" "}
+                      {featured.height} &middot; {featured.weight} lbs
                     </p>
                     <StarRating rating={featured.rating} />
                   </div>
@@ -421,7 +658,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Metrics below image */}
             <div className="bg-uc-panel p-6 md:p-10 border border-white/[0.04]">
               <div className="grid grid-cols-3 md:grid-cols-6 gap-4 md:gap-6 mb-8">
                 <RadialGauge
@@ -478,7 +714,7 @@ export default function Home() {
         </div>
       </RevealSection>
 
-      {/* ═══ SECTION 5 — SOCIAL CARD SHOWCASE ═══ */}
+      {/* ═══ SECTION 6 — VERIFIED CARDS ═══ */}
       <RevealSection className="py-32 px-6 border-y border-white/[0.04]">
         <div className="max-w-5xl mx-auto">
           <p className="text-[10px] tracking-[0.5em] uppercase text-uc-cyan mb-4 text-center font-bold">
@@ -491,7 +727,6 @@ export default function Home() {
             Generate verified cards. Share everywhere. Let your data speak.
           </p>
 
-          {/* Card fan layout */}
           <div className="flex justify-center items-end gap-4 md:gap-6 max-w-3xl mx-auto mb-12">
             {verifiedAthletes.map((athlete, i) => {
               const rotation = i === 0 ? -6 : i === 2 ? 6 : 0;
@@ -556,7 +791,6 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Trait sequence tags */}
                   <div className="flex gap-1 justify-center">
                     {["VEL", "ACC", "REL"].map((tag) => (
                       <span
@@ -584,9 +818,101 @@ export default function Home() {
         </div>
       </RevealSection>
 
-      {/* ═══ SECTION 6 — FULL-SCREEN CTA ═══ */}
+      {/* ═══ SECTION 7 — TEAM PREVIEW ═══ */}
+      <RevealSection className="py-32 px-6">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-[10px] tracking-[0.5em] uppercase text-uc-cyan mb-4 text-center font-bold">
+            The Team
+          </p>
+          <h2 className="text-3xl md:text-5xl font-black text-center mb-6 tracking-tight">
+            Built by people who{" "}
+            <span className="gradient-text">played the position.</span>
+          </h2>
+          <p className="text-sm text-uc-gray-500 text-center max-w-lg mx-auto mb-16">
+            Every stage of the pipeline is run by someone with direct experience
+            developing and placing quarterbacks.
+          </p>
+
+          <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {[
+              {
+                name: "Cole Northrup",
+                role: "QB Development",
+                detail: "D1 QB · Lafayette & William & Mary",
+                color: "#00C2FF",
+              },
+              {
+                name: "Jenna Braddock",
+                role: "Sports Nutrition",
+                detail: "MSH, RDN, CSSD · NFL Combine Prep",
+                color: "#00FF88",
+              },
+              {
+                name: "Brian Herny",
+                role: "National Recruiting",
+                detail: "10+ Years · Jacksonville University",
+                color: "#FACC15",
+              },
+              {
+                name: "Jared Tucker",
+                role: "Midwest Recruiting",
+                detail: "Wake Forest · Auburn · Liberty",
+                color: "#A855F7",
+              },
+              {
+                name: "Abu Turay",
+                role: "Northeast Recruiting",
+                detail: "Georgia Tech · Northwestern",
+                color: "#FF6B6B",
+              },
+            ].map((member, i) => (
+              <motion.div
+                key={member.name}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08, duration: 0.5 }}
+                className="glass rounded-xl p-5 border border-white/[0.04] hover:border-white/10 transition-all text-center"
+              >
+                <div
+                  className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center border border-white/10"
+                  style={{ backgroundColor: member.color + "15" }}
+                >
+                  <span
+                    className="text-lg font-black"
+                    style={{ color: member.color }}
+                  >
+                    {member.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </span>
+                </div>
+                <h4 className="text-sm font-bold mb-0.5">{member.name}</h4>
+                <p
+                  className="text-[9px] font-bold tracking-wider uppercase mb-2"
+                  style={{ color: member.color }}
+                >
+                  {member.role}
+                </p>
+                <p className="text-[9px] text-uc-gray-500">{member.detail}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link
+              href="/team"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-uc-gray-400 hover:text-uc-cyan transition-colors"
+            >
+              Meet The Full Team <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+      </RevealSection>
+
+      {/* ═══ SECTION 8 — FULL-SCREEN CTA ═══ */}
       <section className="relative min-h-[80vh] flex items-center justify-center px-6 overflow-hidden">
-        {/* Cinematic background */}
         <div className="absolute inset-0 -z-10">
           <Image
             src="/images/qb-69.png"
@@ -607,13 +933,13 @@ export default function Home() {
           className="relative z-10 text-center max-w-3xl"
         >
           <h2 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-[0.85] tracking-tighter">
-            <span className="text-white">Your data.</span>
+            <span className="text-white">Your development.</span>
             <br />
-            <span className="gradient-text">Your identity.</span>
+            <span className="gradient-text">Your proof.</span>
           </h2>
           <p className="text-uc-gray-300 text-lg md:text-xl mb-12 max-w-xl mx-auto font-light">
-            Stop guessing. Start proving. Get verified and let the metrics
-            speak.
+            Stop guessing. Start proving. Enter the system and let the data
+            speak for you.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -624,10 +950,10 @@ export default function Home() {
               <ChevronRight size={16} />
             </Link>
             <Link
-              href="/search"
+              href="/system"
               className="inline-flex items-center justify-center gap-2 px-12 py-4 rounded-xl glass border border-white/20 text-white font-semibold text-sm tracking-wider uppercase hover:border-uc-cyan/40 hover:text-uc-cyan transition-all duration-300"
             >
-              Browse Prospects
+              See The System
             </Link>
           </div>
         </motion.div>
