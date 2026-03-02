@@ -17,7 +17,7 @@ export default function ScoreRing({ score, size = 120, strokeWidth = 6, label }:
     "var(--color-nil-red)";
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="relative flex flex-col items-center gap-2">
       <svg width={size} height={size} className="transform -rotate-90">
         {/* Background ring */}
         <circle

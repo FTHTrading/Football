@@ -9,7 +9,7 @@ export default function CollectivesPage() {
     <>
       {/* ═══ Hero ═══ */}
       <section className="pt-32 sm:pt-40 pb-24 px-6 hero-glow">
-        <div className="max-w-[1200px] mx-auto max-w-3xl">
+        <div className="max-w-3xl mx-auto">
           <p className="text-overline mb-5">For Collectives</p>
           <h1 className="text-display text-nil-white">
             Stop guessing what athletes
