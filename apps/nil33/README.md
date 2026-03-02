@@ -8,6 +8,21 @@ The 33-Signal NIL Valuation & Compliance Infrastructure Layer.
 
 ---
 
+## Current Production Status
+
+| Component | Status | Detail |
+|-----------|--------|--------|
+| QB DNA vertical | 🟢 Live | 61 compiled pages, position-specific analytics |
+| 33-signal engine | 🟡 v0.1 | Deterministic formula implemented, signal ingestion in progress |
+| Rust microservice | 🟡 Scaffolded | Axum 0.8 compiled, endpoints defined, not yet deployed |
+| Compliance DB | 🟡 Phase I | Georgia + SEC states mapped, nationwide expansion in progress |
+| Web3 anchoring | ⚪ Architecture only | Ed25519/SHA-256 designed, not yet production-deployed |
+| Multi-sport expansion | ⚪ Planned | Data model supports 14 sports, only football active |
+| AI agents | 🟡 Framework | Agent definitions complete, orchestration under development |
+| Research papers | 🟡 Working drafts | 5 papers drafted, Zenodo submission target Q3 2026 |
+
+---
+
 ## System Legend
 
 | Color | Layer | Purpose |
@@ -140,9 +155,9 @@ athlete_hash = SHA-256(canonical_fields)
 signature = Ed25519.sign(athlete_hash, server_key)
 ```
 
-- Optional anchor to XRPL, Polygon, or Ethereum
 - University-friendly — no wallet required
 - Tamper-evident verification with version history
+- **Roadmap:** Optional anchor to XRPL, Polygon, or Ethereum (not yet live)
 
 ### NIL Receipt Tokenization
 
@@ -150,10 +165,10 @@ Every NIL deal generates a verifiable receipt:
 
 - Hash receipt per deal (SHA-256)
 - Signed contract fingerprint (Ed25519)
-- Optional ERC-721 receipt NFT
 - Immutable proof of deal existence and timestamp
+- **Roadmap:** Optional ERC-721 receipt NFT (architecture designed, not deployed)
 
-### Future Settlement Rails
+### Future Settlement Rails *(Roadmap — not yet implemented)*
 
 - Stablecoin settlement capability
 - On-chain escrow for deal payments
@@ -341,13 +356,15 @@ NIL33 is building an academic foundation for NIL infrastructure:
 
 ### Planned Papers
 
-| # | Title | DOI Target |
-|---|-------|-----------|
-| 1 | NIL33 Identity Protocol — Cryptographic Athlete Identity for NIL Transactions | Zenodo |
-| 2 | 50-State NIL Compliance Framework — Structured Legal Routing for NIL Agreements | Zenodo |
-| 3 | The 33-Signal Valuation Model — A Deterministic Approach to Athlete NIL Pricing | Zenodo |
-| 4 | NIL33 Infrastructure Architecture — Multi-Agent AI with Web3 Receipts | Zenodo |
-| 5 | NIL Interoperability Proposal — How NIL33 Connects Opendorse, INFLCR, and Athliance | Zenodo |
+| # | Title | Status |
+|---|-------|--------|
+| 1 | NIL33 Identity Protocol — Cryptographic Athlete Identity for NIL Transactions | Working Draft |
+| 2 | 50-State NIL Compliance Framework — Structured Legal Routing for NIL Agreements | Working Draft |
+| 3 | The 33-Signal Valuation Model — A Deterministic Approach to Athlete NIL Pricing | Working Draft |
+| 4 | NIL33 Infrastructure Architecture — Multi-Agent AI with Web3 Receipts | Working Draft |
+| 5 | NIL Interoperability Proposal — How NIL33 Connects Opendorse, INFLCR, and Athliance | Working Draft |
+
+*Submission target: Zenodo Q3 2026. No DOIs assigned yet.*
 
 ---
 
