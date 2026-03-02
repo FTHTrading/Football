@@ -142,7 +142,7 @@ export default function DemoPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <select value={pos} onChange={e => setPos(e.target.value)} className={inputClass}>
-                    {["QB","WR","RB","TE","OL","DL","LB","DB","K","P"].map(p => <option key={p}>{p}</option>)}
+                    {["QB","WR","RB","TE","OL","DL","LB","DB","K","P","Guard","Forward","Center","Small Forward","All-Around"].map(p => <option key={p}>{p}</option>)}
                   </select>
                   <input value={school} onChange={e => setSchool(e.target.value)} placeholder="School" className={inputClass} />
                 </div>
@@ -175,9 +175,9 @@ export default function DemoPage() {
             {/* Quick presets */}
             <div className="max-w-md mx-auto mt-6 flex gap-3">
               {[
-                { label: "SEC QB · $95K", click: () => prefill("Jordan Mitchell","QB","Alabama","Alabama","SEC","125000","0.042","95000") },
-                { label: "B10 WR · $42K", click: () => prefill("Darius Cole","WR","Ohio State","Ohio","Big Ten","78000","0.035","42000") },
-                { label: "B12 RB · $68K", click: () => prefill("Tre Jackson","RB","Oklahoma State","Oklahoma","Big 12","45000","0.028","68000") },
+                { label: "Arch Manning · $3.8M", click: () => prefill("Arch Manning","QB","Texas Longhorns","Texas","SEC","1200000","0.045","3800000") },
+                { label: "Livvy Dunne · $4.2M", click: () => prefill("Livvy Dunne","All-Around","LSU Tigers","Louisiana","SEC","12500000","0.038","4200000") },
+                { label: "AJ Dybantsa · $5.2M", click: () => prefill("AJ Dybantsa","Small Forward","BYU Cougars","Utah","Big 12","1500000","0.042","5200000") },
               ].map(p => (
                 <button key={p.label} onClick={p.click} className="flex-1 text-[11px] text-nil-muted bg-nil-dark/60 border border-nil-border/60 rounded-xl py-2.5 hover:border-nil-green/30 transition-colors cursor-pointer">
                   {p.label}

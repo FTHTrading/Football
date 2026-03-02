@@ -67,7 +67,7 @@ export default function ProductPage() {
           </div>
           <CodePreview title="valuation-output.json">
             <div className="space-y-0.5 text-[13px]">
-              <DataRow label="Athlete" value="Marcus Williams - QB, SEC" />
+              <DataRow label="Athlete" value="Arch Manning - QB, SEC" />
               <DataRow label="Composite Score" value={<span className="text-nil-green font-bold text-xl">74</span>} />
               <DataRow label="Valuation Band" value=",000 - ,000" />
               <DataDivider />
@@ -160,7 +160,7 @@ export default function ProductPage() {
           <CodePreview title="deal-receipt.json">
             <div className="space-y-0.5 text-[13px]">
               <DataRow label="Receipt ID" value={<span className="font-mono text-xs">NIL33-2025-00847</span>} />
-              <DataRow label="Athlete" value="Marcus Williams" />
+              <DataRow label="Athlete" value="Arch Manning" />
               <DataRow label="Composite Score" value={<span className="text-nil-green font-mono">74</span>} />
               <DataRow label="Fair Value Band" value={<span className="font-mono">$42,200–$58,400</span>} />
               <DataRow label="Proposed Amount" value={<span className="text-nil-red font-mono">$80,000</span>} />

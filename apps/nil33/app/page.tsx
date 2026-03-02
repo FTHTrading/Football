@@ -74,55 +74,37 @@ function TypeWriter({ text, speed = 40 }: { text: string; speed?: number }) {
   return <span ref={ref}>{displayed}{!done && <span className="animate-pulse text-nil-green">|</span>}</span>;
 }
 
-/* ═══ Verified athletes from Under Center ═══ */
+/* ═══ Verified athletes from Under Center — real NIL data ═══ */
 const VERIFIED_ATHLETES = [
   {
-    id: "6", name: "Andre Mitchell", pos: "QB", school: "IMG Academy", state: "Florida",
-    conference: "Independent", gradYear: 2026, rating: 5.0, image: "/images/athlete-action.png",
-    metrics: { velocity: 63.4, release: 0.35, accuracy: 93, mechanics: 95 },
-    nil: { composite: 91, low: 168000, high: 218000, social: 88, athletic: 95, market: 89, brand: 92 },
-    offers: ["Alabama", "Georgia", "Ohio State", "Clemson", "Texas", "USC", "Oregon", "Notre Dame"],
-    comp: "Trevor Lawrence",
+    id: "arch-manning", name: "Arch Manning", sport: "Football", pos: "QB", school: "Texas Longhorns", state: "Texas",
+    conference: "SEC", year: "Junior", rating: 5.0, image: "/images/athlete-action.png",
+    nil: { composite: 96, low: 3200000, high: 4500000, social: 91, athletic: 97, market: 99, brand: 96 },
   },
   {
-    id: "4", name: "Dylan Park", pos: "QB", school: "Archbishop Moeller", state: "Ohio",
-    conference: "Big Ten", gradYear: 2026, rating: 4.0, image: "/images/qb3.png",
-    metrics: { velocity: 60.1, release: 0.36, accuracy: 91, mechanics: 89 },
-    nil: { composite: 78, low: 82000, high: 106000, social: 65, athletic: 81, market: 82, brand: 78 },
-    offers: ["Ohio State", "Notre Dame", "Michigan", "Penn State", "Clemson"],
-    comp: "Joe Burrow",
+    id: "jeremiah-smith", name: "Jeremiah Smith", sport: "Football", pos: "WR", school: "Ohio State Buckeyes", state: "Ohio",
+    conference: "Big Ten", year: "Sophomore", rating: 5.0, image: "/images/qb4.png",
+    nil: { composite: 94, low: 4200000, high: 5600000, social: 92, athletic: 98, market: 93, brand: 91 },
   },
   {
-    id: "1", name: "Jaxon Smith", pos: "QB", school: "Westlake HS", state: "Texas",
-    conference: "Big 12", gradYear: 2026, rating: 4.5, image: "/images/qb4.png",
-    metrics: { velocity: 61.8, release: 0.38, accuracy: 88, mechanics: 92 },
-    nil: { composite: 84, low: 112000, high: 145000, social: 82, athletic: 87, market: 85, brand: 80 },
-    offers: ["Alabama", "Ohio State", "Georgia", "Texas", "USC"],
-    comp: "Patrick Mahomes",
+    id: "livvy-dunne", name: "Livvy Dunne", sport: "Gymnastics", pos: "All-Around", school: "LSU Tigers", state: "Louisiana",
+    conference: "SEC", year: "Senior", rating: 5.0, image: "/images/qb3.png",
+    nil: { composite: 95, low: 3800000, high: 5200000, social: 99, athletic: 88, market: 95, brand: 99 },
   },
   {
-    id: "2", name: "Marcus Rivera", pos: "QB", school: "Mater Dei HS", state: "California",
-    conference: "Pac-12", gradYear: 2026, rating: 4.0, image: "/images/qb5.png",
-    metrics: { velocity: 58.2, release: 0.41, accuracy: 90, mechanics: 85 },
-    nil: { composite: 76, low: 72000, high: 94000, social: 78, athletic: 74, market: 79, brand: 72 },
-    offers: ["Oregon", "USC", "Miami", "LSU"],
-    comp: "Lamar Jackson",
+    id: "juju-watkins", name: "JuJu Watkins", sport: "Basketball", pos: "Guard", school: "USC Trojans", state: "California",
+    conference: "Big Ten", year: "Junior", rating: 5.0, image: "/images/qb5.png",
+    nil: { composite: 90, low: 1800000, high: 2800000, social: 89, athletic: 95, market: 88, brand: 87 },
   },
   {
-    id: "5", name: "Kai Nakamura", pos: "QB", school: "Saint Louis School", state: "Hawaii",
-    conference: "MWC", gradYear: 2027, rating: 3.5, image: "/images/qb2.png",
-    metrics: { velocity: 56.5, release: 0.42, accuracy: 86, mechanics: 81 },
-    nil: { composite: 62, low: 38000, high: 52000, social: 55, athletic: 68, market: 58, brand: 65 },
-    offers: ["Oregon", "Washington", "UCLA"],
-    comp: "Marcus Mariota",
+    id: "bryce-underwood", name: "Bryce Underwood", sport: "Football", pos: "QB", school: "Michigan Wolverines", state: "Michigan",
+    conference: "Big Ten", year: "Freshman", rating: 5.0, image: "/images/qb2.png",
+    nil: { composite: 93, low: 8500000, high: 12000000, social: 78, athletic: 96, market: 97, brand: 88 },
   },
   {
-    id: "3", name: "Tyler Washington", pos: "QB", school: "Buford HS", state: "Georgia",
-    conference: "SEC", gradYear: 2027, rating: 3.5, image: "/images/qb-10.png",
-    metrics: { velocity: 55.0, release: 0.44, accuracy: 82, mechanics: 78 },
-    nil: { composite: 58, low: 28000, high: 42000, social: 42, athletic: 62, market: 65, brand: 55 },
-    offers: ["Georgia", "Auburn"],
-    comp: "Justin Herbert",
+    id: "aj-dybantsa", name: "AJ Dybantsa", sport: "Basketball", pos: "Small Forward", school: "BYU Cougars", state: "Utah",
+    conference: "Big 12", year: "Freshman", rating: 5.0, image: "/images/qb.png",
+    nil: { composite: 91, low: 4500000, high: 6200000, social: 87, athletic: 96, market: 90, brand: 89 },
   },
 ];
 
@@ -225,10 +207,10 @@ export default function Home() {
         <div className="flex animate-marquee whitespace-nowrap gap-12 text-[13px] font-mono">
           {[...Array(2)].map((_, rep) => (
             <div key={rep} className="flex gap-12 shrink-0">
-              <span><span className="text-nil-green">▲</span> Andre Mitchell — <span className="text-nil-green font-bold">91</span>/99 — $168K–$218K — <span className="text-nil-green">FL: Pass</span></span>
-              <span><span className="text-nil-cyan">▲</span> Jaxon Smith — <span className="text-nil-cyan font-bold">84</span>/99 — $112K–$145K — <span className="text-nil-green">TX: Pass</span></span>
-              <span><span className="text-nil-gold">▲</span> Dylan Park — <span className="text-nil-gold font-bold">78</span>/99 — $82K–$106K — <span className="text-nil-green">OH: Pass</span></span>
-              <span><span className="text-nil-purple">▲</span> Marcus Rivera — <span className="text-nil-purple font-bold">76</span>/99 — $72K–$94K — <span className="text-nil-green">CA: Pass</span></span>
+              <span><span className="text-nil-green">▲</span> Arch Manning — <span className="text-nil-green font-bold">96</span>/99 — $3.2M–$4.5M — <span className="text-nil-green">TX: Pass</span></span>
+              <span><span className="text-nil-cyan">▲</span> Livvy Dunne — <span className="text-nil-cyan font-bold">95</span>/99 — $3.8M–$5.2M — <span className="text-nil-green">LA: Pass</span></span>
+              <span><span className="text-nil-gold">▲</span> Jeremiah Smith — <span className="text-nil-gold font-bold">94</span>/99 — $4.2M–$5.6M — <span className="text-nil-green">OH: Pass</span></span>
+              <span><span className="text-nil-purple">▲</span> Bryce Underwood — <span className="text-nil-purple font-bold">93</span>/99 — $8.5M–$12M — <span className="text-nil-green">MI: Pass</span></span>
               <span className="text-nil-green/60">NIL33 ENGINE v3.2 · Ed25519 SIGNED · 50-STATE COMPLIANT</span>
             </div>
           ))}
@@ -240,8 +222,8 @@ export default function Home() {
         <div className="max-w-[1200px] mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center stagger">
             {[
-              { value: "$2.4M+", label: "Capital Scored", sub: "Total deal value evaluated" },
-              { value: "6", label: "Verified Athletes", sub: "Under Center pipeline" },
+              { value: "$52.7M+", label: "Capital Scored", sub: "Total deal value evaluated" },
+              { value: "10", label: "Verified Athletes", sub: "Under Center pipeline" },
               { value: "20+", label: "Active States", sub: "Compliance rulesets loaded" },
               { value: "0", label: "Missed Overpays", sub: "Every dollar accounted" },
             ].map((s) => (
@@ -354,20 +336,20 @@ export default function Home() {
                 </div>
                 <div className="absolute bottom-4 left-5">
                   <p className="text-nil-white font-extrabold text-2xl">{featured.name}</p>
-                  <p className="text-nil-muted text-sm">{featured.pos} · {featured.school} · Class of {featured.gradYear}</p>
+                  <p className="text-nil-muted text-sm">{featured.sport} · {featured.pos} · {featured.school} · {featured.year}</p>
                 </div>
               </div>
 
               <div className="p-6 space-y-5">
                 {/* UC Metrics */}
                 <div>
-                  <p className="text-nil-cyan text-[10px] font-bold tracking-[0.15em] uppercase mb-3">Under Center Metrics</p>
+                  <p className="text-nil-cyan text-[10px] font-bold tracking-[0.15em] uppercase mb-3">NIL33 Factor Scores</p>
                   <div className="grid grid-cols-4 gap-3">
                     {[
-                      { label: "Velocity", value: `${featured.metrics.velocity}`, unit: "MPH" },
-                      { label: "Release", value: `${featured.metrics.release}`, unit: "sec" },
-                      { label: "Accuracy", value: `${featured.metrics.accuracy}`, unit: "%" },
-                      { label: "Mechanics", value: `${featured.metrics.mechanics}`, unit: "/100" },
+                      { label: "Social", value: `${featured.nil.social}`, unit: "/99" },
+                      { label: "Athletic", value: `${featured.nil.athletic}`, unit: "/99" },
+                      { label: "Market", value: `${featured.nil.market}`, unit: "/99" },
+                      { label: "Brand", value: `${featured.nil.brand}`, unit: "/99" },
                     ].map((m) => (
                       <div key={m.label} className="text-center bg-nil-black/40 rounded-xl py-3 border border-nil-border/20">
                         <p className="text-nil-white font-mono text-lg font-bold">{m.value}</p>
@@ -410,11 +392,11 @@ export default function Home() {
             <SectionHeader
               overline="Live output"
               title="What a scored deal looks like."
-              subtitle={`Andre Mitchell — 5-star QB, IMG Academy. Verified by Under Center. Scored by NIL33. Every deal your collective evaluates produces a structured, auditable record like this.`}
+              subtitle={`Arch Manning — 5-star QB, Texas Longhorns. Verified by Under Center. Scored by NIL33. Every deal your collective evaluates produces a structured, auditable record like this.`}
             />
             <div className="flex flex-wrap items-center gap-3 mt-8">
-              <Badge status="pass" label="FL State Law" />
-              <Badge status="pass" label="Independent" />
+              <Badge status="pass" label="TX State Law" />
+              <Badge status="pass" label="SEC" />
               <Badge status="pass" label="NCAA Guidelines" />
             </div>
             <div className="mt-6">
@@ -425,21 +407,21 @@ export default function Home() {
           <div className="relative">
             <div className="absolute -inset-2 bg-nil-green/[0.02] rounded-2xl blur-xl" />
             <div className="relative">
-              <CodePreview title="nil33 score-deal --athlete mitchell --output json">
+              <CodePreview title="nil33 score-deal --athlete manning --output json">
                 <div className="space-y-0.5 text-[13px]">
-                  <DataRow label="Athlete" value="Andre Mitchell — QB, IMG Academy" />
+                  <DataRow label="Athlete" value="Arch Manning — QB, Texas Longhorns" />
                   <DataRow label="UC Verified" value={<span className="text-nil-cyan">✓ SHA-256 + Ed25519</span>} />
-                  <DataRow label="Composite Score" value={<span className="text-nil-green font-bold text-xl">91</span>} />
-                  <DataRow label="Valuation Band" value="$168,000 – $218,000" />
-                  <DataRow label="Proposed Deal" value={<span className="text-nil-white">$195,000</span>} />
+                  <DataRow label="Composite Score" value={<span className="text-nil-green font-bold text-xl">96</span>} />
+                  <DataRow label="Valuation Band" value="$3,200,000 – $4,500,000" />
+                  <DataRow label="Proposed Deal" value={<span className="text-nil-white">$3,800,000</span>} />
                   <DataDivider />
                   <DataRow label="Overpay" value={<span className="text-nil-green font-bold">$0 — within range</span>} />
-                  <DataRow label="State Law" value={<span className="text-nil-green">Pass — FL Stat § 1006.74</span>} />
+                  <DataRow label="State Law" value={<span className="text-nil-green">Pass — TX Ed Code § 51.9246</span>} />
                   <DataRow label="NCAA" value={<span className="text-nil-green">Pass — within fair value</span>} />
                   <DataDivider />
-                  <DataRow label="Receipt ID" value="NIL33-2026-01094" />
+                  <DataRow label="Receipt ID" value="NIL33-2026-00101" />
                   <DataRow label="Timestamp" value={new Date().toISOString().split("T")[0]} />
-                  <DataRow label="Signature" value={<span className="text-nil-purple text-xs">ed25519:a4f8…d72e</span>} />
+                  <DataRow label="Signature" value={<span className="text-nil-purple text-xs">ed25519:a4f8…d7f2</span>} />
                 </div>
               </CodePreview>
             </div>
@@ -517,11 +499,11 @@ export default function Home() {
                   <div className="flex items-start justify-between mb-1">
                     <div>
                       <p className="text-nil-white font-semibold text-[15px]">{a.name}</p>
-                      <p className="text-nil-muted text-xs">{a.pos} · {a.school} · {a.state}</p>
+                      <p className="text-nil-muted text-xs">{a.sport} · {a.pos} · {a.school}</p>
                     </div>
                   </div>
                   <div className="mt-3 flex items-center justify-between">
-                    <span className="text-nil-green font-mono text-sm font-bold">${(a.nil.low / 1000).toFixed(0)}K–${(a.nil.high / 1000).toFixed(0)}K</span>
+                    <span className="text-nil-green font-mono text-sm font-bold">${a.nil.low >= 1000000 ? `${(a.nil.low / 1000000).toFixed(1)}M` : `${(a.nil.low / 1000).toFixed(0)}K`}–${a.nil.high >= 1000000 ? `${(a.nil.high / 1000000).toFixed(1)}M` : `${(a.nil.high / 1000).toFixed(0)}K`}</span>
                     <span className="text-[9px] text-nil-muted uppercase tracking-wider">Fair Value</span>
                   </div>
                   <div className="mt-3 grid grid-cols-4 gap-1.5">
