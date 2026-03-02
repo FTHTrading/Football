@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // output: "export" — enable for static demo deploys, disable for internal dev (API routes)
+  output: "export",
   images: {
     unoptimized: true,
   },
