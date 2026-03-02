@@ -111,7 +111,7 @@ export default function AthleteProfilePage({
           {/* Cinematic photo header */}
           <div className="relative h-56 md:h-72">
             <Image
-              src="/images/athlete-action.jpg"
+              src="/images/athlete-action.png"
               alt={`${athlete?.name ?? "Athlete"} action shot`}
               fill
               className="object-cover"
@@ -128,7 +128,7 @@ export default function AthleteProfilePage({
               <div className="flex-shrink-0 -mt-16">
                 <div className="w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden border-4 border-uc-panel shadow-2xl">
                   <Image
-                    src="/images/athlete-profile.jpg"
+                    src="/images/athlete-profile.png"
                     alt={athlete?.name ?? "Athlete"}
                     width={160}
                     height={160}

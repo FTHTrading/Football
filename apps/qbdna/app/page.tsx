@@ -53,7 +53,7 @@ export default function Home() {
         {/* Hero Photo Background */}
         <div className="absolute inset-0 -z-10">
           <Image
-            src="/images/hero-stadium.jpg"
+            src="/images/hero-stadium.png"
             alt=""
             fill
             className="object-cover object-center"
@@ -156,7 +156,7 @@ export default function Home() {
             {/* Large background image */}
             <div className="relative h-64 md:h-80">
               <Image
-                src="/images/athlete-action.jpg"
+                src="/images/athlete-action.png"
                 alt="Quarterback in action"
                 fill
                 className="object-cover"
