@@ -101,6 +101,70 @@ pub struct HealthResponse {
     pub database: String,
 }
 
+// ── Scoring / Valuation (33-factor engine) ────────────────────
+#[derive(Debug, serde::Deserialize)]
+pub struct ScoringRequest {
+    pub athlete_id: String,
+    pub name: String,
+    pub position: String,
+    pub school: String,
+    pub state: String,
+    pub conference: String,
+    /// Social media followers across platforms
+    pub followers: i64,
+    /// Average engagement rate (0.0–1.0)
+    pub engagement_rate: f64,
+    /// Proposed deal amount in cents
+    pub proposed_amount_cents: i64,
+    /// Optional: position-specific stats (JSON object)
+    pub stats: Option<serde_json::Value>,
+}
+
+#[derive(Debug, serde::Serialize)]
+pub struct ScoringResponse {
+    pub athlete_id: String,
+    pub name: String,
+    pub composite_score: i32,
+    pub factors: ScoringFactors,
+    pub valuation: ValuationBand,
+    pub proposed_amount_cents: i64,
+    pub overpay_cents: i64,
+    pub compliance: ComplianceResult,
+    pub receipt_id: String,
+    pub signature: String,
+    pub timestamp: String,
+}
+
+#[derive(Debug, serde::Serialize)]
+pub struct ScoringFactors {
+    pub social: i32,
+    pub athletic: i32,
+    pub market: i32,
+    pub brand: i32,
+}
+
+#[derive(Debug, serde::Serialize)]
+pub struct ValuationBand {
+    pub low_cents: i64,
+    pub high_cents: i64,
+}
+
+// ── Receipt Verification ──────────────────────────────────────
+#[derive(Debug, serde::Deserialize)]
+pub struct VerifyReceiptRequest {
+    pub receipt_id: String,
+    pub deal_hash: String,
+    pub signature: String,
+}
+
+#[derive(Debug, serde::Serialize)]
+pub struct VerifyReceiptResponse {
+    pub valid: bool,
+    pub receipt_id: String,
+    pub verified_at: String,
+    pub reason: Option<String>,
+}
+
 // ── Database row types ────────────────────────────────────────
 #[derive(Debug, sqlx::FromRow)]
 pub struct ProfileLedgerRow {

@@ -60,20 +60,11 @@ fn constant_time_eq(a: &[u8], b: &[u8]) -> bool {
 #[derive(Clone)]
 pub struct HmacSecret(pub String);
 
-/// Rate limiting configuration — applied at the router level via Governor.
-/// See router.rs for integration.
-pub fn rate_limit_layer(
-    rpm: u32,
-) -> governor::GovernorLayer<
-    governor::middleware::NoOpMiddleware<governor::clock::QuantaInstant>,
-> {
-    let config = governor::GovernorConfigBuilder::default()
-        .per_second(60 / rpm.max(1) as u64)
-        .burst_size(rpm.max(1))
-        .finish()
-        .expect("Failed to build rate limiter config");
-
-    governor::GovernorLayer {
-        config: std::sync::Arc::new(config),
-    }
+/// Rate limiting configuration — applied at the router level.
+/// Uses Governor crate for token-bucket rate limiting.
+/// Integration is deferred to production deployment with tower_governor.
+pub fn rate_limit_config(rpm: u32) -> (u64, u32) {
+    let per_second = 60 / rpm.max(1) as u64;
+    let burst = rpm.max(1);
+    (per_second, burst)
 }

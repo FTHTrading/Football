@@ -110,6 +110,11 @@
   50% { opacity: 1; }
 }
 
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 /* ─── Custom utilities (same layer as Tailwind utilities) ─── */
 @layer utilities {
   /* ─── Typography Scale ─── */
@@ -215,4 +220,16 @@
   .stagger > *:nth-child(4) { animation-delay: 240ms; }
   .stagger > *:nth-child(5) { animation-delay: 320ms; }
   .stagger > *:nth-child(6) { animation-delay: 400ms; }
+
+  /* ─── Glass effect (enhanced) ─── */
+  .glass {
+    background: rgba(17, 17, 19, 0.6);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+  }
+
+  /* ─── Marquee ─── */
+  .animate-marquee {
+    animation: marquee 40s linear infinite;
+  }
 }

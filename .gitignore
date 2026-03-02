@@ -46,3 +46,7 @@ next-env.d.ts
 
 # turbo
 .turbo/
+
+rust-engine/target/
+rust-engine/Cargo.lock
+*.zip

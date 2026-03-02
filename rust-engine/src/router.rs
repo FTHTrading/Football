@@ -29,6 +29,10 @@ pub fn build(state: AppState) -> Router {
         .route("/nil/receipt", post(routes::nil::create_receipt))
         // Ranking
         .route("/ranking/recompute", get(routes::ranking::recompute))
+        // Scoring
+        .route("/scoring/evaluate", post(routes::scoring::evaluate))
+        // Receipt verification
+        .route("/receipt/verify", post(routes::verify::verify))
         // Scraping
         .route("/scrape/run", get(routes::scrape::run))
         // Middleware

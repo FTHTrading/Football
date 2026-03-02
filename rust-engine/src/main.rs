@@ -14,6 +14,7 @@ mod middleware;
 mod models;
 mod ranking;
 mod routes;
+mod scoring;
 mod scraping;
 mod services;
 
