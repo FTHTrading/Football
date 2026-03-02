@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Nav from "../components/Nav";
+import Footer from "../components/Footer";
 
 export const metadata: Metadata = {
   title: "NIL33 — Capital Discipline Software for NIL Collectives | Norcross, GA",
@@ -198,7 +200,11 @@ export default function RootLayout({
         <meta name="geo.position" content="33.9410;-84.2135" />
         <meta name="ICBM" content="33.9410, -84.2135" />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <Nav />
+        <main className="min-h-screen">{children}</main>
+        <Footer />
+      </body>
     </html>
   );
 }

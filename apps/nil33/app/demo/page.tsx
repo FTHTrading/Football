@@ -2,8 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Card from "../../components/Card";
+import { ScoreBar } from "../../components/ScoreDisplay";
+import Badge from "../../components/Badge";
+import CodePreview, { DataRow, DataDivider } from "../../components/CodePreview";
+import Button from "../../components/Button";
 
-/* ─── Scoring engine ─── */
+/* ═══ Scoring engine (deterministic — do not modify) ═══ */
 function scoreDeal(
   name: string,
   pos: string,
@@ -75,6 +80,8 @@ function scoreDeal(
 
 type Result = ReturnType<typeof scoreDeal>;
 
+const inputClass = "w-full bg-nil-dark border border-nil-border rounded-xl px-4 py-2.5 text-nil-white text-sm placeholder:text-nil-muted/50 focus:outline-none focus:border-nil-green/40 transition-colors";
+
 export default function DemoPage() {
   const [name, setName] = useState("");
   const [pos, setPos] = useState("QB");
@@ -113,217 +120,176 @@ export default function DemoPage() {
   }
 
   return (
-    <>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-nil-black/80 backdrop-blur-md border-b border-nil-border/50">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="text-nil-white font-bold tracking-tight">
-            NIL<span className="text-nil-green">33</span>
-          </Link>
-          <div className="flex items-center gap-8">
-            <Link href="/collectives" className="text-[13px] text-nil-muted hover:text-nil-white transition-colors hidden sm:block">Collectives</Link>
-            <Link href="/product" className="text-[13px] text-nil-muted hover:text-nil-white transition-colors hidden sm:block">Product</Link>
-            <Link href="/pricing" className="text-[13px] text-nil-muted hover:text-nil-white transition-colors hidden sm:block">Pricing</Link>
-            <Link href="/demo" className="text-[13px] text-nil-white hidden sm:block">Demo</Link>
-          </div>
-        </div>
-      </nav>
+    <section className="pt-32 sm:pt-40 pb-24 px-6">
+      <div className="max-w-[1200px] mx-auto">
 
-      <section className="pt-28 pb-20 px-6">
-        <div className="max-w-5xl mx-auto">
+        {!result ? (
+          <>
+            {/* ═══ Form ═══ */}
+            <div className="max-w-md mx-auto mb-10 text-center">
+              <p className="text-overline mb-5">Live Demo</p>
+              <h1 className="text-h1 text-nil-white mb-3">Run a valuation.</h1>
+              <p className="text-body-lg text-nil-muted">
+                Enter the deal details. Get a score, compliance check, and receipt.
+              </p>
+            </div>
 
-          {!result ? (
-            <>
-              <div className="max-w-md mx-auto mb-10">
-                <h1 className="text-2xl font-bold text-nil-white mb-2">Run a valuation</h1>
-                <p className="text-sm text-nil-muted">Enter the deal details. Get a score, compliance check, and receipt.</p>
-              </div>
-
-              <div className="max-w-md mx-auto space-y-4">
-                <input value={name} onChange={e => setName(e.target.value)} placeholder="Athlete name"
-                  className="w-full bg-nil-dark border border-nil-border rounded-lg px-4 py-2.5 text-nil-white text-sm placeholder:text-nil-muted/50 focus:outline-none focus:border-nil-green/40" />
+            <Card className="max-w-md mx-auto">
+              <div className="space-y-4">
+                <input value={name} onChange={e => setName(e.target.value)} placeholder="Athlete name" className={inputClass} />
 
                 <div className="grid grid-cols-2 gap-3">
-                  <select value={pos} onChange={e => setPos(e.target.value)}
-                    className="bg-nil-dark border border-nil-border rounded-lg px-4 py-2.5 text-nil-white text-sm focus:outline-none focus:border-nil-green/40">
+                  <select value={pos} onChange={e => setPos(e.target.value)} className={inputClass}>
                     {["QB","WR","RB","TE","OL","DL","LB","DB","K","P"].map(p => <option key={p}>{p}</option>)}
                   </select>
-                  <input value={school} onChange={e => setSchool(e.target.value)} placeholder="School"
-                    className="bg-nil-dark border border-nil-border rounded-lg px-4 py-2.5 text-nil-white text-sm placeholder:text-nil-muted/50 focus:outline-none focus:border-nil-green/40" />
+                  <input value={school} onChange={e => setSchool(e.target.value)} placeholder="School" className={inputClass} />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <select value={state} onChange={e => setState(e.target.value)}
-                    className="bg-nil-dark border border-nil-border rounded-lg px-4 py-2.5 text-nil-white text-sm focus:outline-none focus:border-nil-green/40">
+                  <select value={state} onChange={e => setState(e.target.value)} className={inputClass}>
                     {["Alabama","Arizona","Arkansas","California","Colorado","Connecticut","Florida","Georgia","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maryland","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Jersey","New York","North Carolina","Ohio","Oklahoma","Oregon","Pennsylvania","South Carolina","Tennessee","Texas","Utah","Virginia","Washington","Wisconsin","Wyoming"].map(s => <option key={s}>{s}</option>)}
                   </select>
-                  <select value={conf} onChange={e => setConf(e.target.value)}
-                    className="bg-nil-dark border border-nil-border rounded-lg px-4 py-2.5 text-nil-white text-sm focus:outline-none focus:border-nil-green/40">
+                  <select value={conf} onChange={e => setConf(e.target.value)} className={inputClass}>
                     {["SEC","Big Ten","Big 12","ACC","Pac-12","AAC","Sun Belt","Conf USA","MAC","MWC","Independent"].map(c => <option key={c}>{c}</option>)}
                   </select>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <input type="number" value={followers} onChange={e => setFollowers(e.target.value)} placeholder="Followers (e.g. 45000)"
-                    className="bg-nil-dark border border-nil-border rounded-lg px-4 py-2.5 text-nil-white text-sm placeholder:text-nil-muted/50 focus:outline-none focus:border-nil-green/40" />
-                  <input type="number" step="0.01" value={engagement} onChange={e => setEngagement(e.target.value)} placeholder="Engagement (e.g. 0.04)"
-                    className="bg-nil-dark border border-nil-border rounded-lg px-4 py-2.5 text-nil-white text-sm placeholder:text-nil-muted/50 focus:outline-none focus:border-nil-green/40" />
+                  <input type="number" value={followers} onChange={e => setFollowers(e.target.value)} placeholder="Followers (e.g. 45000)" className={inputClass} />
+                  <input type="number" step="0.01" value={engagement} onChange={e => setEngagement(e.target.value)} placeholder="Engagement (e.g. 0.04)" className={inputClass} />
                 </div>
 
-                <input type="number" value={proposed} onChange={e => setProposed(e.target.value)} placeholder="Proposed deal amount ($)"
-                  className="w-full bg-nil-dark border border-nil-border rounded-lg px-4 py-2.5 text-nil-white text-sm placeholder:text-nil-muted/50 focus:outline-none focus:border-nil-green/40" />
+                <input type="number" value={proposed} onChange={e => setProposed(e.target.value)} placeholder="Proposed deal amount ($)" className={inputClass} />
 
                 <button onClick={run} disabled={!ready || loading}
-                  className={`w-full py-3 rounded-lg text-sm font-semibold transition-colors ${ready && !loading ? "bg-nil-green text-nil-black hover:bg-nil-green/90 cursor-pointer" : "bg-nil-gray text-nil-muted cursor-not-allowed"}`}>
+                  className={`w-full py-3 rounded-xl text-sm font-semibold transition-all ${ready && !loading ? "bg-nil-green text-nil-black hover:bg-nil-green/90 hover:shadow-[0_0_20px_rgba(0,255,136,0.15)] cursor-pointer" : "bg-nil-border/40 text-nil-muted cursor-not-allowed"}`}>
                   {loading ? "Scoring…" : "Score This Deal"}
                 </button>
 
                 <p className="text-nil-muted/50 text-[11px] text-center">Demo scoring engine. Production uses live data feeds.</p>
               </div>
+            </Card>
 
-              {/* Quick presets */}
-              <div className="max-w-md mx-auto mt-8 flex gap-2">
-                {[
-                  { label: "SEC QB · $95K", click: () => prefill("Jordan Mitchell","QB","Alabama","Alabama","SEC","125000","0.042","95000") },
-                  { label: "B10 WR · $42K", click: () => prefill("Darius Cole","WR","Ohio State","Ohio","Big Ten","78000","0.035","42000") },
-                  { label: "B12 RB · $68K", click: () => prefill("Tre Jackson","RB","Oklahoma State","Oklahoma","Big 12","45000","0.028","68000") },
-                ].map(p => (
-                  <button key={p.label} onClick={p.click} className="flex-1 text-[11px] text-nil-muted bg-nil-dark border border-nil-border rounded-lg py-2 hover:border-nil-green/30 transition-colors cursor-pointer">
-                    {p.label}
-                  </button>
-                ))}
-              </div>
-            </>
-          ) : (
-            /* ─── Results ─── */
-            <>
-              {/* Verdict bar */}
-              <div className={`rounded-lg p-5 mb-8 border ${result.overpay > 0 ? "border-nil-red/30 bg-nil-red/[0.04]" : "border-nil-green/30 bg-nil-green/[0.04]"}`}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className={`text-xs font-semibold uppercase tracking-wider ${result.overpay > 0 ? "text-nil-red" : "text-nil-green"}`}>
-                      {result.overpay > 0 ? "Overpay detected" : "Within fair value"}
-                    </p>
-                    <p className="text-nil-white font-semibold mt-1">
-                      {result.name} <span className="text-nil-muted font-normal">· {result.pos} · {result.school}</span>
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className={`font-mono text-3xl font-bold ${result.overpay > 0 ? "text-nil-red" : "text-nil-green"}`}>{result.composite}</p>
-                    <p className="text-nil-muted text-xs">/99</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-3 gap-6">
-                {/* Valuation */}
-                <div className="bg-nil-dark border border-nil-border rounded-lg p-5">
-                  <p className="text-[11px] text-nil-muted uppercase tracking-wider mb-4">Valuation</p>
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-nil-muted">Fair range</span>
-                      <span className="text-nil-white font-mono">${result.low.toLocaleString()}–${result.high.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-nil-muted">Proposed</span>
-                      <span className={`font-mono ${result.overpay > 0 ? "text-nil-red" : "text-nil-green"}`}>${result.proposed.toLocaleString()}</span>
-                    </div>
-                    {result.overpay > 0 && (
-                      <>
-                        <div className="h-px bg-nil-border" />
-                        <div className="flex justify-between">
-                          <span className="text-nil-muted">Overpay</span>
-                          <span className="text-nil-red font-mono font-bold">${result.overpay.toLocaleString()}</span>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                  <div className="mt-5 space-y-2">
-                    {(["social","athletic","market","brand"] as const).map(f => (
-                      <div key={f} className="flex items-center gap-3">
-                        <span className="text-nil-muted text-xs w-16 capitalize">{f}</span>
-                        <div className="flex-1 h-1 bg-nil-gray rounded-full overflow-hidden">
-                          <div className="h-full bg-nil-green/60 rounded-full" style={{ width: `${result.factors[f]}%` }} />
-                        </div>
-                        <span className="text-nil-muted font-mono text-xs w-6 text-right">{result.factors[f]}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Compliance */}
-                <div className="bg-nil-dark border border-nil-border rounded-lg p-5">
-                  <p className="text-[11px] text-nil-muted uppercase tracking-wider mb-4">Compliance</p>
-                  <div className="space-y-4">
-                    {([
-                      { label: `${result.state} State Law`, ...result.compliance.state },
-                      { label: `${result.conference} Rules`, ...result.compliance.conference },
-                      { label: "NCAA Guidelines", ...result.compliance.ncaa },
-                    ]).map(c => (
-                      <div key={c.label}>
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-nil-muted text-sm">{c.label}</span>
-                          <span className={`text-xs font-medium capitalize ${c.status === "pass" ? "text-nil-green" : c.status === "review" ? "text-nil-gold" : "text-nil-red"}`}>
-                            {c.status}
-                          </span>
-                        </div>
-                        <p className="text-nil-muted/60 text-xs">{c.detail}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Receipt */}
-                <div className="bg-nil-dark border border-nil-border rounded-lg p-5">
-                  <p className="text-[11px] text-nil-muted uppercase tracking-wider mb-4">Receipt</p>
-                  <div className="space-y-2 text-xs font-mono">
-                    <div className="flex justify-between"><span className="text-nil-muted">ID</span><span className="text-nil-white">{result.receiptId}</span></div>
-                    <div className="flex justify-between"><span className="text-nil-muted">Score</span><span className="text-nil-green">{result.composite}/99</span></div>
-                    <div className="flex justify-between"><span className="text-nil-muted">Range</span><span className="text-nil-white">${result.low.toLocaleString()}–${result.high.toLocaleString()}</span></div>
-                    <div className="flex justify-between"><span className="text-nil-muted">Status</span><span className={result.compliance.ncaa.status === "pass" ? "text-nil-green" : "text-nil-gold"}>{result.compliance.ncaa.status === "pass" ? "Clear" : "Review"}</span></div>
-                    <div className="h-px bg-nil-border my-1" />
-                    <div className="flex justify-between"><span className="text-nil-muted">Time</span><span className="text-nil-muted">{new Date(result.timestamp).toLocaleDateString()}</span></div>
-                    <div><span className="text-nil-muted">Sig</span><p className="text-nil-purple/70 break-all mt-0.5">{result.signature}</p></div>
-                  </div>
-                  <button onClick={() => {
-                    const t = `NIL33 Receipt ${result.receiptId}\nAthlete: ${result.name} (${result.pos}, ${result.school})\nScore: ${result.composite}/99\nFair Value: $${result.low.toLocaleString()}–$${result.high.toLocaleString()}\nProposed: $${result.proposed.toLocaleString()}\n${result.overpay > 0 ? `Overpay: $${result.overpay.toLocaleString()}` : "Status: Within fair value"}\nCompliance: ${result.compliance.ncaa.status}\nSigned: ${result.signature}\nhttps://nil33.com/demo`;
-                    navigator.clipboard.writeText(t);
-                  }} className="w-full mt-4 text-[11px] text-nil-muted bg-nil-gray/50 border border-nil-border rounded py-2 hover:text-nil-white transition-colors cursor-pointer">
-                    Copy receipt
-                  </button>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="mt-8 flex items-center justify-center gap-4">
-                <button onClick={reset} className="bg-nil-green text-nil-black font-semibold px-6 py-2.5 rounded-lg text-sm hover:bg-nil-green/90 transition-colors cursor-pointer">
-                  Score Another Deal
+            {/* Quick presets */}
+            <div className="max-w-md mx-auto mt-6 flex gap-3">
+              {[
+                { label: "SEC QB · $95K", click: () => prefill("Jordan Mitchell","QB","Alabama","Alabama","SEC","125000","0.042","95000") },
+                { label: "B10 WR · $42K", click: () => prefill("Darius Cole","WR","Ohio State","Ohio","Big Ten","78000","0.035","42000") },
+                { label: "B12 RB · $68K", click: () => prefill("Tre Jackson","RB","Oklahoma State","Oklahoma","Big 12","45000","0.028","68000") },
+              ].map(p => (
+                <button key={p.label} onClick={p.click} className="flex-1 text-[11px] text-nil-muted bg-nil-dark/60 border border-nil-border/60 rounded-xl py-2.5 hover:border-nil-green/30 transition-colors cursor-pointer">
+                  {p.label}
                 </button>
-                <Link href="/pricing" className="text-nil-muted text-sm hover:text-nil-white transition-colors">
-                  See pricing →
-                </Link>
+              ))}
+            </div>
+          </>
+        ) : (
+          /* ═══ Results ═══ */
+          <>
+            {/* Verdict bar */}
+            <div className={`rounded-2xl p-6 mb-8 border ${result.overpay > 0 ? "border-red-500/30 bg-red-500/[0.04]" : "border-nil-green/30 bg-nil-green/[0.04]"}`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className={`text-overline ${result.overpay > 0 ? "text-red-400" : "text-nil-green"}`}>
+                    {result.overpay > 0 ? "Overpay detected" : "Within fair value"}
+                  </p>
+                  <p className="text-nil-white text-h3 mt-1">
+                    {result.name} <span className="text-nil-muted font-normal text-base">· {result.pos} · {result.school}</span>
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className={`font-mono text-4xl font-bold ${result.overpay > 0 ? "text-red-400" : "text-nil-green"}`}>{result.composite}</p>
+                  <p className="text-nil-muted text-xs">/99</p>
+                </div>
               </div>
+            </div>
 
-              <p className="text-center text-nil-muted/40 text-[11px] mt-6">
-                Demo engine. Production uses live data feeds, full 33-factor weighting, and real-time compliance updates.
-              </p>
-            </>
-          )}
-        </div>
-      </section>
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Valuation */}
+              <Card>
+                <p className="text-overline mb-5">Valuation</p>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-nil-muted">Fair range</span>
+                    <span className="text-nil-white font-mono">${result.low.toLocaleString()}–${result.high.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-nil-muted">Proposed</span>
+                    <span className={`font-mono ${result.overpay > 0 ? "text-red-400" : "text-nil-green"}`}>${result.proposed.toLocaleString()}</span>
+                  </div>
+                  {result.overpay > 0 && (
+                    <>
+                      <div className="h-px bg-nil-border" />
+                      <div className="flex justify-between">
+                        <span className="text-nil-muted">Overpay</span>
+                        <span className="text-red-400 font-mono font-bold">${result.overpay.toLocaleString()}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+                <div className="mt-6 space-y-3">
+                  <ScoreBar label="Social" value={result.factors.social} color="var(--color-nil-green)" />
+                  <ScoreBar label="Athletic" value={result.factors.athletic} color="var(--color-nil-cyan)" />
+                  <ScoreBar label="Market" value={result.factors.market} color="var(--color-nil-purple)" />
+                  <ScoreBar label="Brand" value={result.factors.brand} color="var(--color-nil-gold)" />
+                </div>
+              </Card>
 
-      {/* Footer */}
-      <footer className="border-t border-nil-border/50 py-10 px-6 mt-auto">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-          <span className="text-nil-muted text-xs">© 2026 NIL33 · Norcross, GA</span>
-          <div className="flex items-center gap-6">
-            <Link href="/product" className="text-xs text-nil-muted hover:text-nil-white transition-colors">Product</Link>
-            <Link href="/collectives" className="text-xs text-nil-muted hover:text-nil-white transition-colors">Collectives</Link>
-            <Link href="/pricing" className="text-xs text-nil-muted hover:text-nil-white transition-colors">Pricing</Link>
-            <Link href="/demo" className="text-xs text-nil-muted hover:text-nil-white transition-colors">Demo</Link>
-            <Link href="/developers" className="text-xs text-nil-muted hover:text-nil-white transition-colors">Developers</Link>
-          </div>
-        </div>
-      </footer>
-    </>
+              {/* Compliance */}
+              <Card>
+                <p className="text-overline mb-5">Compliance</p>
+                <div className="space-y-4">
+                  {([
+                    { label: `${result.state} State Law`, ...result.compliance.state },
+                    { label: `${result.conference} Rules`, ...result.compliance.conference },
+                    { label: "NCAA Guidelines", ...result.compliance.ncaa },
+                  ]).map(c => (
+                    <div key={c.label}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-nil-muted text-sm">{c.label}</span>
+                        <Badge status={c.status} label={c.status} />
+                      </div>
+                      <p className="text-nil-muted/60 text-xs leading-relaxed">{c.detail}</p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {/* Receipt */}
+              <Card>
+                <p className="text-overline mb-5">Receipt</p>
+                <CodePreview title={result.receiptId}>
+                  <DataRow label="Score" value={`${result.composite}/99`} />
+                  <DataRow label="Range" value={`$${result.low.toLocaleString()}–$${result.high.toLocaleString()}`} />
+                  <DataRow label="Status" value={result.compliance.ncaa.status === "pass" ? "Clear" : "Review"} />
+                  <DataDivider />
+                  <DataRow label="Time" value={new Date(result.timestamp).toLocaleDateString()} />
+                  <div className="px-4 py-1.5">
+                    <span className="text-nil-muted text-xs">Sig</span>
+                    <p className="text-nil-purple/70 text-xs font-mono break-all mt-0.5">{result.signature}</p>
+                  </div>
+                </CodePreview>
+                <button onClick={() => {
+                  const t = `NIL33 Receipt ${result.receiptId}\nAthlete: ${result.name} (${result.pos}, ${result.school})\nScore: ${result.composite}/99\nFair Value: $${result.low.toLocaleString()}–$${result.high.toLocaleString()}\nProposed: $${result.proposed.toLocaleString()}\n${result.overpay > 0 ? `Overpay: $${result.overpay.toLocaleString()}` : "Status: Within fair value"}\nCompliance: ${result.compliance.ncaa.status}\nSigned: ${result.signature}\nhttps://nil33.com/demo`;
+                  navigator.clipboard.writeText(t);
+                }} className="w-full mt-4 text-[11px] text-nil-muted bg-nil-border/20 border border-nil-border rounded-xl py-2.5 hover:text-nil-white transition-colors cursor-pointer">
+                  Copy receipt
+                </button>
+              </Card>
+            </div>
+
+            {/* Actions */}
+            <div className="mt-10 flex items-center justify-center gap-4">
+              <Button onClick={reset} variant="primary" size="lg">Score Another Deal</Button>
+              <Button href="/pricing" variant="ghost">See pricing →</Button>
+            </div>
+
+            <p className="text-center text-nil-muted/40 text-[11px] mt-6">
+              Demo engine. Production uses live data feeds, full 33-factor weighting, and real-time compliance updates.
+            </p>
+          </>
+        )}
+      </div>
+    </section>
   );
 }
