@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  --color-nil-black: #0a0a0a;
+  --color-nil-dark: #111111;
+  --color-nil-gray: #1a1a1a;
+  --color-nil-border: #2a2a2a;
+  --color-nil-muted: #666666;
+  --color-nil-text: #e5e5e5;
+  --color-nil-white: #fafafa;
+  --color-nil-green: #00ff88;
+  --color-nil-cyan: #00d4ff;
+  --color-nil-purple: #a855f7;
+  --color-nil-gold: #f59e0b;
+  --color-nil-red: #ef4444;
+  --color-nil-blue: #3b82f6;
+  --color-nil-orange: #f97316;
+  --font-heading: "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color-nil-black);
+  color: var(--color-nil-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--color-nil-green);
+  color: var(--color-nil-black);
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+}
+
+.glow-green {
+  text-shadow: 0 0 20px rgba(0, 255, 136, 0.5), 0 0 40px rgba(0, 255, 136, 0.2);
+}
+
+.glow-cyan {
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.5), 0 0 40px rgba(0, 212, 255, 0.2);
+}

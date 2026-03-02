@@ -1,798 +1,382 @@
-# UNDER CENTER
+# NIL33
 
-### Verified Quarterback Identity System
+### The Athlete Intelligence Platform
 
-> Verified metrics. Real recruiting data. Institutional-grade quarterback intelligence.
+> AI-powered NIL valuation, compliance, and deal intelligence for every sport, every athlete, every state.
+
+**nil33.com** · **qbdna.nil33.com**
 
 ---
 
 ## Table of Contents
 
-1. [System Overview](#1-system-overview)
-2. [Architecture](#2-architecture)
-3. [Technology Stack](#3-technology-stack)
-4. [Rating Engines](#4-rating-engines)
-5. [Core Modules](#5-core-modules)
-6. [NIL Infrastructure](#6-nil-infrastructure)
-7. [Data Model](#7-data-model)
-8. [Rust Engine](#8-rust-engine)
-9. [Security & Hardening](#9-security--hardening)
-10. [Analytics & Observability](#10-analytics--observability)
-11. [Documentation](#11-documentation)
-12. [Deployment Guide](#12-deployment-guide)
-13. [Environment Variables](#13-environment-variables)
-14. [Development Workflow](#14-development-workflow)
-15. [Roadmap](#15-roadmap)
+1. [Platform Overview](#1-platform-overview)
+2. [Monorepo Structure](#2-monorepo-structure)
+3. [Applications](#3-applications)
+4. [Shared Packages](#4-shared-packages)
+5. [AI / MCP / Agentic / RAG](#5-ai--mcp--agentic--rag)
+6. [Scraping Pipeline](#6-scraping-pipeline)
+7. [Rust Engine](#7-rust-engine)
+8. [Data Model](#8-data-model)
+9. [Sports Coverage](#9-sports-coverage)
+10. [Getting Started](#10-getting-started)
+11. [Deployment](#11-deployment)
+12. [License](#12-license)
 
 ---
 
-## 1. System Overview
+## 1. Platform Overview
 
-Under Center is a full-stack quarterback identity and verification platform. It takes raw athlete data — velocity, release time, spin rate, accuracy, mechanics — and transforms it into verified, standardized profiles that coaches, scouts, and NIL partners can trust.
+NIL33 is a full-stack athlete intelligence platform built for the NIL (Name, Image, Likeness) era of collegiate athletics. It provides:
 
-**46 page routes · 2 API routes · 16 data models · 61 compiled pages**
+- **AI-Powered Valuations** — Multi-provider LLM pipeline (OpenAI + Anthropic) estimates athlete market value across 14 sports
+- **National Deal Tracker** — Scraping pipeline monitors public sources for NIL deals in real time
+- **Compliance Engine** — Automated checks against NCAA bylaws, 50-state legislation, and institutional rules
+- **Agreement Infrastructure** — Digital contract generation, version control, and cryptographic signatures
+- **Agentic Intelligence** — Autonomous AI agents for deal monitoring, compliance checking, and market analysis
+- **RAG Knowledge Base** — Retrieval-augmented generation grounded in NCAA regulations and state law
 
-The system is not a template. It is a purpose-built platform with real business logic:
+### Products
 
-- **QB Index** — 8 weighted performance inputs → 0-99 composite score
-- **Genetic Athletic Index (GAI)** — 6-gene profile with tier classification and archetype assignment
-- **NIL Valuation** — Exponential formula translating verified metrics into dollar projections
-- **NIL Infrastructure** — Compliance engine, agreement tracking, state law mapping, resource hub
-- **Verified Card System** — Canvas-rendered athlete cards (1080×1350, 3 themes, shareable)
-- **Rust Engine** — High-performance backend for identity hashing, ranking, compliance, and scraping
-- **Stripe Checkout** — $149 verification tier with webhook-driven status management
-- **Role-Based Access** — Athlete, Coach, Admin with middleware-enforced route protection
+| Product | Domain | Status | Description |
+|---------|--------|--------|-------------|
+| **NIL33** | `nil33.com` | Active | All-sports NIL intelligence hub |
+| **QB DNA** | `qbdna.nil33.com` | Active | Quarterback-specific rating & recruiting platform |
+| **Court IQ** | — | Planned | Basketball intelligence vertical |
+| **Diamond Edge** | — | Planned | Baseball/softball intelligence vertical |
+| **Pitch Control** | — | Planned | Soccer intelligence vertical |
 
 ---
 
-## 2. Architecture
+## 2. Monorepo Structure
 
 ```
-┌───────────────────────────────────────────────────────┐
-│                      FRONTEND                         │
-│  Next.js 16 · React 19 · Tailwind 4 · Three.js       │
-│  ┌──────────┬──────────┬──────────┬──────────┐        │
-│  │Homepage  │Profiles  │Card Lab  │Demo      │        │
-│  │10 sect.  │/athlete  │/card-gen │8 sect.   │        │
-│  └──────────┴──────────┴──────────┴──────────┘        │
-├───────────────────────────────────────────────────────┤
-│                       BACKEND                         │
-│  API Routes · Prisma ORM · NextAuth · Stripe          │
-│  ┌──────────┬──────────┬──────────┬──────────┐        │
-│  │Checkout  │Webhooks  │Auth      │Admin     │        │
-│  │/api/co.. │/api/wh.. │Sessions  │Verify    │        │
-│  └──────────┴──────────┴──────────┴──────────┘        │
-├───────────────────────────────────────────────────────┤
-│                     RUST ENGINE                       │
-│  Axum 0.8 · SQLx 0.8 · Ed25519 · Tokio               │
-│  ┌──────────┬──────────┬──────────┬──────────┐        │
-│  │Identity  │Ranking   │Compliance│Scraping  │        │
-│  │Hashing   │Pipeline  │Engine    │Service   │        │
-│  └──────────┴──────────┴──────────┴──────────┘        │
-├───────────────────────────────────────────────────────┤
-│                     DATA LAYER                        │
-│  PostgreSQL · 16 Models · 4 Enums                     │
-│  ┌──────────┬──────────┬──────────┬──────────┐        │
-│  │Users     │Athletes  │Metrics   │NIL Data  │        │
-│  │Sessions  │Films     │Cards     │Compliance│        │
-│  └──────────┴──────────┴──────────┴──────────┘        │
-├───────────────────────────────────────────────────────┤
-│                    INFRASTRUCTURE                     │
-│  Upstash Redis · PostHog · Pino Logger                │
-│  ┌──────────┬──────────┬──────────┬──────────┐        │
-│  │Rate Limit│Analytics │Logging   │Env Valid.│        │
-│  │10/10s    │10 events │4 domains │Fail-fast │        │
-│  └──────────┴──────────┴──────────┴──────────┘        │
-└───────────────────────────────────────────────────────┘
+nil33/
+├── apps/
+│   ├── qbdna/              # QB DNA — Next.js 16, React 19, Prisma 7
+│   │   ├── app/             # 46 page routes, 61 compiled pages
+│   │   ├── components/      # 30+ React components
+│   │   ├── lib/             # Rating engines, utilities, auth
+│   │   ├── prisma/          # 16-model schema (Postgres)
+│   │   └── public/          # Static assets
+│   └── nil33/               # NIL33 Hub — Next.js 16, React 19
+│       └── app/             # All-sports homepage, deal tracker
+├── packages/
+│   ├── ai/                  # Multi-provider AI engine
+│   │   └── src/
+│   │       ├── providers.ts # OpenAI + Anthropic + fallback chain
+│   │       ├── mcp.ts       # MCP tool registry (4 built-in tools)
+│   │       ├── rag.ts       # RAG pipeline with NCAA bylaws
+│   │       ├── agents.ts    # ReAct agents (Deal, Compliance, Valuation)
+│   │       └── valuation.ts # Sport-agnostic NIL valuation model
+│   ├── scraping/            # Deal scraping pipeline
+│   │   └── src/
+│   │       ├── scraper.ts   # RSS + HTML + API scraping
+│   │       ├── parsers.ts   # NLP deal extraction
+│   │       ├── scheduler.ts # Periodic scraping with dedup
+│   │       └── sources.ts   # 5 pre-configured public sources
+│   ├── types/               # Shared TypeScript types
+│   │   └── src/
+│   │       ├── sports.ts    # 14 sports, conferences, positions
+│   │       ├── athletes.ts  # Profiles, metrics, social, valuations
+│   │       ├── deals.ts     # Deal records, agreements, payments
+│   │       └── compliance.ts# State laws, rules, audit trail
+│   └── ui/                  # Shared React components
+│       └── src/
+│           └── components/  # Logo, StatCard, Badge, GlowCard
+├── rust-engine/             # Axum 0.8 + Ed25519 verification engine
+│   ├── src/
+│   │   ├── main.rs          # Server entry (port 4000)
+│   │   ├── handlers/        # HTTP handlers
+│   │   ├── models/          # Domain models
+│   │   ├── rating/          # Composite rating + DNA engine
+│   │   ├── crypto/          # Ed25519 signatures
+│   │   └── middleware/       # Auth, CORS, rate limiting
+│   └── Cargo.toml
+├── turbo.json               # Turborepo task runner
+├── package.json             # npm workspaces root
+└── README.md
 ```
 
----
-
-## 3. Technology Stack
-
-### Frontend
-
-| Technology | Version | Purpose |
-|---|---|---|
-| Next.js | 16.1.6 | App Router + Turbopack |
-| React | 19.2.3 | Component framework |
-| Tailwind CSS | 4.x | Utility-first styling with custom design tokens |
-| Three.js / React Three Fiber | Latest | 3D card preview rendering |
-| Framer Motion | 12.x | Animations and transitions |
-| Zustand | 5.x | Client state management |
-| Recharts | 2.x | Data visualization (radial gauges, bar charts) |
-| Lucide React | Latest | Icon system |
-
-### Backend
-
-| Technology | Version | Purpose |
-|---|---|---|
-| Prisma | 7.4.2 | ORM + PostgreSQL migrations |
-| PostgreSQL | - | Primary database |
-| NextAuth | 4.24.x | Authentication (OAuth + credentials) |
-| Stripe | 20.4.x | Payment processing + webhooks |
-| Zod | 4.3.x | Runtime schema validation |
-
-### Rust Engine
-
-| Technology | Version | Purpose |
-|---|---|---|
-| Axum | 0.8 | HTTP framework |
-| SQLx | 0.8 | Async PostgreSQL driver |
-| Tokio | 1.x | Async runtime |
-| Ed25519-dalek | 2.x | Cryptographic identity signing |
-| SHA2 / HMAC | Latest | Metric hashing and integrity |
-| Governor | Latest | Rate limiting |
-| Tower-HTTP | Latest | CORS, tracing middleware |
-
-### Infrastructure
-
-| Technology | Purpose |
-|---|---|
-| Upstash Redis | Rate limiting (sliding window) |
-| PostHog | User analytics (10 custom events) |
-| Pino | Structured JSON logging (4 domains) |
-| Docker | Rust engine containerization |
-| Vercel / Netlify | Frontend hosting |
+**Tooling:** npm workspaces · Turborepo 2.5 · TypeScript 5.8 · ESLint 9
 
 ---
 
-## 4. Rating Engines
+## 3. Applications
 
-Under Center runs two independent rating systems and one valuation formula. All math is deterministic with no random variation.
+### QB DNA (`apps/qbdna/`)
 
-### QB Index
+The original quarterback intelligence platform — verified metrics, real recruiting data, institutional-grade QB analysis.
 
-**File:** `lib/qb-index.ts`
+| Metric | Value |
+|--------|-------|
+| Page routes | 46 |
+| Compiled pages | 61 |
+| API routes | 2 |
+| Prisma models | 16 |
+| React components | 30+ |
 
-8 weighted inputs → 0-99 composite score:
+**Key features:**
+- **QB Index** — 8-input weighted composite (Pass Yds, TDs, Comp%, Rush Yds, Rush TDs, INTs, Games, Wins)
+- **Genetic Athletic Index (GAI)** — 6-gene composite (Speed, Arm Strength, Accuracy, Football IQ, Leadership, Durability)
+- **NIL Valuation** — `$12 × 1.065^composite` per-player revenue model
+- **Prospect Profiles** — 200+ mock profiles with position-specific stats
+- **Institutional Demo** — 8-section guided walkthrough for partnership pitches
+- **NIL Infrastructure** — Marketplace, compliance hub, agreement templates, resource library
 
-| Input | Weight |
-|---|---|
-| Accuracy | 20% |
-| Velocity | 18% |
-| Mechanics | 16% |
-| Release | 14% |
-| Footwork | 10% |
-| Poise | 8% |
-| Field Vision | 8% |
-| Clutch Factor | 6% |
+**Stack:** Next.js 16.1.6 · React 19.2.3 · Prisma 7.4.2 · Tailwind CSS 4 · NextAuth 5 · Framer Motion
 
-**Tiers:**
+### NIL33 Hub (`apps/nil33/`)
 
-| Range | Tier |
-|---|---|
-| 90-99 | Elite |
-| 80-89 | Premium |
-| 70-79 | Verified |
-| 60-69 | Developing |
-| 0-59 | Emerging |
+The all-sports NIL intelligence platform at nil33.com.
 
-### Genetic Athletic Index (GAI)
+**Homepage sections:**
+1. **Hero** — Animated gradient title, live stats, deal count badge
+2. **Sports Grid** — 14 sports with athlete/deal counts
+3. **Live Deals** — National NIL deal feed with value, brand, school
+4. **Intelligence** — 6 AI capabilities with architecture diagram
+5. **Verticals** — QB DNA (live), Court IQ, Diamond Edge, Pitch Control
+6. **Compliance** — 50-state coverage map preview
+7. **Footer** — UnyKorn company branding
 
-**File:** `lib/gai.ts`
-
-6 genes → 4 coefficients → composite score:
-
-| Gene | Symbol | Source |
-|---|---|---|
-| Arm Velocity | VEL-α | `velocity` |
-| Accuracy | ACC-γ | `accuracy` |
-| Release | REL-β | `releaseTime` |
-| Mechanics | MECH-δ | `mechanics` |
-| Decision | DEC-ε | `poise` |
-| Spatial | SPR-ζ | `fieldVision` |
-
-**Formula:** `Base × Activation × Growth × Fit`
-
-- Base = weighted average of 6 gene scores
-- Activation = `1 + (consistency − 50) / 200`
-- Growth = trajectory modifier
-- Fit = `1 + (programFit − 50) / 250`
-
-**6 Archetypes:** Gunslinger · Field General · Dual-Threat · Pocket Passer · Improviser · Game Manager
-
-**14 Program Profiles:** Alabama, Ohio State, Georgia, Clemson, Oklahoma, LSU, Michigan, Texas, USC, Oregon, Notre Dame, Penn State, Florida, Florida State
-
-### NIL Valuation
-
-**File:** `app/nil/marketplace/page.tsx`
-
-```
-NIL Value = 1.065^composite × 12
-```
-
-Monthly exposure is `nilValue / 12`. Trend is deterministic based on the composite score (not random).
+**Stack:** Next.js 16.1.6 · React 19.2.3 · Tailwind CSS 4
 
 ---
 
-## 5. Core Modules
+## 4. Shared Packages
 
-### Homepage (`/`)
+### `@nil33/ai` — AI Engine
 
-10-section cinematic landing page:
-
-1. Hero — Animated title with gradient text
-2. Live Metrics — Velocity, release, accuracy from verified data
-3. Platform Pillars — Card system, verification, intelligence, NIL
-4. Film Room Preview — Video overlay with metric telemetry
-5. QB Comparison — Side-by-side verified comparisons
-6. Verified Card — Full-size card preview with 3D rotation
-7. Recruiting Timeline — Interactive event timeline
-8. NIL Preview — Valuation teaser with market positioning
-9. Coach Access — Portal entry with role-based preview
-10. Final CTA — Verification call-to-action
-
-### Athlete Profile (`/athlete/[id]`)
-
-Dynamic route with `generateStaticParams` for 6 demo athletes:
-
-- Hero section with verified badge
-- Radial gauge visualization (QB Index)
-- GAI gene chart with archetype display
-- Performance metrics table
-- Film gallery with overlay controls
-- Recruiting timeline
-- NIL valuation section
-
-### Card Generator (`/card-generator`)
-
-Canvas-rendered shareable verification card:
-
-- 3 themes: Dark, Light, Neon
-- 1080×1350 output resolution
-- Real-time 3D preview (Three.js)
-- Download as PNG
-- QR code linking to profile
-
-### Demo Walkthrough (`/demo`)
-
-8-section guided tour designed for partnership pitches:
-
-1. System Architecture
-2. Rating Engine
-3. Profile System
-4. Card Generator
-5. NIL Valuation
-6. Recruiting Intelligence
-7. Coach Portal
-8. Call-to-Action
-
-### Leaderboard (`/leaderboard`)
-
-Ranked athlete table with QB Index scores, tier badges, and filtering.
-
-### Scout View (`/scout`)
-
-Scouting-focused athlete browser with metric comparisons and notes.
-
-### Genome (`/genome`)
-
-Full GAI visualization — gene charts, archetype classifier, program fit radar.
-
-### Awards (`/awards`)
-
-Tier-based award display from GAI archetype and gene classifications.
-
-### Admin Panel (`/admin`)
-
-Role-protected admin interface (`ADMIN` only):
-
-- Athlete verification status toggle
-- Payment confirmation tracking
-- User management
-
-### Dashboard (`/dashboard`)
-
-Authenticated athlete dashboard:
-
-- Profile overview
-- Verification status
-- Card downloads
-- NIL dashboard (`/dashboard/nil`)
-
-### Analytics (`/analytics`)
-
-Platform analytics visualization with Recharts.
-
----
-
-## 6. NIL Infrastructure
-
-Under Center includes a full NIL infrastructure layer — not just a marketplace page, but a compliance-ready system with legal awareness.
-
-### Hub (`/nil`)
-
-Central NIL navigation hub linking to marketplace, compliance, agreements, and resources.
-
-### Marketplace (`/nil/marketplace`)
-
-Active NIL marketplace with valuation display, deal tracking, and brand matching interface. Uses the exponential formula (`1.065^composite × 12`) for all valuations.
-
-### Compliance (`/nil/compliance`)
-
-State-by-state compliance engine:
-
-- State law lookup and display
-- Institution-specific rule overlays
-- Compliance record tracking
-- Eligibility verification checkpoints
-
-### Agreements (`/nil/agreements`)
-
-Contract management interface:
-
-- Agreement templates
-- Version tracking
-- Status management (Draft → Active → Completed)
-- Value and counterparty recording
-
-### Resources (`/nil/resources`)
-
-Educational hub for athletes navigating NIL:
-
-- Compliance guides
-- Financial literacy resources
-- Legal overview content
-- Platform onboarding materials
-
-### NIL Layout (`/nil/layout.tsx`)
-
-Shared layout with sub-navigation across all NIL pages.
-
----
-
-## 7. Data Model
-
-### Prisma Schema — 16 Models · 4 Enums
-
-**Core Entities:**
-
-| Model | Purpose |
-|---|---|
-| `User` | Authentication, role assignment (Athlete/Coach/Admin) |
-| `Account` | OAuth account linking |
-| `Session` | Active session management |
-| `VerificationToken` | Email verification tokens |
-| `Athlete` | Profile, bio, school, grad year, verification status |
-| `AthleteMetrics` | Performance data (10 fields: velocity, release, spin, accuracy, mechanics, footwork, poise, fieldVision, clutchFactor, compositeScore) |
-| `Film` | Video assets with metric overlay data |
-| `TimelineEvent` | Recruiting events (offers, visits, commitments, camps) |
-| `Card` | Generated shareable card records |
-| `NilProfile` | NIL valuation and brand readiness data |
-| `NilDeal` | Individual NIL deal tracking |
-| `ProfileView` | View analytics per athlete |
-| `StateLaw` | State-level NIL legislation reference |
-| `InstitutionRule` | School-specific NIL compliance rules |
-| `ComplianceRecord` | Athlete compliance check history |
-| `ContractVersion` | NIL agreement version tracking |
-
-**Enums:** `Role` · `VerificationStatus` · `EventType` · `CardTheme`
-
-### Client-Side State (`lib/store.ts`)
-
-Zustand store with `AthleteMetrics` type matching the Prisma model:
+Multi-provider LLM abstraction with MCP tools, ReAct agents, and RAG pipeline.
 
 ```typescript
-interface AthleteMetrics {
-  velocity: number;      // MPH
-  releaseTime: number;   // Seconds
-  spinRate: number;      // RPM
-  accuracy: number;      // Percentage
-  mechanics: number;     // 0-100
-  footwork: number;      // 0-100
-  poise: number;         // 0-100
-  fieldVision: number;   // 0-100
-  clutchFactor: number;  // 0-100
-  compositeScore: number; // QB Index output
-}
+import { createProvider, Providers } from "@nil33/ai";
+
+// Quick: use a pre-configured provider
+const fast = Providers.fast();           // gpt-4o-mini, temp 0.3
+const reasoning = Providers.reasoning(); // Claude Sonnet w/ GPT-4o fallback
+
+// Custom: build your own with fallback chain
+const provider = createProvider({
+  provider: "anthropic",
+  model: "claude-sonnet-4-20250514",
+  fallback: [{ provider: "openai", model: "gpt-4o" }],
+});
+
+const response = await provider.complete({
+  messages: [{ role: "user", content: "Estimate NIL value for a D1 QB..." }],
+});
 ```
 
----
+### `@nil33/types` — Type System
 
-## 8. Rust Engine
+Canonical TypeScript types for 14 sports, athlete profiles, NIL deals, and compliance records.
 
-A standalone Rust backend (`rust-engine/`) designed for high-performance operations that exceed what Node.js can efficiently handle.
+- `SportId` — 14 sport identifiers with positions, conferences, market weights
+- `AthleteProfile` — Full player profiles with social presence and performance metrics
+- `NILDeal` — Deal records with value, type, brand, compliance status, and source attribution
+- `ComplianceCheckResult` — Rule-by-rule compliance validation with severity levels
 
-**25 files · 19 source modules · Dockerized**
+### `@nil33/scraping` — Deal Scraping
 
-### Module Inventory
+Public-source NIL deal monitoring pipeline.
 
-| Module | File | Purpose |
-|---|---|---|
-| Config | `src/config.rs` | Environment loading, database URL, JWT secrets |
-| Errors | `src/errors.rs` | Unified error handling with Axum `IntoResponse` |
-| Router | `src/router.rs` | Route tree assembly with middleware layers |
-| Models | `src/models/mod.rs` | Shared request/response structs |
-| Database | `src/db/mod.rs` | SQLx connection pool + migrations |
-| Identity Hashing | `src/hashing/mod.rs` | SHA-256 metric hashing, Ed25519 signing |
-| Compliance | `src/compliance/mod.rs` | State law lookup, eligibility checks |
-| Ranking | `src/ranking/mod.rs` | Percentile computation, cohort ranking |
-| Scraping | `src/scraping/mod.rs` | External data ingestion service |
-| Blockchain | `src/blockchain/mod.rs` | On-chain verification anchoring |
-| Middleware | `src/middleware/mod.rs` | Auth extraction, rate limiting |
-| Services | `src/services/mod.rs` | Business logic orchestration |
+- **5 pre-configured sources** — ESPN, The Athletic, Sports Illustrated, NCAA Official, Google News
+- **3 scraping strategies** — RSS, HTML (Cheerio), JSON API
+- **NLP deal extraction** — Value patterns, sport/deal-type classification, confidence scoring
+- **Scheduler** — Configurable intervals, deduplication, error recovery
 
-### API Routes
+### `@nil33/ui` — Shared Components
 
-| Route | Method | Purpose |
-|---|---|---|
-| `/health` | GET | Liveness + readiness checks |
-| `/identity/hash` | POST | Hash athlete metrics with SHA-256 |
-| `/identity/verify` | POST | Ed25519 signature verification |
-| `/nil/valuation` | POST | Server-side NIL valuation computation |
-| `/nil/compliance` | GET | State law compliance check |
-| `/ranking/compute` | POST | Percentile ranking pipeline |
-| `/ranking/leaderboard` | GET | Sorted leaderboard output |
-| `/scrape/trigger` | POST | External data ingestion trigger |
+React components used across both apps:
 
-### Infrastructure
-
-- **Dockerfile** — Multi-stage build (builder → runtime)
-- **docker-compose.yml** — Engine + PostgreSQL orchestration
-- **Migrations** — SQLx migration directory
-- **.env.example** — All required environment variables documented
+- `NIL33Logo` — Branded logo with green/white split
+- `StatCard` — Metric display with trend indicators
+- `Badge` — Status badges with pulse animation
+- `GlowCard` — Hover-glow card containers
 
 ---
 
-## 9. Security & Hardening
+## 5. AI / MCP / Agentic / RAG
 
-### Rate Limiting (Upstash Redis)
+### Multi-Provider AI
 
-| Tier | Limit | Scope |
-|---|---|---|
-| Standard | 10 requests / 10 seconds | General routes |
-| Strict | 5 requests / 60 seconds | Auth + payment routes |
+The `@nil33/ai` package provides a unified interface across LLM providers:
 
-### Route Protection
+| Provider | Models | Use Case |
+|----------|--------|----------|
+| OpenAI | gpt-4o, gpt-4o-mini | Fast completions, structured extraction |
+| Anthropic | Claude Sonnet | Deep reasoning, compliance analysis |
 
-- Middleware enforced on `/admin/*` and `/dashboard/*`
-- JWT validation on all protected routes
-- `ADMIN` role required for `/admin` access
-- `ATHLETE` role required for `/dashboard` access
+Features: automatic fallback chains, rate limiting, cost tracking, latency metrics.
 
-### Input Validation
+### MCP Tool Registry
 
-- Zod schemas on all critical POST endpoints
-- Type-safe request parsing with runtime validation
+4 built-in tools following the Model Context Protocol:
 
-### Webhook Security
+| Tool | Description |
+|------|-------------|
+| `nil33.athlete.lookup` | Search athletes by name, sport, school |
+| `nil33.deals.search` | Query national deals by sport, value, brand |
+| `nil33.compliance.check` | Validate deals against NCAA/state rules |
+| `nil33.valuation.estimate` | Estimate athlete market value |
 
-- Stripe signature verification on all webhook events
-- Raw body parsing for HMAC validation
-- Idempotency-safe event handling
+### Agentic Framework
 
-### Structured Logging (Pino)
+ReAct (Reason + Act) loop agents with tool access:
 
-Domain-specific loggers:
+- **Deal Monitor** — Watches for new deals, identifies notable transactions, detects trends
+- **Compliance Checker** — Validates activities against NCAA bylaws and state legislation
+- **Valuation Engine** — Estimates and tracks athlete value with sport-specific models
 
-- `authLogger` — Authentication events
-- `stripeLogger` — Payment lifecycle
-- `adminLogger` — Verification actions
-- `analyticsLogger` — Event tracking
+### RAG Pipeline
 
-### Environment Validation
-
-- Fail-fast on missing critical environment variables
-- Type-checked env access via `lib/env.ts`
-
----
-
-## 10. Analytics & Observability
-
-| Layer | Technology | Coverage |
-|---|---|---|
-| User Analytics | PostHog | 10 custom events, session replay ready |
-| Structured Logs | Pino | Domain-specific, JSON-formatted |
-| Payment Events | Stripe | Full checkout + webhook lifecycle |
-| Error Handling | Error boundaries | Production-safe rendering |
-| Env Validation | Fail-fast startup | Missing vars caught at boot |
-| Rust Health | Axum `/health` | Liveness + readiness probes |
-
-### PostHog Events
-
-| Event | Trigger |
-|---|---|
-| `page_view` | Route navigation |
-| `profile_view` | Athlete profile loaded |
-| `card_generated` | Card export completed |
-| `card_downloaded` | Card PNG saved |
-| `demo_started` | Demo walkthrough entered |
-| `demo_section_viewed` | Demo section navigation |
-| `checkout_initiated` | Stripe checkout started |
-| `verification_started` | Verification flow entered |
-| `coach_portal_viewed` | Coach access page loaded |
-| `nil_marketplace_viewed` | NIL marketplace loaded |
+Retrieval-augmented generation grounded in:
+- NCAA NIL bylaws and interpretations
+- State NIL legislation (50 states)
+- Historical deal data and market trends
+- Athlete profiles and performance data
 
 ---
 
-## 11. Documentation
+## 6. Scraping Pipeline
 
-### Repository Docs
+```
+Public Sources → Scraper → Parser → Dedup → Store
+     ↓              ↓         ↓              ↓
+  RSS/HTML      cheerio    NLP extract    Database
+  5 sources     Fetch      confidence     Webhook
+```
 
-| Document | Purpose |
-|---|---|
-| `README.md` | This file — system overview and technical reference |
-| `TECHNICAL-OVERVIEW.md` | Deep-dive into architecture, data flow, and components |
-| `AUDIT.md` | Full system audit: rating math, bugs fixed, data model gaps, production readiness |
-
-### Platform Docs (`/docs`)
-
-7 institutional documents accessible at `/docs` with print-to-PDF support:
-
-| Page | Route |
-|---|---|
-| Documentation Hub | `/docs` |
-| Platform Overview | `/docs/platform-overview` |
-| Capabilities | `/docs/capabilities` |
-| Coach Onboarding | `/docs/coach-onboarding` |
-| NIL Expansion | `/docs/nil-expansion` |
-| Recruiting Intelligence | `/docs/recruiting-intelligence` |
-| Security Hardening | `/docs/security-hardening` |
-| Design System | `/docs/design-system` |
+Sources are scraped on configurable intervals (15-120 min). Each item is run through the `DealParser` which uses regex patterns and keyword matching to extract structured deal data with confidence scores.
 
 ---
 
-## 12. Deployment Guide
+## 7. Rust Engine
+
+High-performance verification and rating engine (`rust-engine/`):
+
+| Component | Technology |
+|-----------|------------|
+| Web Framework | Axum 0.8 |
+| Database | SQLx 0.8 (Postgres) |
+| Cryptography | Ed25519 (ed25519-dalek) |
+| Runtime | Tokio (async) |
+| Port | 4000 |
+
+**Modules:**
+- `rating/` — Composite rating engine + DNA genetic model
+- `crypto/` — Ed25519 keypair generation, signing, verification
+- `handlers/` — Player CRUD, rating calculation, signature verification
+- `middleware/` — JWT auth, CORS, rate limiting
+
+---
+
+## 8. Data Model
+
+16 Prisma models powering the QB DNA application:
+
+```
+User ─→ Account / Session / VerificationToken
+Player ─→ GameLog / RatingSnapshot
+       ─→ DraftProjection
+StateLaw ─→ ComplianceRecord
+InstitutionRule
+ContractVersion
+```
+
+Key models: `Player` (55 fields), `GameLog` (per-game stats), `RatingSnapshot` (historical ratings), `ComplianceRecord` (audit trail), `ContractVersion` (agreement versioning).
+
+---
+
+## 9. Sports Coverage
+
+| Sport | Positions | Market Weight | Season |
+|-------|-----------|---------------|--------|
+| Football | QB, RB, WR, TE, OL, DL, LB, DB, K, P | 1.00 | Fall |
+| Basketball | PG, SG, SF, PF, C | 0.85 | Winter |
+| Gymnastics | Vault, Bars, Beam, Floor, AA | 0.55 | Winter |
+| Baseball | P, C, 1B, 2B, 3B, SS, LF, CF, RF, DH | 0.50 | Spring |
+| Hockey | C, LW, RW, D, G | 0.45 | Winter |
+| Soccer | GK, CB, FB, CDM, CM, CAM, LW, RW, ST | 0.45 | Fall |
+| Volleyball | S, OH, MB, OPP, L, DS | 0.45 | Fall |
+| Golf | — | 0.40 | Spring |
+| Softball | P, C, 1B, 2B, 3B, SS, LF, CF, RF | 0.40 | Spring |
+| Tennis | Singles, Doubles | 0.40 | Spring |
+| Lacrosse | A, M, D, G, FO, LSM | 0.35 | Spring |
+| Track & Field | Sprints, Distance, Hurdles, Jumps, Throws | 0.35 | Spring |
+| Swimming | Free, Back, Breast, Fly, IM, Diving | 0.35 | Winter |
+| Wrestling | 125–285 (10 weight classes) | 0.30 | Winter |
+
+---
+
+## 10. Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
-- PostgreSQL database
-- Stripe account (test or live keys)
-- Upstash Redis instance
-- PostHog project
+- Node.js 20+
+- npm 10+
+- Rust 1.70+ (optional, for rust-engine)
+- PostgreSQL 15+ (for QB DNA data layer)
 
-### Build & Deploy (Next.js)
-
-```bash
-npm install
-npx prisma generate
-npx prisma migrate deploy
-npm run build
-```
-
-### Build & Deploy (Rust Engine)
+### Install
 
 ```bash
-cd rust-engine
-docker compose up -d
+# Clone
+git clone https://github.com/FTHTrading/Football.git nil33
+cd nil33
+
+# Install all workspace dependencies
+npm install --legacy-peer-deps
+
+# Generate Prisma client (QB DNA)
+cd apps/qbdna && npx prisma generate && cd ../..
 ```
 
-Or without Docker:
+### Development
 
 ```bash
-cd rust-engine
-cargo build --release
-./target/release/under-center-engine
-```
-
-### Hosting Options
-
-| Platform | Layer | Status |
-|---|---|---|
-| Vercel | Frontend | Recommended (edge functions, preview deploys) |
-| Netlify | Frontend | Supported |
-| Docker | Rust Engine | Recommended (multi-stage build) |
-| Self-hosted | Both | Supported (Node.js + Rust runtimes) |
-
----
-
-## 13. Environment Variables
-
-### Next.js Application
-
-```env
-# Database
-DATABASE_URL=postgresql://user:password@host:5432/undercenter
-
-# Auth
-NEXTAUTH_SECRET=<openssl rand -base64 32>
-NEXTAUTH_URL=https://your-domain.com
-
-# Stripe
-STRIPE_SECRET_KEY=sk_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_...
-
-# Redis (Rate Limiting)
-UPSTASH_REDIS_REST_URL=https://...upstash.io
-UPSTASH_REDIS_REST_TOKEN=AX...
-
-# Analytics
-NEXT_PUBLIC_POSTHOG_KEY=phc_...
-NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
-
-# App
-NEXT_PUBLIC_BASE_URL=https://your-domain.com
-```
-
-### Rust Engine
-
-See `rust-engine/.env.example` for all required variables:
-
-```env
-DATABASE_URL=postgresql://user:password@host:5432/undercenter
-JWT_SECRET=<your-jwt-secret>
-ED25519_PRIVATE_KEY=<base64-encoded-private-key>
-RUST_LOG=info
-HOST=0.0.0.0
-PORT=8080
-```
-
----
-
-## 14. Development Workflow
-
-```bash
-# Start Next.js dev server
+# Run both apps simultaneously (Turborepo)
 npm run dev
 
-# Generate Prisma client
-npx prisma generate
+# Run individually
+npm run dev:qbdna   # → localhost:3000
+npm run dev:nil33   # → localhost:3001
 
-# Run database migrations
-npx prisma migrate dev
-
-# Production build
+# Build all
 npm run build
 
-# Stripe webhook testing
-stripe listen --forward-to localhost:3000/api/webhook
+# Build individually
+npm run build:qbdna
+npm run build:nil33
+```
 
-# Start Rust engine (Docker)
-cd rust-engine && docker compose up -d
+### Environment Variables
 
-# Start Rust engine (local)
-cd rust-engine && cargo run
+Create `apps/qbdna/.env`:
+
+```env
+DATABASE_URL="postgresql://..."
+NEXTAUTH_SECRET="..."
+NEXTAUTH_URL="http://localhost:3000"
 ```
 
 ---
 
-## 15. Roadmap
+## 11. Deployment
 
-### Phase 1 — Verified MVP ✅
+| App | Domain | Platform |
+|-----|--------|----------|
+| NIL33 Hub | `nil33.com` | Cloudflare Pages |
+| QB DNA | `qbdna.nil33.com` | Cloudflare Pages |
+| Rust Engine | — | Docker / Fly.io |
 
-- Cinematic homepage (10 sections) with verified metrics
-- Individual athlete profile pages with dynamic routing
-- Shareable verified card (1080×1350, 3 themes)
-- QB Index (8 weighted inputs, 0-99 score, 5 tiers)
-- GAI (6 genes, 4 coefficients, 6 archetypes, 14 program profiles)
-- Demo walkthrough (8 sections, partnership-ready)
-- Stripe checkout ($149 verification)
-- Security hardening (rate limiting, middleware, validation, logging)
-- Institutional documentation suite (7 pages)
-- NIL infrastructure layer (hub, marketplace, compliance, agreements, resources)
-- System audit with full math verification (AUDIT.md)
-
-### Phase 2 — Rust Engine ✅
-
-- Axum 0.8 HTTP framework with SQLx
-- Identity hashing (SHA-256) and signing (Ed25519)
-- Ranking pipeline with percentile computation
-- Compliance engine with state law lookup
-- Scraping service for external data ingestion
-- Docker containerization with multi-stage builds
-- Health check endpoints (liveness + readiness)
-
-### Phase 3 — Data Intelligence
-
-- Coach filtering and discovery dashboard
-- Athlete ranking engine with percentile cohorts
-- Advanced recruiting signal processing
-- Automated verification pipeline
-
-### Phase 4 — NIL & Monetization
-
-- Live NIL marketplace with brand matching
-- Premium coach subscriptions
-- Deal tracking with compliance audit trail
-- Analytics reporting dashboard
+Domain `nil33.com` is registered on Cloudflare (auto-renew March 2027).
 
 ---
 
-## Application Flow
+## 12. License
 
-```
-Landing (/)
-├── View QBs (/leaderboard, /scout, /search)
-│   └── Select Athlete → /athlete/[id]
-│       ├── View Metrics (QB Index + GAI)
-│       ├── View Film
-│       ├── View Timeline
-│       └── View NIL Valuation
-│
-├── NIL (/nil)
-│   ├── Marketplace (/nil/marketplace)
-│   ├── Compliance (/nil/compliance)
-│   ├── Agreements (/nil/agreements)
-│   └── Resources (/nil/resources)
-│
-├── Card Lab (/card-generator)
-│   └── Generate → Preview 3D → Download PNG
-│
-├── Get Verified (/pricing)
-│   ├── Stripe Checkout → /api/checkout
-│   ├── Webhook Confirms → Status: PENDING
-│   └── Admin Approves → Status: VERIFIED
-│
-├── View Demo (/demo)
-│   └── 8-section guided walkthrough
-│
-└── Documentation (/docs)
-    └── 8 institutional documents with print-to-PDF
-```
+Proprietary — UnyKorn · Norcross, GA
 
----
-
-## Route Map
-
-All 46 page routes + 2 API routes:
-
-```
-/                          Homepage (10 sections)
-/admin                     Admin panel (role-protected)
-/analytics                 Platform analytics
-/athlete/[id]              Athlete profile (6 static paths)
-/awards                    GAI-based awards
-/board                     Board view
-/card-generator            Verified card builder
-/coach                     Coach portal
-/collectibles              Collectibles gallery
-/combine                   Combine data
-/community                 Community hub
-/compare                   Athlete comparison
-/dashboard                 Athlete dashboard
-/dashboard/nil             NIL dashboard
-/demo                      Partnership demo (8 sections)
-/docs                      Documentation hub
-/docs/capabilities         Capabilities overview
-/docs/coach-onboarding     Coach onboarding guide
-/docs/design-system        Design system reference
-/docs/nil-expansion        NIL expansion plan
-/docs/platform-overview    Platform overview
-/docs/recruiting-intelligence  Recruiting intel
-/docs/security-hardening   Security hardening
-/draft                     Draft board
-/film-room                 Film analysis
-/gameday                   Game day view
-/genome                    GAI visualization
-/highlights                Highlight reel
-/lab                       Lab experiments
-/leaderboard               Ranked athlete table
-/login                     Authentication
-/map                       Geographic view
-/nil                       NIL infrastructure hub
-/nil/agreements            Contract management
-/nil/compliance            State law compliance
-/nil/marketplace           NIL marketplace
-/nil/resources             NIL resources
-/offers                    Offers tracker
-/portal                    Portal entry
-/pricing                   Verification pricing
-/product                   Product overview
-/profile/[id]              Public profile (6 static paths)
-/scout                     Scouting view
-/search                    Athlete search
-/stats                     Statistics
-/training                  Training data
-
-/api/checkout              Stripe checkout session
-/api/webhook               Stripe webhook handler
-```
-
----
-
-## Positioning
-
-Under Center is a purpose-built quarterback identity system — not a theme, not a template, and not a static profile generator.
-
-It is engineered for verified metrics, recruiting workflows, NIL compliance, and scalable athlete identity infrastructure.
-
-The system was architected to scale without structural redesign.
-
----
-
-## License
-
-Proprietary — Under Center LLC. All rights reserved.
+Copyright © 2025 UnyKorn. All rights reserved.
