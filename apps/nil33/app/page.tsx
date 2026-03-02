@@ -1,751 +1,765 @@
 "use client";
 
-import {
-  ArrowRight,
-  Check,
-  Shield,
-  TrendingUp,
-  Users,
-  MapPin,
-  Star,
-  Briefcase,
-  GraduationCap,
-  Trophy,
-  BarChart3,
-  FileCheck,
-  Lock,
-  Zap,
-  Building2,
-  DollarSign,
-} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 /* ═══════════════════════════════════════════════════
-   NIL33 — Homepage
-   Structure: Give them what they came for FIRST,
-   then introduce the scaled version.
-
-   TOP HALF  → Athlete / Parent / Individual
-   BOTTOM HALF → Collectives / Institutions / Scale
+   NIL33 — Product Demonstration Homepage
+   
+   This is not a pitch. This is what we built.
+   Show the product. Show the engine. Show the output.
    ═══════════════════════════════════════════════════ */
 
-/* ---------- Navigation ---------- */
-function Nav() {
+/* ---------- Scroll Reveal Hook ---------- */
+function useReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold: 0.15 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return { ref, className: visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6" };
+}
+
+function Section({ children, id, className = "" }: { children: React.ReactNode; id?: string; className?: string }) {
+  const reveal = useReveal();
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <a href="#" className="text-xl font-bold tracking-tight">
-          <span className="text-[#00ff88]">NIL</span>
-          <span className="text-white">33</span>
+    <section id={id} ref={reveal.ref} className={`transition-all duration-700 ease-out ${reveal.className} ${className}`}>
+      {children}
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────
+   NAVIGATION
+   ────────────────────────────────────────────────── */
+function Nav() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
+
+  return (
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-[#0a0a0a]/95 backdrop-blur-lg border-b border-white/[0.06] shadow-2xl" : "bg-transparent"}`}>
+      <div className="max-w-7xl mx-auto px-8 h-18 flex items-center justify-between">
+        <a href="#" className="flex items-center gap-1.5">
+          <div className="w-8 h-8 rounded-lg bg-[#00ff88] flex items-center justify-center">
+            <span className="text-black font-black text-sm">33</span>
+          </div>
+          <span className="text-lg font-bold tracking-tight text-white">NIL33</span>
         </a>
-        <div className="hidden md:flex items-center gap-8 text-sm text-gray-400">
-          <a href="#your-value" className="hover:text-white transition-colors">Your Value</a>
-          <a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a>
-          <a href="#for-collectives" className="hover:text-white transition-colors">For Collectives</a>
-          <a href="#about" className="hover:text-white transition-colors">About</a>
+
+        <div className="hidden lg:flex items-center gap-10 text-[13px] font-medium tracking-wide uppercase">
+          <a href="#valuation" className="text-gray-500 hover:text-white transition-colors duration-200">Valuation</a>
+          <a href="#compliance" className="text-gray-500 hover:text-white transition-colors duration-200">Compliance</a>
+          <a href="#receipts" className="text-gray-500 hover:text-white transition-colors duration-200">Receipts</a>
+          <a href="#architecture" className="text-gray-500 hover:text-white transition-colors duration-200">Architecture</a>
         </div>
+
         <a
-          href="#get-started"
-          className="bg-[#00ff88] text-black px-5 py-2 rounded-lg text-sm font-semibold hover:bg-[#00ff88]/90 transition-colors"
+          href="mailto:kevanbtc@gmail.com?subject=NIL33 — Demo Request"
+          className="bg-white text-black px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-200 transition-colors duration-200"
         >
-          Get My Value
+          Request Demo
         </a>
       </div>
     </nav>
   );
 }
 
-/* ====================================================
-   PART 1 — WHAT YOU CAME HERE FOR
-   (Athletes, Parents, anyone asking "What am I worth?")
-   ==================================================== */
-
-/* ---------- Hero ---------- */
+/* ──────────────────────────────────────────────────
+   HERO — Statement + Product Preview
+   ────────────────────────────────────────────────── */
 function Hero() {
   return (
-    <section className="min-h-screen flex items-center justify-center pt-16 px-6">
-      <div className="max-w-4xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 bg-[#00ff88]/10 border border-[#00ff88]/30 rounded-full px-4 py-1.5 text-sm text-[#00ff88] mb-8">
-          <span>Free for athletes — get your value now</span>
-        </div>
+    <section className="relative min-h-screen flex items-center pt-24 pb-32 px-8 overflow-hidden">
+      {/* Background grid */}
+      <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[#00ff88]/[0.04] rounded-full blur-[120px]" />
 
-        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
-          What&apos;s your
-          <br />
-          <span className="text-[#00ff88]">NIL value?</span>
-        </h1>
+      <div className="relative max-w-7xl mx-auto w-full">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left — Statement */}
+          <div>
+            <div className="inline-flex items-center gap-2 bg-white/[0.04] border border-white/[0.08] rounded-full px-4 py-1.5 text-xs font-medium text-gray-400 uppercase tracking-widest mb-8">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88] animate-pulse" />
+              Infrastructure — Not a Marketplace
+            </div>
 
-        <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-          Find out in 2 minutes. NIL33 looks at 33 real factors — not just your 
-          follower count — and gives you a clear, honest number.
-        </p>
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[0.95] mb-8">
+              <span className="text-white">NIL valuation</span>
+              <br />
+              <span className="text-white">and compliance</span>
+              <br />
+              <span className="text-[#00ff88]">infrastructure.</span>
+            </h1>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a
-            href="#get-started"
-            className="w-full sm:w-auto bg-[#00ff88] text-black px-8 py-4 rounded-xl text-lg font-semibold hover:bg-[#00ff88]/90 transition-colors flex items-center justify-center gap-2"
-          >
-            Get My NIL Value <ArrowRight className="w-5 h-5" />
-          </a>
-          <a
-            href="#for-collectives"
-            className="w-full sm:w-auto border border-white/20 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:border-white/40 transition-colors"
-          >
-            I Run a Collective
-          </a>
+            <p className="text-lg text-gray-400 leading-relaxed max-w-lg mb-12">
+              33 measurable factors. 50-state compliance routing.
+              Cryptographic deal receipts. Built for athletes, collectives, 
+              and institutions that need real numbers — not guesswork.
+            </p>
+
+            <div className="flex items-center gap-6">
+              <a
+                href="mailto:kevanbtc@gmail.com?subject=NIL33 — Early Access"
+                className="bg-[#00ff88] text-black px-7 py-4 rounded-xl text-sm font-bold hover:bg-[#00ff88]/90 transition-all duration-200 hover:shadow-[0_0_30px_rgba(0,255,136,0.3)]"
+              >
+                Request Early Access
+              </a>
+              <a href="#valuation" className="text-gray-500 text-sm font-medium hover:text-white transition-colors duration-200">
+                See the engine ↓
+              </a>
+            </div>
+          </div>
+
+          {/* Right — Mock Product UI */}
+          <div className="relative">
+            <div className="bg-[#111] border border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl">
+              {/* Window chrome */}
+              <div className="flex items-center gap-2 px-4 py-3 border-b border-white/[0.06] bg-[#0d0d0d]">
+                <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
+                <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
+                <div className="w-3 h-3 rounded-full bg-[#28c840]" />
+                <span className="ml-3 text-xs text-gray-600 font-mono">nil33 / valuation-engine</span>
+              </div>
+
+              {/* Mock scorecard */}
+              <div className="p-6 space-y-5">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Athlete Valuation Report</div>
+                    <div className="text-xl font-bold text-white">Marcus Johnson</div>
+                    <div className="text-sm text-gray-400">QB · Georgia · Class of 2027</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-4xl font-black text-[#00ff88]">84.7</div>
+                    <div className="text-xs text-gray-500 uppercase tracking-wider">NIL Score</div>
+                  </div>
+                </div>
+
+                <div className="h-px bg-white/[0.06]" />
+
+                {/* Factor bars */}
+                <div className="space-y-3">
+                  {[
+                    { label: "On-Field Performance", value: 91, color: "#00ff88" },
+                    { label: "Recruiting Interest", value: 87, color: "#00ff88" },
+                    { label: "Social Reach", value: 72, color: "#f59e0b" },
+                    { label: "Brand Safety", value: 95, color: "#00ff88" },
+                    { label: "Compliance Status", value: 100, color: "#00d4ff" },
+                    { label: "Deal History", value: 64, color: "#f59e0b" },
+                  ].map((f, i) => (
+                    <div key={i}>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-gray-400">{f.label}</span>
+                        <span className="text-white font-mono font-bold">{f.value}</span>
+                      </div>
+                      <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                        <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${f.value}%`, backgroundColor: f.color }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="h-px bg-white/[0.06]" />
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-xs text-gray-500 mb-0.5">Estimated Range</div>
+                    <div className="text-lg font-bold text-white">$185K — $340K</div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-[#00ff88]" />
+                    <span className="text-xs text-gray-400">All 33 factors computed</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-/* ---------- Your Value (what the athlete gets) ---------- */
-function YourValue() {
+/* ──────────────────────────────────────────────────
+   SYSTEM STATS BAR
+   ────────────────────────────────────────────────── */
+function SystemStats() {
   return (
-    <section id="your-value" className="py-24 px-6 border-t border-white/5">
-      <div className="max-w-4xl mx-auto">
-        <p className="text-[#00ff88] text-sm font-semibold uppercase tracking-widest mb-4">
-          For Athletes &amp; Parents
-        </p>
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-          Here&apos;s what you get.
-        </h2>
-        <p className="text-lg text-gray-400 mb-12 max-w-2xl">
-          No guesswork. No jargon. Just a clear picture of what you&apos;re worth 
-          and whether a deal is safe.
-        </p>
-
-        <div className="grid sm:grid-cols-3 gap-8">
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <div className="w-12 h-12 bg-[#00ff88]/10 rounded-xl flex items-center justify-center mb-4">
-              <TrendingUp className="w-6 h-6 text-[#00ff88]" />
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">Your NIL number</h3>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              A clear value based on 33 real factors — game stats, recruiting interest, 
-              social reach, and more. Not a guess. A number you can use.
-            </p>
-          </div>
-
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <div className="w-12 h-12 bg-[#00d4ff]/10 rounded-xl flex items-center justify-center mb-4">
-              <Shield className="w-6 h-6 text-[#00d4ff]" />
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">Am I allowed?</h3>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              Before any deal, we check your state&apos;s laws and your school&apos;s 
-              rules. If something&apos;s off, we tell you before it becomes a problem.
-            </p>
-          </div>
-
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <div className="w-12 h-12 bg-[#a855f7]/10 rounded-xl flex items-center justify-center mb-4">
-              <FileCheck className="w-6 h-6 text-[#a855f7]" />
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">Proof it happened</h3>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              Every deal gets a digital receipt — timestamped and signed. 
-              Real proof that protects you, the brand, and your eligibility.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- How It Works (athlete perspective) ---------- */
-function HowItWorks() {
-  const steps = [
-    {
-      num: "01",
-      title: "Enter your info",
-      desc: "Name, sport, school, position. That's it. Takes 2 minutes.",
-      icon: Users,
-    },
-    {
-      num: "02",
-      title: "We crunch the numbers",
-      desc: "NIL33 looks at 33 factors: game performance, recruiting rankings, social following, compliance status, and more.",
-      icon: BarChart3,
-    },
-    {
-      num: "03",
-      title: "See your value",
-      desc: "Get your NIL score, your value range, what's helping you, and what's holding you back. Plain English — no jargon.",
-      icon: TrendingUp,
-    },
-    {
-      num: "04",
-      title: "Negotiate with confidence",
-      desc: "Walk into any deal knowing exactly what you're worth. Stay compliant. Keep a record of everything.",
-      icon: DollarSign,
-    },
-  ];
-
-  return (
-    <section id="how-it-works" className="py-24 px-6 bg-[#00ff88]/[0.03] border-t border-white/5">
-      <div className="max-w-4xl mx-auto">
-        <p className="text-[#00ff88] text-sm font-semibold uppercase tracking-widest mb-4">
-          How It Works
-        </p>
-        <h2 className="text-3xl sm:text-4xl font-bold mb-12">
-          Four steps. Two minutes. One clear answer.
-        </h2>
-
-        <div className="space-y-6">
-          {steps.map((step, i) => (
-            <div
-              key={i}
-              className="flex gap-6 items-start bg-white/5 border border-white/10 rounded-xl p-6"
-            >
-              <div className="flex flex-col items-center gap-2 min-w-[48px]">
-                <div className="text-2xl font-bold text-[#00ff88]/40">{step.num}</div>
-                <step.icon className="w-5 h-5 text-gray-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-1">
-                  {step.title}
-                </h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  {step.desc}
-                </p>
-              </div>
+    <Section className="py-16 px-8 border-y border-white/[0.06]">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 md:divide-x md:divide-white/[0.06]">
+          {[
+            { value: "33", label: "Measurable Factors", sub: "Six categories" },
+            { value: "50", label: "States Covered", sub: "Compliance routing" },
+            { value: "14", label: "Sports Supported", sub: "Revenue & Olympic" },
+            { value: "< 200ms", label: "Valuation Speed", sub: "Per athlete" },
+          ].map((stat, i) => (
+            <div key={i} className="md:px-10 first:md:pl-0 last:md:pr-0">
+              <div className="text-3xl md:text-4xl font-black text-white tracking-tight">{stat.value}</div>
+              <div className="text-sm text-gray-300 font-medium mt-1">{stat.label}</div>
+              <div className="text-xs text-gray-600 mt-0.5">{stat.sub}</div>
             </div>
           ))}
         </div>
       </div>
-    </section>
+    </Section>
   );
 }
 
-/* ---------- For Parents ---------- */
-function ForParents() {
+/* ──────────────────────────────────────────────────
+   VALUATION ENGINE — Show the product
+   ────────────────────────────────────────────────── */
+function ValuationEngine() {
   return (
-    <section className="py-24 px-6 border-t border-white/5">
-      <div className="max-w-4xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+    <Section id="valuation" className="py-32 px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-20 items-start">
+          {/* Left — Explanation */}
           <div>
-            <p className="text-[#a855f7] text-sm font-semibold uppercase tracking-widest mb-4">
-              For Parents &amp; Families
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-              Protect your kid.<br />Understand the deal.
+            <div className="text-[#00ff88] text-xs font-bold uppercase tracking-[0.2em] mb-6">Valuation Engine</div>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.05] mb-8">
+              33 factors.<br />
+              <span className="text-gray-500">Not follower counts.</span>
             </h2>
-            <p className="text-gray-400 leading-relaxed mb-6">
-              NIL can feel overwhelming as a parent. You want your athlete to benefit, 
-              but you also want to make sure nothing jeopardizes their eligibility or future.
+            <p className="text-gray-400 leading-relaxed mb-10 max-w-lg">
+              Most platforms estimate NIL value from social media followers. 
+              NIL33 computes a deterministic score from 33 measurable signals 
+              across six weighted categories.
             </p>
-            <p className="text-gray-400 leading-relaxed">
-              NIL33 gives you clear, simple reports. You&apos;ll see exactly what your 
-              athlete is worth, whether a deal is legal in your state, and what the 
-              school allows — all in plain language you can actually understand.
-            </p>
+
+            <div className="space-y-6">
+              {[
+                { cat: "Identity Verification", desc: "KYC, age, eligibility, school enrollment", weight: "12%" },
+                { cat: "On-Field Performance", desc: "Game stats, film grades, seasonal trajectory", weight: "28%" },
+                { cat: "Recruiting Interest", desc: "Rankings, offers, visit history, portal activity", weight: "22%" },
+                { cat: "Social & Brand Reach", desc: "Followers, engagement rate, content quality, brand safety", weight: "18%" },
+                { cat: "Compliance Status", desc: "State law, school rules, prior violations, active flags", weight: "12%" },
+                { cat: "Deal History", desc: "Past contracts, fulfillment rate, dispute record", weight: "8%" },
+              ].map((c, i) => (
+                <div key={i} className="group">
+                  <div className="flex items-baseline justify-between mb-1">
+                    <span className="text-sm font-semibold text-white group-hover:text-[#00ff88] transition-colors duration-200">{c.cat}</span>
+                    <span className="text-xs font-mono text-[#00ff88]/60">{c.weight}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 leading-relaxed">{c.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="space-y-4">
+
+          {/* Right — Mock 33-factor grid */}
+          <div className="bg-[#111] border border-white/[0.08] rounded-2xl p-8">
+            <div className="flex items-center justify-between mb-6">
+              <div className="text-xs text-gray-500 uppercase tracking-widest">33 Factor Heatmap</div>
+              <div className="flex items-center gap-3 text-[10px] text-gray-600">
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-[#00ff88]" /> Strong</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-[#f59e0b]" /> Moderate</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-[#ef4444]" /> Weak</span>
+              </div>
+            </div>
+            <div className="grid grid-cols-6 gap-1.5">
+              {/* 33 cells + 3 empty for clean 6x6 grid */}
+              {[
+                "#00ff88","#00ff88","#00ff88","#f59e0b","#00ff88","#00ff88",
+                "#00ff88","#f59e0b","#00ff88","#00ff88","#00ff88","#f59e0b",
+                "#00ff88","#00ff88","#ef4444","#00ff88","#f59e0b","#00ff88",
+                "#00ff88","#00ff88","#00ff88","#f59e0b","#00ff88","#00ff88",
+                "#00ff88","#00d4ff","#00d4ff","#00ff88","#00ff88","#f59e0b",
+                "#f59e0b","#00ff88","#00ff88","transparent","transparent","transparent",
+              ].map((color, i) => (
+                <div
+                  key={i}
+                  className={`aspect-square rounded-md transition-all duration-300 ${color === "transparent" ? "" : "hover:scale-110 hover:shadow-lg cursor-default"}`}
+                  style={{ backgroundColor: color === "transparent" ? "transparent" : color, opacity: color === "transparent" ? 0 : 0.7 }}
+                  title={i < 33 ? `Factor ${i + 1}` : ""}
+                />
+              ))}
+            </div>
+            <div className="mt-6 pt-6 border-t border-white/[0.06] flex items-center justify-between">
+              <div>
+                <div className="text-xs text-gray-500">Composite Score</div>
+                <div className="text-2xl font-black text-[#00ff88] font-mono">84.7 / 100</div>
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-gray-500">Confidence</div>
+                <div className="text-sm font-mono text-white">High — 31/33 verified</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+/* ──────────────────────────────────────────────────
+   COMPLIANCE ENGINE — Show the system
+   ────────────────────────────────────────────────── */
+function ComplianceEngine() {
+  return (
+    <Section id="compliance" className="py-32 px-8 bg-[#0d0d0d]">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-20 items-start">
+          {/* Left — Mock compliance check UI */}
+          <div className="bg-[#111] border border-white/[0.08] rounded-2xl overflow-hidden order-2 lg:order-1">
+            <div className="px-6 py-4 border-b border-white/[0.06] bg-[#0d0d0d]">
+              <div className="text-xs text-gray-500 uppercase tracking-widest">Compliance Check — Real-Time</div>
+            </div>
+            <div className="p-6 space-y-4">
+              {/* State check */}
+              <div className="flex items-start gap-3 p-4 bg-[#00ff88]/[0.04] border border-[#00ff88]/20 rounded-lg">
+                <div className="w-6 h-6 rounded-full bg-[#00ff88]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-[#00ff88] text-xs">✓</span>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-white">Georgia State Law — Passed</div>
+                  <div className="text-xs text-gray-500 mt-0.5">SB 290 (2021) — No institutional involvement required. Agent disclosure required for deals &gt;$5,000.</div>
+                </div>
+              </div>
+
+              {/* School check */}
+              <div className="flex items-start gap-3 p-4 bg-[#00ff88]/[0.04] border border-[#00ff88]/20 rounded-lg">
+                <div className="w-6 h-6 rounded-full bg-[#00ff88]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-[#00ff88] text-xs">✓</span>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-white">University Policy — Passed</div>
+                  <div className="text-xs text-gray-500 mt-0.5">72-hour disclosure window. No use of institutional marks without approval. Compliance office notified.</div>
+                </div>
+              </div>
+
+              {/* NCAA check */}
+              <div className="flex items-start gap-3 p-4 bg-[#00ff88]/[0.04] border border-[#00ff88]/20 rounded-lg">
+                <div className="w-6 h-6 rounded-full bg-[#00ff88]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-[#00ff88] text-xs">✓</span>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-white">NCAA Guidelines — Passed</div>
+                  <div className="text-xs text-gray-500 mt-0.5">No pay-for-play indicators. No recruiting inducement flags. Deal structure compliant.</div>
+                </div>
+              </div>
+
+              {/* Warning example */}
+              <div className="flex items-start gap-3 p-4 bg-[#f59e0b]/[0.04] border border-[#f59e0b]/20 rounded-lg">
+                <div className="w-6 h-6 rounded-full bg-[#f59e0b]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-[#f59e0b] text-xs">!</span>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-white">Agent Disclosure — Action Required</div>
+                  <div className="text-xs text-gray-500 mt-0.5">Deal value exceeds $5,000. Georgia law requires agent disclosure filing within 7 days of execution.</div>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-white/[0.06]">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-[#00ff88]" />
+                    <span className="text-xs text-gray-400">3 of 4 checks passed</span>
+                  </div>
+                  <span className="text-xs font-mono text-[#f59e0b]">1 action required</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right — Explanation */}
+          <div className="order-1 lg:order-2">
+            <div className="text-[#00d4ff] text-xs font-bold uppercase tracking-[0.2em] mb-6">Compliance Engine</div>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.05] mb-8">
+              50-state<br />
+              <span className="text-gray-500">compliance routing.</span>
+            </h2>
+            <p className="text-gray-400 leading-relaxed mb-10 max-w-lg">
+              Every state has different NIL laws. Every school has its own rules. 
+              NIL33 checks every deal against all of them — automatically — and 
+              flags issues before they become violations.
+            </p>
+
+            <div className="space-y-4">
+              {[
+                { label: "State Law Check", desc: "Automated match against current legislation in the athlete's home state and school state." },
+                { label: "Institution Rules", desc: "Cross-reference with school-specific NIL policies, disclosure windows, and mark usage rules." },
+                { label: "NCAA / Conference", desc: "Verify deal structure doesn't trigger pay-for-play or inducement flags." },
+                { label: "Risk Scoring", desc: "Each deal receives a compliance risk score. High-risk deals are flagged before execution." },
+              ].map((item, i) => (
+                <div key={i} className="flex items-start gap-4 py-3 border-b border-white/[0.04] last:border-0">
+                  <div className="w-8 h-8 rounded-lg bg-[#00d4ff]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-[#00d4ff] text-xs font-bold">{String(i + 1).padStart(2, "0")}</span>
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-white">{item.label}</div>
+                    <div className="text-xs text-gray-500 mt-0.5 leading-relaxed">{item.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+/* ──────────────────────────────────────────────────
+   DEAL RECEIPTS — Show the output
+   ────────────────────────────────────────────────── */
+function DealReceipts() {
+  return (
+    <Section id="receipts" className="py-32 px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-20 items-start">
+          {/* Left — Explanation */}
+          <div>
+            <div className="text-[#a855f7] text-xs font-bold uppercase tracking-[0.2em] mb-6">Deal Receipts</div>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.05] mb-8">
+              Verifiable proof.<br />
+              <span className="text-gray-500">Every deal. Every time.</span>
+            </h2>
+            <p className="text-gray-400 leading-relaxed mb-10 max-w-lg">
+              Every NIL deal processed through NIL33 generates a cryptographic 
+              receipt — timestamped, signed, and immutable. No more handshake deals. 
+              No more he-said-she-said.
+            </p>
+
+            <div className="space-y-4">
+              {[
+                "Timestamped at execution with SHA-256 hash",
+                "Both parties digitally sign the receipt",
+                "Compliance status recorded at time of deal",
+                "Immutable — cannot be altered after creation",
+                "Exportable for audits, tax filings, and disputes",
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#a855f7]" />
+                  <span className="text-sm text-gray-300">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right — Mock receipt */}
+          <div className="bg-[#111] border border-white/[0.08] rounded-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-white/[0.06] bg-[#0d0d0d] flex items-center justify-between">
+              <div className="text-xs text-gray-500 uppercase tracking-widest">Deal Receipt</div>
+              <div className="text-xs font-mono text-[#a855f7]">VERIFIED</div>
+            </div>
+            <div className="p-6 space-y-5 font-mono text-xs">
+              <div className="space-y-3">
+                <div className="flex justify-between"><span className="text-gray-500">Receipt ID</span><span className="text-white">NIL33-2026-00847</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Athlete</span><span className="text-white">Marcus Johnson</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Brand</span><span className="text-white">SportFuel Athletics</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Deal Type</span><span className="text-white">Social Media Campaign</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Value</span><span className="text-[#00ff88] font-bold">$12,500.00</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Duration</span><span className="text-white">90 days</span></div>
+              </div>
+
+              <div className="h-px bg-white/[0.06]" />
+
+              <div className="space-y-3">
+                <div className="flex justify-between"><span className="text-gray-500">Compliance</span><span className="text-[#00ff88]">PASSED — 4/4</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">NIL Score at Signing</span><span className="text-white">84.7</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Market Range</span><span className="text-white">$9,200 — $18,400</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Fair Market</span><span className="text-[#00ff88]">WITHIN RANGE</span></div>
+              </div>
+
+              <div className="h-px bg-white/[0.06]" />
+
+              <div className="space-y-2">
+                <div className="text-gray-500">Executed</div>
+                <div className="text-white">2026-02-14T18:32:07Z</div>
+              </div>
+              <div className="space-y-2">
+                <div className="text-gray-500">SHA-256</div>
+                <div className="text-[#a855f7]/60 break-all leading-relaxed">a7f3b2c1d4e5f6a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2</div>
+              </div>
+
+              <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-[#a855f7]" />
+                  <span className="text-gray-400">Digitally signed by both parties</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+/* ──────────────────────────────────────────────────
+   ARCHITECTURE — System diagram
+   ────────────────────────────────────────────────── */
+function Architecture() {
+  return (
+    <Section id="architecture" className="py-32 px-8 bg-[#0d0d0d]">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-20">
+          <div className="text-[#00d4ff] text-xs font-bold uppercase tracking-[0.2em] mb-6">System Architecture</div>
+          <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.05] mb-6">
+            How it&apos;s built.
+          </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed">
+            NIL33 is a three-layer system: data ingestion, computation engine, 
+            and output layer. Each layer is independently verifiable.
+          </p>
+        </div>
+
+        {/* Architecture flow diagram */}
+        <div className="grid md:grid-cols-3 gap-0">
+          {[
+            {
+              layer: "Layer 1",
+              title: "Data Ingestion",
+              color: "#00ff88",
+              items: ["Identity verification", "Performance data feeds", "Social media APIs", "Recruiting databases", "State law database", "School policy registry"],
+            },
+            {
+              layer: "Layer 2",
+              title: "Computation Engine",
+              color: "#00d4ff",
+              items: ["33-factor scoring model", "Weighted category analysis", "Compliance rule matching", "Fair market calculation", "Risk scoring algorithm", "Deal simulation engine"],
+            },
+            {
+              layer: "Layer 3",
+              title: "Output & Verification",
+              color: "#a855f7",
+              items: ["Valuation reports", "Compliance certificates", "Deal receipts (SHA-256)", "Audit logs", "API endpoints", "Institutional dashboards"],
+            },
+          ].map((layer, i) => (
+            <div key={i} className="relative">
+              <div className={`border border-white/[0.08] rounded-2xl p-8 mx-2 h-full ${i === 1 ? "bg-white/[0.02] border-white/[0.12]" : ""}`}>
+                <div className="text-xs font-bold uppercase tracking-[0.2em] mb-2" style={{ color: layer.color }}>{layer.layer}</div>
+                <h3 className="text-xl font-black text-white mb-6">{layer.title}</h3>
+                <div className="space-y-3">
+                  {layer.items.map((item, j) => (
+                    <div key={j} className="flex items-center gap-3 group">
+                      <div className="w-1 h-1 rounded-full" style={{ backgroundColor: layer.color }} />
+                      <span className="text-sm text-gray-400 group-hover:text-white transition-colors duration-200">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Arrow between columns */}
+              {i < 2 && (
+                <div className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 w-8 h-8 bg-[#111] border border-white/[0.08] rounded-full items-center justify-center">
+                  <span className="text-gray-500 text-xs">→</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Tech stack */}
+        <div className="mt-20 border border-white/[0.06] rounded-xl p-8 bg-[#111]">
+          <div className="text-xs text-gray-500 uppercase tracking-widest mb-6">Technology Stack</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {[
-              { text: "See your child's NIL value in clear terms", icon: TrendingUp },
-              { text: "Know if a deal is legal before they sign", icon: Shield },
-              { text: "Guardian consent built in for athletes under 18", icon: Lock },
-              { text: "No jargon — reports a parent can actually read", icon: FileCheck },
-            ].map((item, i) => (
-              <div key={i} className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-lg p-4">
-                <item.icon className="w-5 h-5 text-[#a855f7] mt-0.5 flex-shrink-0" />
-                <span className="text-sm text-gray-300">{item.text}</span>
+              { tech: "Next.js", role: "Frontend" },
+              { tech: "TypeScript", role: "Type Safety" },
+              { tech: "Prisma", role: "Data Layer" },
+              { tech: "Rust", role: "Valuation Engine" },
+              { tech: "PostgreSQL", role: "Storage" },
+              { tech: "Tailwind", role: "Design System" },
+            ].map((t, i) => (
+              <div key={i} className="text-center">
+                <div className="text-sm font-bold text-white">{t.tech}</div>
+                <div className="text-xs text-gray-600 mt-0.5">{t.role}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
-    </section>
+    </Section>
   );
 }
 
-/* ---------- Athlete CTA (mid-page) ---------- */
-function AthleteCTA() {
+/* ──────────────────────────────────────────────────
+   WHO THIS IS FOR — Clear segmentation
+   ────────────────────────────────────────────────── */
+function WhoItsFor() {
   return (
-    <section id="get-started" className="py-20 px-6 bg-gradient-to-b from-[#00ff88]/[0.06] to-transparent border-t border-white/5">
+    <Section className="py-32 px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-black tracking-tight">
+            Built for the NIL ecosystem.
+          </h2>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            {
+              title: "Athletes",
+              desc: "Know your value. Verify compliance. Build a real track record of deals.",
+              color: "#00ff88",
+              items: ["Free valuation", "Compliance pre-check", "Deal receipts", "Score history"],
+            },
+            {
+              title: "Collectives",
+              desc: "Stop guessing. See data-backed valuations. Manage capital with discipline.",
+              color: "#f59e0b",
+              items: ["Roster valuations", "Deal simulation", "Spend tracking", "API access"],
+            },
+            {
+              title: "Compliance",
+              desc: "Audit trails. Risk flags. 50-state coverage. Protect your program.",
+              color: "#00d4ff",
+              items: ["Auto rule-check", "Violation prevention", "Audit export", "Risk scoring"],
+            },
+            {
+              title: "Brands",
+              desc: "Find the right athlete. Verify the value. Execute compliant deals.",
+              color: "#a855f7",
+              items: ["Athlete matching", "Value verification", "Risk screening", "Deal structure"],
+            },
+          ].map((item, i) => (
+            <div key={i} className="bg-[#111] border border-white/[0.08] rounded-2xl p-7 hover:border-white/[0.15] transition-all duration-300 group">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${item.color}12` }}>
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[#00ff88] transition-colors duration-200">{item.title}</h3>
+              <p className="text-sm text-gray-500 leading-relaxed mb-5">{item.desc}</p>
+              <div className="space-y-2">
+                {item.items.map((feat, j) => (
+                  <div key={j} className="flex items-center gap-2 text-xs text-gray-400">
+                    <div className="w-1 h-1 rounded-full" style={{ backgroundColor: item.color }} />
+                    {feat}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+/* ──────────────────────────────────────────────────
+   CTA — One clear action
+   ────────────────────────────────────────────────── */
+function CTA() {
+  return (
+    <Section className="py-32 px-8 bg-[#0d0d0d]">
       <div className="max-w-3xl mx-auto text-center">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-          Ready to find out what you&apos;re worth?
+        <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6">
+          See it in action.
         </h2>
-        <p className="text-lg text-gray-400 mb-8 max-w-xl mx-auto">
-          It&apos;s free. It takes 2 minutes. And you&apos;ll walk away with a real number.
+        <p className="text-lg text-gray-400 leading-relaxed mb-12 max-w-xl mx-auto">
+          NIL33 is in early access. Request a demo to see the valuation engine, 
+          compliance checks, and deal receipt system for yourself.
         </p>
         <a
-          href="mailto:kevanbtc@gmail.com?subject=NIL33 Early Access — Athlete"
-          className="inline-flex items-center gap-2 bg-[#00ff88] text-black px-8 py-4 rounded-xl text-lg font-semibold hover:bg-[#00ff88]/90 transition-colors"
+          href="mailto:kevanbtc@gmail.com?subject=NIL33 — Demo Request"
+          className="inline-flex items-center gap-3 bg-[#00ff88] text-black px-10 py-5 rounded-xl text-lg font-bold hover:bg-[#00ff88]/90 transition-all duration-200 hover:shadow-[0_0_40px_rgba(0,255,136,0.3)]"
         >
-          Request Early Access <ArrowRight className="w-5 h-5" />
+          Request a Demo
+          <span className="text-sm opacity-60">→</span>
         </a>
-        <div className="flex items-center justify-center gap-8 text-sm text-gray-500 mt-6">
-          <span className="flex items-center gap-1.5">
-            <Check className="w-4 h-4 text-[#00ff88]" /> Free for athletes
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Check className="w-4 h-4 text-[#00ff88]" /> No credit card
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Check className="w-4 h-4 text-[#00ff88]" /> 50 states
-          </span>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ====================================================
-   PART 2 — THE SCALED VERSION
-   (Collectives, Compliance, Institutions, Brands)
-   ==================================================== */
-
-/* ---------- Divider ---------- */
-function ScaleDivider() {
-  return (
-    <section className="py-16 px-6 border-t border-white/10">
-      <div className="max-w-4xl mx-auto text-center">
-        <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-6 py-2 text-sm text-gray-400">
-          <Building2 className="w-4 h-4 text-[#00d4ff]" />
-          <span>Running a collective, compliance program, or brand?</span>
-          <ArrowRight className="w-4 h-4" />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- For Collectives & Institutions ---------- */
-function ForCollectives() {
-  return (
-    <section id="for-collectives" className="py-24 px-6 bg-[#00d4ff]/[0.03] border-t border-white/5">
-      <div className="max-w-5xl mx-auto">
-        <p className="text-[#00d4ff] text-sm font-semibold uppercase tracking-widest mb-4">
-          For Collectives, Brands &amp; Compliance
+        <p className="text-xs text-gray-600 mt-6">
+          Early access · No commitment · Response within 24 hours
         </p>
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-          Stop guessing. Start managing.
-        </h2>
-        <p className="text-lg text-gray-400 mb-12 max-w-3xl">
-          NIL33 gives collectives and institutions the same valuation engine athletes 
-          use — plus capital management, compliance automation, and deal infrastructure 
-          built for scale.
-        </p>
-
-        <div className="grid sm:grid-cols-2 gap-6">
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-[#f59e0b]/10 flex items-center justify-center">
-                <DollarSign className="w-5 h-5 text-[#f59e0b]" />
-              </div>
-              <h3 className="text-lg font-bold text-white">Capital Discipline</h3>
-            </div>
-            <ul className="space-y-2">
-              {[
-                "See data-backed valuations before writing checks",
-                "Simulate deals before committing capital",
-                "Track spend across your entire roster",
-                "Know exactly where your money is going",
-              ].map((b, j) => (
-                <li key={j} className="flex items-start gap-2 text-sm text-gray-400">
-                  <Check className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#f59e0b]" />
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-[#00d4ff]/10 flex items-center justify-center">
-                <Shield className="w-5 h-5 text-[#00d4ff]" />
-              </div>
-              <h3 className="text-lg font-bold text-white">Compliance Automation</h3>
-            </div>
-            <ul className="space-y-2">
-              {[
-                "Auto-check every deal against state and school rules",
-                "Flag risks before they become violations",
-                "Full audit trail for every NIL activity",
-                "50-state law coverage — always current",
-              ].map((b, j) => (
-                <li key={j} className="flex items-start gap-2 text-sm text-gray-400">
-                  <Check className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#00d4ff]" />
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-[#00ff88]/10 flex items-center justify-center">
-                <Zap className="w-5 h-5 text-[#00ff88]" />
-              </div>
-              <h3 className="text-lg font-bold text-white">Valuation API</h3>
-            </div>
-            <ul className="space-y-2">
-              {[
-                "Plug NIL33 valuations into your own systems",
-                "Bulk-value entire rosters in seconds",
-                "Real-time compliance checks via API",
-                "Built for developers and ops teams",
-              ].map((b, j) => (
-                <li key={j} className="flex items-start gap-2 text-sm text-gray-400">
-                  <Check className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#00ff88]" />
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-[#a855f7]/10 flex items-center justify-center">
-                <Briefcase className="w-5 h-5 text-[#a855f7]" />
-              </div>
-              <h3 className="text-lg font-bold text-white">Brand Matching</h3>
-            </div>
-            <ul className="space-y-2">
-              {[
-                "Find athletes who actually fit your brand",
-                "Match on value, audience, sport, and risk",
-                "Pre-screen compliance before outreach",
-                "Not just follower counts — real fit",
-              ].map((b, j) => (
-                <li key={j} className="flex items-start gap-2 text-sm text-gray-400">
-                  <Check className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#a855f7]" />
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
       </div>
-    </section>
+    </Section>
   );
 }
 
-/* ---------- Pricing (Collectives) ---------- */
-function Pricing() {
-  const plans = [
-    {
-      name: "Starter",
-      price: "$500",
-      period: "/month",
-      desc: "For small collectives getting started with structured NIL management.",
-      features: [
-        "Up to 50 athlete valuations/month",
-        "State compliance checks",
-        "Deal receipts",
-        "Email support",
-      ],
-      cta: "Get Started",
-      highlight: false,
-    },
-    {
-      name: "Pro",
-      price: "$1,200",
-      period: "/month",
-      desc: "For collectives and programs managing real NIL capital at scale.",
-      features: [
-        "Unlimited valuations",
-        "Full 50-state compliance engine",
-        "Deal simulation",
-        "API access",
-        "Roster-wide reporting",
-        "Priority support",
-      ],
-      cta: "Start Pro",
-      highlight: true,
-    },
-    {
-      name: "Enterprise",
-      price: "$2,500",
-      period: "/month",
-      desc: "For conferences, multi-program institutions, and large collectives.",
-      features: [
-        "Everything in Pro",
-        "Multi-program dashboards",
-        "Custom compliance rules",
-        "Dedicated account manager",
-        "SLA-backed uptime",
-        "White-label options",
-      ],
-      cta: "Talk to Us",
-      highlight: false,
-    },
-  ];
-
-  return (
-    <section className="py-24 px-6 border-t border-white/5">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <p className="text-[#00d4ff] text-sm font-semibold uppercase tracking-widest mb-4">
-            Pricing
-          </p>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            Simple, transparent pricing.
-          </h2>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-            Athletes are always free. Collectives and institutions pick the plan 
-            that fits their roster size and needs.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {plans.map((plan, i) => (
-            <div
-              key={i}
-              className={`rounded-xl p-6 ${
-                plan.highlight
-                  ? "bg-[#00ff88]/10 border-2 border-[#00ff88]/40"
-                  : "bg-white/5 border border-white/10"
-              }`}
-            >
-              {plan.highlight && (
-                <div className="text-[#00ff88] text-xs font-bold uppercase tracking-widest mb-3">
-                  Most Popular
-                </div>
-              )}
-              <h3 className="text-xl font-bold text-white">{plan.name}</h3>
-              <div className="mt-2 mb-4">
-                <span className="text-3xl font-bold text-white">{plan.price}</span>
-                <span className="text-gray-500 text-sm">{plan.period}</span>
-              </div>
-              <p className="text-sm text-gray-400 mb-6">{plan.desc}</p>
-              <ul className="space-y-2 mb-6">
-                {plan.features.map((f, j) => (
-                  <li key={j} className="flex items-start gap-2 text-sm text-gray-300">
-                    <Check className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#00ff88]" />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="mailto:kevanbtc@gmail.com?subject=NIL33 — ${plan.name} Plan"
-                className={`block text-center py-3 rounded-lg text-sm font-semibold transition-colors ${
-                  plan.highlight
-                    ? "bg-[#00ff88] text-black hover:bg-[#00ff88]/90"
-                    : "border border-white/20 text-white hover:border-white/40"
-                }`}
-              >
-                {plan.cta}
-              </a>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- FAQ ---------- */
-function FAQ() {
-  const faqs = [
-    {
-      q: "What is NIL?",
-      a: "NIL stands for Name, Image, and Likeness. Since 2021, college athletes can earn money from their personal brand — endorsements, appearances, social media, and more.",
-    },
-    {
-      q: "Is NIL33 free for athletes?",
-      a: "Yes. Athletes can get their NIL value and compliance checks for free. Paid plans are for collectives, institutions, and brands that need to manage NIL at scale.",
-    },
-    {
-      q: "How is the value calculated?",
-      a: "We measure 33 real factors across six categories: identity, on-field performance, recruiting interest, social reach, compliance status, and deal history. No guesswork — just data.",
-    },
-    {
-      q: "What states does this work in?",
-      a: "All 50. Every state has different NIL laws, and we track all of them. NIL33 automatically applies the right rules based on your school's location.",
-    },
-    {
-      q: "Is my data safe?",
-      a: "Yes. Bank-level security. Your data is never sold. You control who sees your profile.",
-    },
-    {
-      q: "I'm a parent. Is this safe for my kid?",
-      a: "Absolutely. Guardian consent is built in for athletes under 18. Every deal is checked against state and school rules before it moves forward.",
-    },
-    {
-      q: "Can I plug NIL33 into my own systems?",
-      a: "Yes — Pro and Enterprise plans include API access. You can pull valuations, run compliance checks, and simulate deals programmatically.",
-    },
-  ];
-
-  return (
-    <section className="py-24 px-6 bg-[#00ff88]/[0.03] border-t border-white/5">
-      <div className="max-w-3xl mx-auto">
-        <p className="text-[#00ff88] text-sm font-semibold uppercase tracking-widest mb-4 text-center">
-          Questions
-        </p>
-        <h2 className="text-3xl sm:text-4xl font-bold mb-12 text-center">
-          Frequently asked questions
-        </h2>
-
-        <div className="space-y-6">
-          {faqs.map((faq, i) => (
-            <div key={i} className="border-b border-white/10 pb-6">
-              <h3 className="text-base font-semibold text-white mb-2">
-                {faq.q}
-              </h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                {faq.a}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- Final CTA (dual-track) ---------- */
-function FinalCTA() {
-  return (
-    <section className="py-24 px-6 border-t border-white/5">
-      <div className="max-w-4xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Athlete Track */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-8 text-center">
-            <Trophy className="w-10 h-10 text-[#00ff88] mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">I&apos;m an athlete</h3>
-            <p className="text-sm text-gray-400 mb-6">
-              Get your NIL value for free. See what you&apos;re worth, 
-              check your compliance, and start building your record.
-            </p>
-            <a
-              href="mailto:kevanbtc@gmail.com?subject=NIL33 Early Access — Athlete"
-              className="inline-flex items-center gap-2 bg-[#00ff88] text-black px-6 py-3 rounded-lg text-sm font-semibold hover:bg-[#00ff88]/90 transition-colors"
-            >
-              Get My Value <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
-
-          {/* Collective / Institution Track */}
-          <div className="bg-white/5 border border-[#00d4ff]/20 rounded-xl p-8 text-center">
-            <Building2 className="w-10 h-10 text-[#00d4ff] mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">I manage NIL spend</h3>
-            <p className="text-sm text-gray-400 mb-6">
-              Get capital discipline, compliance automation, and valuation 
-              infrastructure for your collective or program.
-            </p>
-            <a
-              href="mailto:kevanbtc@gmail.com?subject=NIL33 Demo — Collective/Institution"
-              className="inline-flex items-center gap-2 border border-[#00d4ff]/40 text-[#00d4ff] px-6 py-3 rounded-lg text-sm font-semibold hover:bg-[#00d4ff]/10 transition-colors"
-            >
-              Schedule a Demo <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- Footer ---------- */
+/* ──────────────────────────────────────────────────
+   FOOTER — Professional, complete
+   ────────────────────────────────────────────────── */
 function Footer() {
   return (
-    <footer id="about" className="py-16 px-6 border-t border-white/10 bg-black/50">
-      <div className="max-w-4xl mx-auto">
-        <div className="grid sm:grid-cols-3 gap-10 mb-12">
-          <div>
-            <div className="text-xl font-bold mb-3">
-              <span className="text-[#00ff88]">NIL</span>
-              <span className="text-white">33</span>
+    <footer className="py-20 px-8 border-t border-white/[0.06]">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-4 gap-12 mb-16">
+          {/* Brand */}
+          <div className="md:col-span-1">
+            <div className="flex items-center gap-1.5 mb-4">
+              <div className="w-7 h-7 rounded-md bg-[#00ff88] flex items-center justify-center">
+                <span className="text-black font-black text-[10px]">33</span>
+              </div>
+              <span className="text-base font-bold text-white">NIL33</span>
             </div>
-            <p className="text-sm text-gray-500 leading-relaxed">
-              Know your value. Stay compliant. Get paid with confidence.
+            <p className="text-sm text-gray-500 leading-relaxed mb-4">
+              Deterministic NIL valuation and compliance infrastructure.
+            </p>
+            <p className="text-xs text-gray-600">
+              Norcross, Georgia 30092<br />
+              A UnyKorn Company
             </p>
           </div>
 
+          {/* Product */}
           <div>
-            <h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4>
-            <ul className="space-y-2 text-sm text-gray-500">
-              <li><a href="#your-value" className="hover:text-white transition-colors">Your Value</a></li>
-              <li><a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a></li>
-              <li><a href="#for-collectives" className="hover:text-white transition-colors">For Collectives</a></li>
-              <li><a href="#get-started" className="hover:text-white transition-colors">Get Started</a></li>
+            <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Product</h4>
+            <ul className="space-y-2.5 text-sm text-gray-500">
+              <li><a href="#valuation" className="hover:text-white transition-colors duration-200">Valuation Engine</a></li>
+              <li><a href="#compliance" className="hover:text-white transition-colors duration-200">Compliance Engine</a></li>
+              <li><a href="#receipts" className="hover:text-white transition-colors duration-200">Deal Receipts</a></li>
+              <li><a href="#architecture" className="hover:text-white transition-colors duration-200">Architecture</a></li>
             </ul>
           </div>
 
+          {/* Company */}
           <div>
-            <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
-            <ul className="space-y-2 text-sm text-gray-500">
-              <li className="flex items-center gap-2">
-                <MapPin className="w-4 h-4" />
-                Norcross, Georgia
-              </li>
-              <li>
-                <a href="mailto:kevanbtc@gmail.com" className="hover:text-white transition-colors">
-                  kevanbtc@gmail.com
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/FTHTrading/nil33"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
-                >
-                  GitHub
-                </a>
-              </li>
+            <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Company</h4>
+            <ul className="space-y-2.5 text-sm text-gray-500">
+              <li><a href="https://github.com/FTHTrading/nil33" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-200">GitHub</a></li>
+              <li><a href="mailto:kevanbtc@gmail.com" className="hover:text-white transition-colors duration-200">Contact</a></li>
+              <li><a href="mailto:kevanbtc@gmail.com?subject=NIL33 — Demo Request" className="hover:text-white transition-colors duration-200">Request Demo</a></li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Legal</h4>
+            <ul className="space-y-2.5 text-sm text-gray-500">
+              <li className="text-gray-600">Privacy Policy — Coming Soon</li>
+              <li className="text-gray-600">Terms of Service — Coming Soon</li>
+              <li className="text-gray-600">Security — SOC 2 Planned</li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-600">
-          <p>© 2026 NIL33 — A UnyKorn Company. All rights reserved.</p>
-          <p>Identity · Value · Legacy</p>
+        <div className="border-t border-white/[0.06] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-gray-600">
+            © 2026 NIL33 — A UnyKorn Company. All rights reserved.
+          </p>
+          <p className="text-xs text-gray-700">
+            Identity · Value · Legacy
+          </p>
         </div>
       </div>
     </footer>
   );
 }
 
-/* ---------- Stats Bar ---------- */
-function Stats() {
-  return (
-    <section className="py-12 px-6 border-t border-white/5">
-      <div className="max-w-4xl mx-auto grid grid-cols-3 gap-8 text-center">
-        <div>
-          <div className="text-3xl font-bold text-white">33</div>
-          <div className="text-sm text-gray-500 mt-1">Value Factors</div>
-        </div>
-        <div>
-          <div className="text-3xl font-bold text-white">50</div>
-          <div className="text-sm text-gray-500 mt-1">States Covered</div>
-        </div>
-        <div>
-          <div className="text-3xl font-bold text-white">14</div>
-          <div className="text-sm text-gray-500 mt-1">Sports</div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- Page ---------- */
+/* ──────────────────────────────────────────────────
+   PAGE
+   ────────────────────────────────────────────────── */
 export default function HomePage() {
   return (
-    <main className="bg-black text-white min-h-screen">
+    <main className="bg-[#0a0a0a] text-white min-h-screen antialiased">
       <Nav />
-
-      {/* PART 1 — What you came here for */}
       <Hero />
-      <Stats />
-      <YourValue />
-      <HowItWorks />
-      <ForParents />
-      <AthleteCTA />
-
-      {/* PART 2 — The scaled version */}
-      <ScaleDivider />
-      <ForCollectives />
-      <Pricing />
-
-      {/* Shared */}
-      <FAQ />
-      <FinalCTA />
+      <SystemStats />
+      <ValuationEngine />
+      <ComplianceEngine />
+      <DealReceipts />
+      <Architecture />
+      <WhoItsFor />
+      <CTA />
       <Footer />
     </main>
   );
