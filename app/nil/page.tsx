@@ -1,378 +1,357 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
-import { PLACEHOLDER_ATHLETES } from "@/lib/placeholder-data";
-import type { Athlete } from "@/lib/store";
-import { DNAStrandDivider } from "@/components/DNAHelix";
 import {
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Zap,
-  Shield,
-  Users,
-  Globe,
-  ArrowRight,
-  Search,
-  Filter,
-  BarChart3,
-  Sparkles,
-  Dna,
-  ChevronDown,
-  ExternalLink,
-  Star,
+  Dna, Shield, FileText, Scale, BarChart3, ArrowRight,
+  Globe, Users, DollarSign, CheckCircle2, AlertTriangle,
+  BookOpen, Briefcase, TrendingUp, Lock, Zap
 } from "lucide-react";
 
-/* ── NIL Value Calculator (simplified from component) ── */
-function calculateNILValue(a: Athlete) {
-  const perfScore = Math.round((a.metrics.velocity / 70) * 30 + (a.metrics.mechanics / 100) * 35 + (a.metrics.accuracy / 100) * 35);
-  const recruitScore = Math.min(100, Math.round(a.offers.length * 12 + (a.rating / 5) * 40));
-  const socialScore = Math.round(Math.min(100, 30 + a.offers.length * 8 + (a.verified ? 15 : 0)));
-  const bigMarkets = ["Texas", "California", "Florida", "Georgia", "Ohio"];
-  const marketScore = bigMarkets.includes(a.state) ? 85 : 60;
-  const verifiedScore = a.verified ? 95 : 30;
+/* ── State Law Sample Data ── */
+const STATE_MATRIX = [
+  { state: "Florida", code: "FL", nil: true, disclosure: true, minor: true, agent: true, institutional: false, notes: "Cannot conflict with school sponsors" },
+  { state: "Wisconsin", code: "WI", nil: true, disclosure: true, minor: true, agent: true, institutional: true, notes: "Institutional restrictions apply" },
+  { state: "Texas", code: "TX", nil: true, disclosure: true, minor: true, agent: true, institutional: false, notes: "No institutional approval required" },
+  { state: "California", code: "CA", nil: true, disclosure: true, minor: true, agent: true, institutional: false, notes: "Athlete-friendly, broad NIL rights" },
+  { state: "Alabama", code: "AL", nil: true, disclosure: true, minor: true, agent: true, institutional: true, notes: "School may restrict categories" },
+  { state: "Georgia", code: "GA", nil: true, disclosure: true, minor: true, agent: true, institutional: false, notes: "Broad protections for athletes" },
+  { state: "Ohio", code: "OH", nil: true, disclosure: true, minor: true, agent: true, institutional: true, notes: "School reporting required" },
+  { state: "Pennsylvania", code: "PA", nil: true, disclosure: true, minor: true, agent: false, institutional: false, notes: "Follows NCAA baseline" },
+];
 
-  const composite = perfScore * 0.35 + recruitScore * 0.25 + socialScore * 0.15 + marketScore * 0.15 + verifiedScore * 0.10;
-  const total = Math.round((composite * composite * 0.15) / 50) * 50;
-  const tier = total >= 50000 ? "Elite" : total >= 20000 ? "Premium" : total >= 8000 ? "Rising" : total >= 3000 ? "Emerging" : "Developing";
-  const trend = +(Math.random() * 18 - 3).toFixed(1);
+/* ── NIL Deal Flow Steps ── */
+const DEAL_FLOW = [
+  { step: "1", title: "Brand Initiates Offer", desc: "Brand identifies athlete via verified profile, metric data, and social reach. Submits structured offer through platform." },
+  { step: "2", title: "Terms Drafted", desc: "Agreement template auto-populates with brand details, compensation, deliverables, duration, and usage rights." },
+  { step: "3", title: "Guardian Approval", desc: "If athlete is under 18, guardian receives notification and must digitally consent before terms are finalized." },
+  { step: "4", title: "Deal Signed", desc: "Both parties execute the agreement. Contract versioned, timestamped, and stored in athlete's document vault." },
+  { step: "5", title: "Deliverables Completed", desc: "Athlete completes content, appearances, or promotional obligations. Status tracked in dashboard." },
+  { step: "6", title: "Revenue Logged", desc: "Payment recorded, disclosure form auto-generated, tax documentation flagged, and compliance audit trail updated." },
+];
 
-  return { total, composite, tier, trend, perfScore, recruitScore, socialScore, marketScore, verifiedScore };
-}
+/* ── Revenue Streams ── */
+const REVENUE = [
+  { stream: "Athlete Verification", price: "$149", model: "One-time", status: "Live" },
+  { stream: "Coach Analytics Access", price: "$49/mo", model: "Subscription", status: "Planned" },
+  { stream: "NIL Deal Commission", price: "10–15%", model: "Revenue Share", status: "Planned" },
+  { stream: "Brand Listing Access", price: "$99/mo", model: "Subscription", status: "Planned" },
+  { stream: "Premium Intelligence", price: "$29/mo", model: "Subscription", status: "Planned" },
+  { stream: "Contract Processing", price: "$25/deal", model: "Per Transaction", status: "Planned" },
+];
 
-/* ── Deal Types ── */
-const DEAL_CATEGORIES = [
-  { key: "all", label: "All Deals" },
-  { key: "social", label: "Social Media" },
-  { key: "appearance", label: "Appearances" },
-  { key: "merch", label: "Merchandise" },
-  { key: "camp", label: "Camps & Clinics" },
-  { key: "licensing", label: "Licensing" },
-] as const;
+/* ── Sub-sections ── */
+const SECTIONS = [
+  {
+    title: "Compliance & Governance",
+    subtitle: "State-aware NIL compliance intelligence",
+    description: "Interactive state law matrix, disclosure requirements, minor athlete protections, and institutional conflict rules. Location-aware compliance guidance.",
+    href: "/nil/compliance",
+    icon: Shield,
+    color: "from-uc-red to-orange-500",
+    accent: "text-uc-red",
+  },
+  {
+    title: "Agreement Library",
+    subtitle: "Structured NIL contract templates",
+    description: "Athlete representation agreements, brand partnership contracts, content licenses, minor guardian consent forms, and revenue disclosure templates.",
+    href: "/nil/agreements",
+    icon: FileText,
+    color: "from-uc-cyan to-blue-500",
+    accent: "text-uc-cyan",
+  },
+  {
+    title: "Education & Resources",
+    subtitle: "NIL knowledge base for athletes & families",
+    description: "How NIL works, tax implications, violation prevention, school compliance, and strategic monetization guidance for quarterbacks and their families.",
+    href: "/nil/resources",
+    icon: BookOpen,
+    color: "from-purple-500 to-pink-500",
+    accent: "text-purple-400",
+  },
+  {
+    title: "NIL Marketplace",
+    subtitle: "Athlete valuations & deal intelligence",
+    description: "Real-time NIL valuations, athlete tier rankings, simulated deal feeds, and market intelligence powered by verified performance data.",
+    href: "/nil/marketplace",
+    icon: TrendingUp,
+    color: "from-uc-green to-emerald-500",
+    accent: "text-uc-green",
+  },
+];
 
-/* ── Simulated NIL deals for athletes ── */
-function generateDeals(a: Athlete) {
-  const nil = calculateNILValue(a);
-  const dealTypes = [
-    { category: "social", title: "Instagram Partnership", brand: "NOCTA Training", value: Math.round(nil.total * 0.08), status: "active" as const },
-    { category: "appearance", title: "Youth QB Camp", brand: "Elite 11 Regional", value: Math.round(nil.total * 0.12), status: "active" as const },
-    { category: "merch", title: "Custom Gloves Collab", brand: "Cutters Sports", value: Math.round(nil.total * 0.06), status: "pending" as const },
-    { category: "camp", title: "Summer Training Camp", brand: `${a.state} QB Academy`, value: Math.round(nil.total * 0.1), status: "active" as const },
-    { category: "licensing", title: "Digital Collectible Rights", brand: "Under Center NFT", value: Math.round(nil.total * 0.15), status: "active" as const },
-    { category: "social", title: "TikTok Brand Deal", brand: "Gatorade", value: Math.round(nil.total * 0.05), status: "completed" as const },
-  ];
-  return dealTypes.filter((_, i) => {
-    // Higher-value athletes get more deals
-    if (nil.total >= 50000) return true;
-    if (nil.total >= 20000) return i < 5;
-    if (nil.total >= 8000) return i < 3;
-    return i < 2;
-  });
-}
-
-/* ── Athlete NIL Card ── */
-function NILAthleteCard({ athlete, rank, delay }: { athlete: Athlete; rank: number; delay: number }) {
-  const [expanded, setExpanded] = useState(false);
-  const nil = calculateNILValue(athlete);
-  const deals = generateDeals(athlete);
-  const activeDeals = deals.filter((d) => d.status === "active");
-  const totalDealValue = deals.reduce((s, d) => s + d.value, 0);
-
-  const tierColors: Record<string, string> = {
-    Elite: "text-yellow-400 bg-yellow-400/10",
-    Premium: "text-purple-400 bg-purple-400/10",
-    Rising: "text-uc-cyan bg-uc-cyan/10",
-    Emerging: "text-uc-green bg-uc-green/10",
-    Developing: "text-uc-gray-400 bg-white/5",
-  };
-
+function StatusBadge({ status }: { status: string }) {
+  const live = status === "Live";
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.5 }}
-      className="glass rounded-2xl overflow-hidden group"
-    >
-      <div className="p-5">
-        <div className="flex items-start gap-4">
-          {/* Rank */}
-          <div className="flex-shrink-0 w-7">
-            <span className="text-base font-black font-mono text-uc-gray-500">#{rank}</span>
-          </div>
-
-          {/* Avatar */}
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-uc-green/15 to-uc-panel flex items-center justify-center flex-shrink-0 border border-white/5">
-            <DollarSign size={18} className="text-uc-green/50" />
-          </div>
-
-          {/* Info */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-0.5">
-              <Link href={`/athlete/${athlete.id}`} className="text-sm font-bold hover:text-uc-cyan transition-colors truncate">
-                {athlete.name}
-              </Link>
-              {athlete.verified && (
-                <span className="px-1.5 py-0.5 rounded text-[7px] font-bold tracking-wider bg-uc-cyan/10 text-uc-cyan border border-uc-cyan/20">DNA</span>
-              )}
-            </div>
-            <p className="text-[10px] text-uc-gray-400">{athlete.school} • {athlete.state}</p>
-          </div>
-
-          {/* Value */}
-          <div className="flex-shrink-0 text-right">
-            <p className="text-2xl font-black font-mono text-uc-green">${nil.total.toLocaleString()}</p>
-            <div className="flex items-center gap-1 justify-end">
-              {nil.trend >= 0 ? (
-                <TrendingUp size={10} className="text-uc-green" />
-              ) : (
-                <TrendingDown size={10} className="text-uc-red" />
-              )}
-              <span className={`text-[10px] font-bold ${nil.trend >= 0 ? "text-uc-green" : "text-uc-red"}`}>
-                {nil.trend > 0 ? "+" : ""}{nil.trend}%
-              </span>
-              <span className={`ml-1 px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wider ${tierColors[nil.tier]}`}>
-                {nil.tier.toUpperCase()}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick stats bar */}
-        <div className="grid grid-cols-4 gap-3 mt-4">
-          {[
-            { label: "Active Deals", value: activeDeals.length.toString(), color: "text-uc-green" },
-            { label: "Deal Value", value: `$${(totalDealValue / 1000).toFixed(1)}K`, color: "text-uc-cyan" },
-            { label: "NIL Score", value: nil.composite.toFixed(0), color: "text-purple-400" },
-            { label: "Offers", value: athlete.offers.length.toString(), color: "text-yellow-400" },
-          ].map((s) => (
-            <div key={s.label} className="text-center">
-              <p className={`text-sm font-bold font-mono ${s.color}`}>{s.value}</p>
-              <p className="text-[8px] text-uc-gray-500 tracking-wider uppercase">{s.label}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Toggle */}
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/5">
-          <div className="flex items-center gap-2">
-            <Star size={10} className="text-yellow-400" />
-            <span className="text-[10px] text-uc-gray-400">{athlete.rating.toFixed(1)} rating</span>
-          </div>
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="flex items-center gap-1 text-[9px] text-uc-green tracking-wider uppercase font-bold hover:text-white transition-colors"
-          >
-            {expanded ? "Hide Deals" : "View Deals"}
-            <ChevronDown size={10} className={`transition-transform ${expanded ? "rotate-180" : ""}`} />
-          </button>
-        </div>
-      </div>
-
-      {/* Expanded deals */}
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="border-t border-white/5 overflow-hidden"
-          >
-            <div className="p-5 space-y-3">
-              <h4 className="text-[9px] tracking-[0.2em] uppercase text-uc-gray-400 font-bold">Active & Pending Deals</h4>
-              {deals.map((deal, i) => (
-                <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.02] border border-white/5">
-                  <div className={`w-2 h-2 rounded-full ${
-                    deal.status === "active" ? "bg-uc-green" : deal.status === "pending" ? "bg-yellow-400" : "bg-uc-gray-500"
-                  }`} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold truncate">{deal.title}</p>
-                    <p className="text-[10px] text-uc-gray-500">{deal.brand}</p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className="text-sm font-bold font-mono text-uc-green">${deal.value.toLocaleString()}</p>
-                    <p className="text-[8px] text-uc-gray-500 uppercase tracking-wider">{deal.status}</p>
-                  </div>
-                </div>
-              ))}
-              <div className="flex items-center gap-3 pt-2">
-                <Link
-                  href={`/athlete/${athlete.id}`}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-uc-green/10 text-uc-green text-[9px] font-bold tracking-wider uppercase border border-uc-green/20 hover:bg-uc-green/20 transition-all"
-                >
-                  Full Profile <ExternalLink size={9} />
-                </Link>
-                <Link
-                  href={`/card-generator?athlete=${athlete.id}`}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 text-uc-gray-400 text-[9px] font-bold tracking-wider uppercase border border-white/5 hover:bg-white/10 transition-all"
-                >
-                  Generate Card
-                </Link>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+    <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${live ? "bg-uc-green/10 text-uc-green" : "bg-yellow-400/10 text-yellow-400"}`}>
+      {status}
+    </span>
   );
 }
 
-/* ── Main NIL Marketplace Page ── */
-export default function NILMarketplacePage() {
-  const [sortBy, setSortBy] = useState<"value" | "trend" | "deals">("value");
-  const [tierFilter, setTierFilter] = useState<string>("all");
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const athletesWithNIL = useMemo(() => {
-    return PLACEHOLDER_ATHLETES.map((a) => ({
-      athlete: a,
-      nil: calculateNILValue(a),
-      deals: generateDeals(a),
-    }));
-  }, []);
-
-  const filtered = useMemo(() => {
-    let list = [...athletesWithNIL];
-
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      list = list.filter(
-        (x) =>
-          x.athlete.name.toLowerCase().includes(q) ||
-          x.athlete.school.toLowerCase().includes(q)
-      );
-    }
-    if (tierFilter !== "all") {
-      list = list.filter((x) => x.nil.tier === tierFilter);
-    }
-
-    list.sort((a, b) => {
-      switch (sortBy) {
-        case "trend": return b.nil.trend - a.nil.trend;
-        case "deals": return b.deals.length - a.deals.length;
-        default: return b.nil.total - a.nil.total;
-      }
-    });
-
-    return list;
-  }, [athletesWithNIL, sortBy, tierFilter, searchQuery]);
-
-  const totalMarketValue = athletesWithNIL.reduce((s, x) => s + x.nil.total, 0);
-  const avgValue = totalMarketValue / athletesWithNIL.length;
-  const eliteCount = athletesWithNIL.filter((x) => x.nil.tier === "Elite" || x.nil.tier === "Premium").length;
-
+export default function NilPage() {
   return (
-    <main className="min-h-screen pt-24 pb-20 px-6">
-      <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border border-uc-green/20 text-[10px] tracking-[0.3em] uppercase text-uc-green mb-4">
-            <DollarSign size={12} />
-            NIL Intelligence
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-3">
-            <span className="gradient-text-dna">NIL Marketplace</span>
-          </h1>
-          <p className="text-uc-gray-400 max-w-lg mx-auto">
-            Real-time NIL valuations powered by genome-decoded performance data.
-            Track deals, discover value, and maximize earning potential.
-          </p>
-        </motion.div>
+    <main className="min-h-screen bg-uc-black pt-24 pb-20 px-4 sm:px-6">
+      <div className="max-w-6xl mx-auto">
 
-        {/* Market Summary */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
-        >
-          {[
-            { label: "Total Market Value", value: `$${(totalMarketValue / 1000).toFixed(0)}K`, icon: DollarSign, color: "text-uc-green" },
-            { label: "Average NIL Value", value: `$${(avgValue / 1000).toFixed(1)}K`, icon: BarChart3, color: "text-uc-cyan" },
-            { label: "Elite / Premium", value: eliteCount.toString(), icon: Sparkles, color: "text-yellow-400" },
-            { label: "Active Athletes", value: athletesWithNIL.length.toString(), icon: Users, color: "text-purple-400" },
-          ].map((s) => (
-            <div key={s.label} className="glass rounded-xl p-4 flex items-center gap-3">
-              <div className={`w-9 h-9 rounded-lg ${s.color.replace("text-", "bg-")}/10 flex items-center justify-center`}>
-                <s.icon size={16} className={s.color} />
+        {/* ═══ HERO ═══ */}
+        <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-20">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border border-uc-green/20 text-[10px] tracking-[0.4em] uppercase text-uc-green mb-6">
+            <DollarSign size={12} /> NIL Infrastructure
+          </div>
+          <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6">
+            NIL Compliance &<br />
+            <span className="gradient-text-dna">Deal Infrastructure</span>
+          </h1>
+          <p className="text-lg text-uc-gray-400 max-w-2xl mx-auto mb-8">
+            Structured agreements. Location-aware compliance. Scalable athlete monetization.
+            Under Center provides the infrastructure layer — not the hype.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link href="/nil/compliance" className="px-6 py-3 rounded-xl bg-gradient-to-r from-uc-green to-emerald-500 text-black font-bold text-sm hover:shadow-lg hover:shadow-uc-green/25 transition-all">
+              View State Laws
+            </Link>
+            <Link href="/nil/agreements" className="px-6 py-3 rounded-xl glass border border-white/10 text-white font-bold text-sm hover:border-uc-cyan/30 transition-all">
+              Download Agreements
+            </Link>
+          </div>
+        </motion.section>
+
+        {/* ═══ WHAT NIL MEANS INSIDE UC ═══ */}
+        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-20">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3">What NIL Means Inside Under Center</h2>
+            <p className="text-sm text-uc-gray-400 max-w-xl mx-auto">Not a broker. Not a marketplace. A structured infrastructure layer.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { icon: FileText, title: "Standardized Templates", desc: "Contract templates built for athlete-brand deals, compliant across jurisdictions.", color: "#00C2FF" },
+              { icon: Scale, title: "Compliance Engine", desc: "State-aware rules that flag disclosure requirements, conflict restrictions, and minor protections.", color: "#00FF88" },
+              { icon: BarChart3, title: "Revenue Tracking", desc: "Deal logging, payment status, and tax documentation — all structured and auditable.", color: "#A855F7" },
+              { icon: Lock, title: "Identity Protection", desc: "Athletes own their data. No exploitation. Clear liability separation between platform and deals.", color: "#FF3B5C" },
+              { icon: Globe, title: "State Law Matrix", desc: "50-state compliance database covering NIL rules, disclosure requirements, and agent registration.", color: "#FFB800" },
+              { icon: Users, title: "Guardian Controls", desc: "Built-in minor consent workflows. No deal executes without guardian approval for athletes under 18.", color: "#00C2FF" },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.title} className="glass rounded-2xl p-5 border border-white/[0.04] hover:border-white/10 transition-all">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-3" style={{ backgroundColor: `${item.color}12` }}>
+                    <Icon size={18} style={{ color: item.color }} />
+                  </div>
+                  <h3 className="text-sm font-bold mb-1">{item.title}</h3>
+                  <p className="text-xs text-uc-gray-400 leading-relaxed">{item.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </motion.section>
+
+        {/* ═══ NAV CARDS TO SUB-PAGES ═══ */}
+        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-20">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3">NIL Infrastructure Suite</h2>
+            <p className="text-sm text-uc-gray-400">Four pillars of the compliance and monetization layer.</p>
+          </div>
+          <div className="grid gap-4">
+            {SECTIONS.map((doc, i) => {
+              const Icon = doc.icon;
+              return (
+                <motion.div key={doc.href} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
+                  <Link href={doc.href} className="block glass rounded-2xl p-6 sm:p-8 hover:border-white/10 border border-white/[0.04] transition-all group">
+                    <div className="flex items-start gap-5">
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${doc.color} flex items-center justify-center flex-shrink-0`}>
+                        <Icon size={22} className="text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-lg font-bold text-white mb-1 group-hover:text-uc-cyan transition-colors">{doc.title}</h3>
+                        <p className={`text-xs font-semibold tracking-wider uppercase mb-2 ${doc.accent}`}>{doc.subtitle}</p>
+                        <p className="text-sm text-uc-gray-400 leading-relaxed">{doc.description}</p>
+                      </div>
+                      <ArrowRight size={16} className="text-uc-gray-400 group-hover:text-uc-cyan group-hover:translate-x-1 transition-all shrink-0 mt-1" />
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.section>
+
+        {/* ═══ STATE LAW MATRIX PREVIEW ═══ */}
+        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-20">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-bold mb-1">State Law Intelligence</h2>
+              <p className="text-sm text-uc-gray-400">Preview — 8 of 50 states shown</p>
+            </div>
+            <Link href="/nil/compliance" className="text-xs text-uc-cyan hover:underline flex items-center gap-1">
+              View all states <ArrowRight size={12} />
+            </Link>
+          </div>
+          <div className="glass rounded-2xl overflow-hidden border border-white/[0.04]">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/5">
+                    <th className="text-left px-4 py-3 text-[10px] text-uc-gray-400 uppercase tracking-wider">State</th>
+                    <th className="text-center px-3 py-3 text-[10px] text-uc-gray-400 uppercase tracking-wider">NIL</th>
+                    <th className="text-center px-3 py-3 text-[10px] text-uc-gray-400 uppercase tracking-wider">Disclosure</th>
+                    <th className="text-center px-3 py-3 text-[10px] text-uc-gray-400 uppercase tracking-wider">Minor</th>
+                    <th className="text-center px-3 py-3 text-[10px] text-uc-gray-400 uppercase tracking-wider">Agent Reg.</th>
+                    <th className="text-center px-3 py-3 text-[10px] text-uc-gray-400 uppercase tracking-wider">Institutional</th>
+                    <th className="text-left px-4 py-3 text-[10px] text-uc-gray-400 uppercase tracking-wider hidden lg:table-cell">Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {STATE_MATRIX.map((s) => (
+                    <tr key={s.code} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition">
+                      <td className="px-4 py-3 text-xs font-bold text-white">{s.state}</td>
+                      <td className="text-center px-3 py-3"><CheckCircle2 size={14} className="text-uc-green mx-auto" /></td>
+                      <td className="text-center px-3 py-3">{s.disclosure ? <CheckCircle2 size={14} className="text-uc-green mx-auto" /> : <span className="text-uc-gray-600">—</span>}</td>
+                      <td className="text-center px-3 py-3">{s.minor ? <AlertTriangle size={14} className="text-yellow-400 mx-auto" /> : <span className="text-uc-gray-600">—</span>}</td>
+                      <td className="text-center px-3 py-3">{s.agent ? <CheckCircle2 size={14} className="text-uc-cyan mx-auto" /> : <span className="text-uc-gray-600">—</span>}</td>
+                      <td className="text-center px-3 py-3">{s.institutional ? <AlertTriangle size={14} className="text-orange-400 mx-auto" /> : <span className="text-uc-gray-600">—</span>}</td>
+                      <td className="px-4 py-3 text-[11px] text-uc-gray-400 hidden lg:table-cell">{s.notes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </motion.section>
+
+        {/* ═══ DEAL FLOW ═══ */}
+        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-20">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3">NIL Deal Flow</h2>
+            <p className="text-sm text-uc-gray-400 max-w-lg mx-auto">From brand offer to revenue logged — every step is structured, compliant, and auditable.</p>
+          </div>
+          <div className="glass rounded-2xl p-6 sm:p-8 border border-white/[0.04]">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {DEAL_FLOW.map((s) => (
+                <div key={s.step} className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-uc-green/20 to-uc-panel flex items-center justify-center shrink-0 text-uc-green font-bold text-sm border border-uc-green/20">
+                    {s.step}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-white mb-1">{s.title}</h3>
+                    <p className="text-xs text-uc-gray-400 leading-relaxed">{s.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.section>
+
+        {/* ═══ REVENUE MODEL ═══ */}
+        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-20">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3">Revenue Architecture</h2>
+            <p className="text-sm text-uc-gray-400">Multiple revenue streams built into the infrastructure.</p>
+          </div>
+          <div className="glass rounded-2xl overflow-hidden border border-white/[0.04]">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-white/5">
+                  <th className="text-left px-6 py-3 text-[10px] text-uc-gray-400 uppercase tracking-wider">Stream</th>
+                  <th className="text-left px-4 py-3 text-[10px] text-uc-gray-400 uppercase tracking-wider">Price</th>
+                  <th className="text-left px-4 py-3 text-[10px] text-uc-gray-400 uppercase tracking-wider">Model</th>
+                  <th className="text-left px-4 py-3 text-[10px] text-uc-gray-400 uppercase tracking-wider">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {REVENUE.map((r) => (
+                  <tr key={r.stream} className="border-b border-white/[0.03]">
+                    <td className="px-6 py-3 text-xs font-bold text-white">{r.stream}</td>
+                    <td className="px-4 py-3 text-xs text-uc-green font-mono">{r.price}</td>
+                    <td className="px-4 py-3 text-xs text-uc-gray-300">{r.model}</td>
+                    <td className="px-4 py-3"><StatusBadge status={r.status} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </motion.section>
+
+        {/* ═══ PLATFORM ROLE ═══ */}
+        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-20">
+          <div className="glass rounded-2xl p-6 sm:p-8 border border-uc-red/10">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-uc-red/10 flex items-center justify-center shrink-0">
+                <AlertTriangle size={18} className="text-uc-red" />
               </div>
               <div>
-                <p className="text-lg font-bold font-mono">{s.value}</p>
-                <p className="text-[9px] text-uc-gray-400 tracking-wider uppercase">{s.label}</p>
+                <h3 className="text-lg font-bold mb-1">Platform Role & Legal Position</h3>
+                <p className="text-xs text-uc-gray-400">Clear liability separation between infrastructure and deals</p>
               </div>
             </div>
-          ))}
-        </motion.div>
-
-        {/* Filters */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="glass rounded-xl p-4 mb-8 flex flex-col md:flex-row items-center gap-4"
-        >
-          <div className="relative flex-1 w-full md:w-auto">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-uc-gray-500" />
-            <input
-              type="text"
-              placeholder="Search athletes..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-uc-surface border border-white/10 rounded-lg pl-9 pr-4 py-2.5 text-xs text-white placeholder:text-uc-gray-500 focus:outline-none focus:border-uc-green/50 transition-colors"
-            />
+            <div className="grid sm:grid-cols-2 gap-4 mb-6">
+              <div className="bg-uc-green/5 rounded-xl p-4 border border-uc-green/10">
+                <p className="text-[10px] text-uc-green font-bold uppercase tracking-wider mb-3">Under Center Provides</p>
+                <ul className="space-y-2">
+                  {["Standardized contract templates", "Compliance education & state law data", "Deal logging & revenue tracking", "Disclosure form generation", "Guardian consent workflows", "Audit trail documentation"].map((t) => (
+                    <li key={t} className="flex items-start gap-2 text-xs text-uc-gray-300">
+                      <CheckCircle2 size={12} className="text-uc-green mt-0.5 shrink-0" /> {t}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-uc-red/5 rounded-xl p-4 border border-uc-red/10">
+                <p className="text-[10px] text-uc-red font-bold uppercase tracking-wider mb-3">Under Center Does NOT</p>
+                <ul className="space-y-2">
+                  {["Guarantee NIL deals or compensation", "Broker pay-for-play arrangements", "Act as athlete agent or representative", "Control athlete earnings or payments", "Provide legal advice or counsel", "Enforce institutional compliance"].map((t) => (
+                    <li key={t} className="flex items-start gap-2 text-xs text-uc-gray-300">
+                      <AlertTriangle size={12} className="text-uc-red mt-0.5 shrink-0" /> {t}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="bg-white/[0.02] rounded-lg p-4 border border-white/[0.04]">
+              <p className="text-[11px] text-uc-gray-400 leading-relaxed">
+                <strong className="text-white">Legal Disclaimer:</strong> This platform provides structured templates, educational resources, and compliance tooling. It does not constitute legal advice. Athletes are responsible for compliance with their institution and applicable state law. Under Center recommends consulting with a qualified attorney for specific legal questions regarding NIL agreements.
+              </p>
+            </div>
           </div>
+        </motion.section>
 
-          <div className="relative">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="bg-uc-surface border border-white/10 rounded-lg px-4 pr-8 py-2.5 text-xs text-white appearance-none focus:outline-none focus:border-uc-green/50"
-            >
-              <option value="value">Sort by Value</option>
-              <option value="trend">Sort by Trend</option>
-              <option value="deals">Sort by Deals</option>
-            </select>
-            <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-uc-gray-400 pointer-events-none" />
+        {/* ═══ SCALING PATH ═══ */}
+        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-20">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3">Infrastructure Roadmap</h2>
+            <p className="text-sm text-uc-gray-400">Controlled evolution from education to execution.</p>
           </div>
-
-          <div className="relative">
-            <select
-              value={tierFilter}
-              onChange={(e) => setTierFilter(e.target.value)}
-              className="bg-uc-surface border border-white/10 rounded-lg px-4 pr-8 py-2.5 text-xs text-white appearance-none focus:outline-none focus:border-uc-green/50"
-            >
-              <option value="all">All Tiers</option>
-              <option value="Elite">Elite</option>
-              <option value="Premium">Premium</option>
-              <option value="Rising">Rising</option>
-              <option value="Emerging">Emerging</option>
-            </select>
-            <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-uc-gray-400 pointer-events-none" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { phase: "Phase 1", title: "Documentation", items: ["Agreement library", "Compliance guide", "State law matrix", "Education hub"], status: "Live", color: "#00FF88" },
+              { phase: "Phase 2", title: "Deal Management", items: ["Contract processing", "Digital signatures", "Document vault", "Revenue logging"], status: "Building", color: "#00C2FF" },
+              { phase: "Phase 3", title: "Intelligence", items: ["Market trends", "Valuation engine", "Scraping feeds", "Coach analytics"], status: "Planned", color: "#A855F7" },
+              { phase: "Phase 4", title: "Marketplace", items: ["Brand matching", "Open listings", "Smart payouts", "On-chain receipts"], status: "Future", color: "#FFB800" },
+            ].map((p) => (
+              <div key={p.phase} className="glass rounded-2xl p-5 border border-white/[0.04]">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: p.color }}>{p.phase}</span>
+                  <span className="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider" style={{ backgroundColor: `${p.color}15`, color: p.color }}>{p.status}</span>
+                </div>
+                <h3 className="text-sm font-bold mb-3">{p.title}</h3>
+                <ul className="space-y-1.5">
+                  {p.items.map((item) => (
+                    <li key={item} className="flex items-center gap-2 text-[11px] text-uc-gray-400">
+                      <Zap size={8} style={{ color: p.color }} /> {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
-        </motion.div>
+        </motion.section>
 
-        {/* Athlete NIL Cards */}
-        <div className="space-y-4 mb-12">
-          {filtered.map((x, i) => (
-            <NILAthleteCard key={x.athlete.id} athlete={x.athlete} rank={i + 1} delay={0.05 * i} />
-          ))}
-        </div>
-
-        <DNAStrandDivider className="mb-8 opacity-30" />
-
-        {/* CTA */}
-        <div className="text-center">
-          <p className="text-uc-gray-400 text-sm mb-4">
-            Unlock full NIL intelligence with a decoded profile.
-          </p>
-          <Link
-            href="/pricing"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-uc-green text-uc-black font-bold text-sm tracking-wider uppercase hover:shadow-[0_0_30px_rgba(0,255,136,0.4)] transition-all"
-          >
-            Unlock NIL Intelligence
-            <ArrowRight size={16} />
-          </Link>
+        {/* ═══ FOOTER ═══ */}
+        <div className="text-center border-t border-white/5 pt-8">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Dna size={14} className="text-uc-cyan" />
+            <span className="text-xs font-bold tracking-[0.15em] uppercase gradient-text-dna">Under Center</span>
+          </div>
+          <p className="text-[10px] text-uc-gray-600">NIL Infrastructure & Compliance Center · March 2026</p>
         </div>
       </div>
     </main>

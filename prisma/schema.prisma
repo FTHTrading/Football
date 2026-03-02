@@ -255,6 +255,88 @@ model NilDeal {
   @@map("nil_deals")
 }
 
+// ─── State Law Matrix ──────────────────────────────────
+
+model StateLaw {
+  id                        String   @id @default(cuid())
+  stateCode                 String   @unique // e.g. "FL", "TX", "CA"
+  stateName                 String
+  nilAllowed                Boolean  @default(true)
+  disclosureRequired        Boolean  @default(true)
+  minorRestrictions         Boolean  @default(true)
+  agentRegistrationRequired Boolean  @default(false)
+  institutionalRestrictions Boolean  @default(false)
+  reportingWindowDays       Int?     // null = not specified
+  notes                     String?  @db.Text
+  effectiveDate             DateTime?
+  updatedAt                 DateTime @updatedAt
+
+  institutionRules InstitutionRule[]
+  complianceRecords ComplianceRecord[]
+
+  @@map("state_laws")
+}
+
+model InstitutionRule {
+  id                 String  @id @default(cuid())
+  schoolName         String
+  stateCode          String
+  customRestrictions String? @db.Text
+  sponsorConflicts   String? @db.Text // JSON array of restricted brands/categories
+  approvalRequired   Boolean @default(true)
+  reviewWindowDays   Int     @default(5)
+  contactEmail       String?
+  updatedAt          DateTime @updatedAt
+
+  stateLaw StateLaw @relation(fields: [stateCode], references: [stateCode], onDelete: Cascade)
+
+  @@unique([schoolName, stateCode])
+  @@map("institution_rules")
+}
+
+// ─── Compliance Records ────────────────────────────────
+
+model ComplianceRecord {
+  id                  String   @id @default(cuid())
+  athleteId           String
+  stateCode           String
+  dealId              String?  // optional link to NilDeal
+  documentsUploaded   Boolean  @default(false)
+  disclosureConfirmed Boolean  @default(false)
+  guardianConsent     Boolean  @default(false) // required if minor
+  institutionApproved Boolean? // null = pending, true = approved, false = rejected
+  conflictCheckPassed Boolean  @default(false)
+  filedAt             DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  stateLaw StateLaw @relation(fields: [stateCode], references: [stateCode], onDelete: Cascade)
+
+  @@index([athleteId])
+  @@index([stateCode])
+  @@map("compliance_records")
+}
+
+// ─── Contract Versioning ───────────────────────────────
+
+model ContractVersion {
+  id            String   @id @default(cuid())
+  nilDealId     String
+  versionNumber Int      @default(1)
+  documentUrl   String?  // stored PDF/signed document
+  templateType  String   // representation, brand-partnership, content-license, guardian-consent, revenue-disclosure
+  status        String   @default("draft") // draft, review, signed, expired, terminated
+  signedByAthlete   Boolean @default(false)
+  signedByBrand     Boolean @default(false)
+  signedByGuardian  Boolean? // null if not minor
+  signedAt      DateTime?
+  expiresAt     DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([nilDealId])
+  @@map("contract_versions")
+}
+
 // ─── Analytics ─────────────────────────────────────────
 
 model ProfileView {
