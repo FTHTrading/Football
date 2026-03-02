@@ -7,6 +7,7 @@ import { Menu, X, Dna } from "lucide-react";
 
 const navLinks = [
   { href: "/system", label: "System" },
+  { href: "/iq", label: "IQ Lab" },
   { href: "/training", label: "Development" },
   { href: "/team", label: "Team" },
   { href: "/search", label: "Prospects" },

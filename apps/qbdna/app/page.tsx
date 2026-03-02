@@ -21,6 +21,10 @@ import {
   Crosshair,
   Shield,
   UserCheck,
+  Brain,
+  Ruler,
+  Scan,
+  Calculator,
 } from "lucide-react";
 
 /* ═══════════════════════════════════════════
@@ -520,6 +524,109 @@ export default function HomePage() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </RevealSection>
+
+      {/* ═══ SECTION 3.5 — IQ LAB CALLOUT ═══ */}
+      <RevealSection className="py-32 px-6 relative overflow-hidden">
+        {/* Background glow */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-uc-cyan/[0.03] rounded-full blur-[120px]" />
+          <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] bg-purple-500/[0.03] rounded-full blur-[80px]" />
+        </div>
+
+        <div className="max-w-6xl mx-auto relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="text-center mb-16"
+          >
+            <p className="text-[10px] tracking-[0.5em] uppercase text-purple-400 mb-4 font-bold">
+              Cognitive Training
+            </p>
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-4">
+              <span className="gradient-text-dna">IQ Lab</span>
+            </h2>
+            <p className="text-lg md:text-xl text-uc-gray-400 max-w-2xl mx-auto font-light">
+              Train the mind that throws the ball. Timed drills across coverages,
+              fronts, and field intelligence — scored like a combine.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.15 }}
+          >
+            <Link
+              href="/iq"
+              className="group block glass-heavy rounded-2xl border border-white/[0.06] hover:border-uc-cyan/30 transition-all duration-500 overflow-hidden"
+            >
+              <div className="p-8 md:p-12">
+                {/* Module strip */}
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-10">
+                  {[
+                    { icon: Ruler, label: "Foundation", color: "#00C2FF", desc: "Field geometry & zones" },
+                    { icon: Eye, label: "H.A.L.O.", color: "#A855F7", desc: "Hardeck reads & tubes" },
+                    { icon: Shield, label: "Fronts", color: "#FACC15", desc: "Defensive front ID" },
+                    { icon: Scan, label: "Coverage", color: "#00FF88", desc: "Shell & pattern reads" },
+                    { icon: Calculator, label: "Space Count", color: "#FF6B35", desc: "Box count & voids" },
+                  ].map((mod, i) => (
+                    <motion.div
+                      key={mod.label}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.25 + i * 0.08, duration: 0.5 }}
+                      className="rounded-xl p-4 border border-white/[0.04] bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
+                    >
+                      <div
+                        className="w-9 h-9 rounded-lg flex items-center justify-center mb-3"
+                        style={{ backgroundColor: mod.color + "15" }}
+                      >
+                        <mod.icon size={16} style={{ color: mod.color }} />
+                      </div>
+                      <p className="text-xs font-bold tracking-tight">{mod.label}</p>
+                      <p className="text-[10px] text-uc-gray-500 mt-0.5">{mod.desc}</p>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Stats row */}
+                <div className="flex flex-wrap items-center justify-between gap-6 mb-8 pb-8 border-b border-white/[0.04]">
+                  {[
+                    { value: "62", label: "QUESTIONS" },
+                    { value: "5", label: "MODULES" },
+                    { value: "150", label: "MAX IQ SCORE" },
+                    { value: "S", label: "TOP GRADE" },
+                  ].map((stat) => (
+                    <div key={stat.label} className="text-center">
+                      <p className="text-2xl md:text-3xl font-black text-uc-cyan">{stat.value}</p>
+                      <p className="text-[8px] tracking-[0.3em] text-uc-gray-500 mt-1">{stat.label}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold tracking-tight">
+                      The game is won before the snap.
+                    </p>
+                    <p className="text-xs text-uc-gray-500 mt-1">
+                      Timed. Scored. Tracked. NFL-caliber cognitive training.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 text-uc-cyan font-bold text-sm group-hover:gap-3 transition-all">
+                    Enter the Lab <ArrowRight size={14} />
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </motion.div>
         </div>
       </RevealSection>
 
