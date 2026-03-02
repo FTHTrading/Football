@@ -6,12 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Dna } from "lucide-react";
 
 const navLinks = [
-  { href: "/search", label: "QBs" },
-  { href: "/nil", label: "NIL" },
-  { href: "/card-generator", label: "Card Lab" },
-  { href: "/graphics", label: "Graphics" },
-  { href: "/studio", label: "Studio" },
-  { href: "/demo", label: "Demo" },
+  { href: "/search", label: "Prospects" },
+  { href: "/profile/1", label: "Profile" },
+  { href: "/graphics", label: "Verified Card" },
 ];
 
 export default function Navigation() {
