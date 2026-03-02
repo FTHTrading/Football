@@ -89,12 +89,11 @@ function calculateNILValue(props: NILValuationProps): {
   const composite = factors.reduce((sum, f) => sum + f.value * f.weight, 0);
   const percentile = Math.round(composite);
 
-  // Scale to dollar value: roughly $1K-$150K range for HS QBs
-  const baseValue = composite * composite * 0.15;
-  const total = Math.round(baseValue / 50) * 50;
+  // Exponential scale: $1K (composite≈50) → $150K (composite≈95)
+  const total = Math.round((500 * Math.exp((composite - 30) / 12)) / 50) * 50;
 
-  // Simulate trend
-  const trend = Math.round((Math.random() * 20 - 5) * 10) / 10;
+  // Deterministic trend: higher-composite athletes have stronger upward momentum
+  const trend = parseFloat(Math.max(-5, Math.min(15, (composite - 45) * 0.25)).toFixed(1));
 
   const tier =
     total >= 50000

@@ -35,9 +35,11 @@ function calculateNILValue(a: Athlete) {
   const verifiedScore = a.verified ? 95 : 30;
 
   const composite = perfScore * 0.35 + recruitScore * 0.25 + socialScore * 0.15 + marketScore * 0.15 + verifiedScore * 0.10;
-  const total = Math.round((composite * composite * 0.15) / 50) * 50;
+  // Exponential scale: $1K (composite≈50) → $150K (composite≈95)
+  const total = Math.round((500 * Math.exp((composite - 30) / 12)) / 50) * 50;
   const tier = total >= 50000 ? "Elite" : total >= 20000 ? "Premium" : total >= 8000 ? "Rising" : total >= 3000 ? "Emerging" : "Developing";
-  const trend = +(Math.random() * 18 - 3).toFixed(1);
+  // Deterministic trend: higher-composite athletes have stronger upward momentum
+  const trend = parseFloat(Math.max(-5, Math.min(15, (composite - 45) * 0.25)).toFixed(1));
 
   return { total, composite, tier, trend, perfScore, recruitScore, socialScore, marketScore, verifiedScore };
 }

@@ -7,7 +7,7 @@ import { PLACEHOLDER_ATHLETES } from "@/lib/placeholder-data";
 import type { Athlete } from "@/lib/store";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import { DNAStrandDivider } from "@/components/DNAHelix";
-import { calculateQBIndex, type QBIndexInput } from "@/lib/qb-index";
+import { calculateQBIndex, metricsToQBIndexInput } from "@/lib/qb-index";
 import { computeGAI } from "@/lib/genome-activation-index";
 import {
   Dna,
@@ -32,25 +32,11 @@ import {
   GraduationCap,
 } from "lucide-react";
 
-/* ── Metrics adapter ── */
-function metricsToIndexInput(m: { velocity: number; releaseTime: number; accuracy: number; mechanics: number; decisionSpeed: number }): QBIndexInput {
-  return {
-    velocity: m.velocity,
-    releaseTime: m.releaseTime,
-    accuracy: m.accuracy,
-    mechanics: m.mechanics,
-    footwork: m.mechanics * 0.9,
-    poise: m.decisionSpeed,
-    fieldVision: m.decisionSpeed * 0.95,
-    clutchFactor: (m.accuracy + m.decisionSpeed) / 2,
-  };
-}
-
 /* ── Athlete scout card ── */
 function ScoutCard({ athlete, rank, delay }: { athlete: Athlete; rank: number; delay: number }) {
   const [expanded, setExpanded] = useState(false);
   const gaiResult = computeGAI(athlete.metrics);
-  const qbIndex = calculateQBIndex(metricsToIndexInput(athlete.metrics));
+  const qbIndex = calculateQBIndex(metricsToQBIndexInput(athlete.metrics));
   const tier = { label: gaiResult.tier.toUpperCase(), color: gaiResult.tierColor, bg: `${gaiResult.tierColor}15` };
 
   const geneTraits = [
@@ -242,7 +228,7 @@ export default function ScoutPage() {
         case "velocity": return b.metrics.velocity - a.metrics.velocity;
         case "accuracy": return b.metrics.accuracy - a.metrics.accuracy;
         case "offers": return b.offers.length - a.offers.length;
-        default: return calculateQBIndex(metricsToIndexInput(b.metrics)) - calculateQBIndex(metricsToIndexInput(a.metrics));
+        default: return calculateQBIndex(metricsToQBIndexInput(b.metrics)) - calculateQBIndex(metricsToQBIndexInput(a.metrics));
       }
     });
 
@@ -341,7 +327,7 @@ export default function ScoutPage() {
           {[
             { label: "Total QBs", value: filteredAthletes.length.toString(), icon: Users, color: "text-uc-cyan" },
             { label: "Verified", value: filteredAthletes.filter((a) => a.verified).length.toString(), icon: Shield, color: "text-uc-green" },
-            { label: "Avg. QB Index", value: (filteredAthletes.reduce((s, a) => s + calculateQBIndex(metricsToIndexInput(a.metrics)), 0) / (filteredAthletes.length || 1)).toFixed(1), icon: BarChart3, color: "text-purple-400" },
+            { label: "Avg. QB Index", value: (filteredAthletes.reduce((s, a) => s + calculateQBIndex(metricsToQBIndexInput(a.metrics)), 0) / (filteredAthletes.length || 1)).toFixed(1), icon: BarChart3, color: "text-purple-400" },
             { label: "Top Velocity", value: Math.max(...filteredAthletes.map((a) => a.metrics.velocity)).toFixed(1) + " mph", icon: Zap, color: "text-yellow-400" },
           ].map((s) => (
             <div key={s.label} className="glass rounded-xl p-4 flex items-center gap-3">

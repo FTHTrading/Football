@@ -8,6 +8,11 @@ export interface AthleteMetrics {
   mechanics: number;
   accuracy: number;
   decisionSpeed: number;
+  // QB Index inputs — tracked separately from the 6 genome genes
+  footwork: number;     // 0–100 percentile
+  poise: number;        // 0–100 percentile
+  fieldVision: number;  // 0–100 percentile
+  clutchFactor: number; // 0–100 percentile
 }
 
 export interface Athlete {

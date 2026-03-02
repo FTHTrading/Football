@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { PLACEHOLDER_ATHLETES } from "@/lib/placeholder-data";
-import { calculateQBIndex, getQBIndexTier, type QBIndexInput } from "@/lib/qb-index";
+import { calculateQBIndex, getQBIndexTier, metricsToQBIndexInput } from "@/lib/qb-index";
 import { computeGAI } from "@/lib/genome-activation-index";
 import { formatVelocity } from "@/lib/utils";
 import {
@@ -17,32 +17,13 @@ import {
   Flame,
 } from "lucide-react";
 
-function metricsToIndexInput(m: {
-  velocity: number;
-  releaseTime: number;
-  accuracy: number;
-  mechanics: number;
-  decisionSpeed: number;
-}): QBIndexInput {
-  return {
-    velocity: m.velocity,
-    releaseTime: m.releaseTime,
-    accuracy: m.accuracy,
-    mechanics: m.mechanics,
-    footwork: m.mechanics * 0.9, // derived estimate
-    poise: m.decisionSpeed,
-    fieldVision: m.decisionSpeed * 0.95,
-    clutchFactor: (m.accuracy + m.decisionSpeed) / 2,
-  };
-}
-
 export default function LeaderboardPage() {
   const ranked = useMemo(() => {
     const withIndex = PLACEHOLDER_ATHLETES.map((a) => {
       const gaiResult = computeGAI(a.metrics);
       return {
         ...a,
-        qbIndex: calculateQBIndex(metricsToIndexInput(a.metrics)),
+        qbIndex: calculateQBIndex(metricsToQBIndexInput(a.metrics)),
         gai: gaiResult.gai,
         gaiTier: gaiResult.tier,
         gaiTierColor: gaiResult.tierColor,
