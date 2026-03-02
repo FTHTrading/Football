@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 import { PostHogProvider } from "@/components/PostHogProvider";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
@@ -36,6 +37,7 @@ export default function RootLayout({
           <ErrorBoundary>
             <Navigation />
             {children}
+            <Footer />
           </ErrorBoundary>
         </PostHogProvider>
       </body>

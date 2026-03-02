@@ -112,10 +112,22 @@ export default function NilPage() {
               View State Laws
             </Link>
             <Link href="/nil/agreements" className="px-6 py-3 rounded-xl glass border border-white/10 text-white font-bold text-sm hover:border-uc-cyan/30 transition-all">
-              Download Agreements
+              View Agreement Structures
             </Link>
           </div>
         </motion.section>
+
+        {/* ═══ PLATFORM ROLE NOTICE ═══ */}
+        <div className="glass rounded-xl p-4 border border-uc-cyan/10 mb-20 flex items-start gap-3">
+          <Shield size={16} className="text-uc-cyan shrink-0 mt-0.5" />
+          <div className="text-[11px] text-uc-gray-400 leading-relaxed">
+            <strong className="text-uc-cyan">Platform Role:</strong>{" "}
+            Under Center is a technology platform that provides educational resources, workflow tools, and data infrastructure.
+            We are not a law firm, brokerage, athlete agency, or compliance authority. All content is designed to assist — not replace — independent professional counsel.
+            See our <Link href="/legal/disclaimer" className="text-uc-cyan underline underline-offset-2">Disclaimer</Link>{" "}
+            and <Link href="/legal/terms" className="text-uc-cyan underline underline-offset-2">Terms of Service</Link>.
+          </div>
+        </div>
 
         {/* ═══ WHAT NIL MEANS INSIDE UC ═══ */}
         <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-20">
@@ -288,7 +300,7 @@ export default function NilPage() {
               <div className="bg-uc-green/5 rounded-xl p-4 border border-uc-green/10">
                 <p className="text-[10px] text-uc-green font-bold uppercase tracking-wider mb-3">Under Center Provides</p>
                 <ul className="space-y-2">
-                  {["Standardized contract templates", "Compliance education & state law data", "Deal logging & revenue tracking", "Disclosure form generation", "Guardian consent workflows", "Audit trail documentation"].map((t) => (
+                  {["Draft agreement structures for reference", "Compliance education & state law data", "Deal logging & revenue tracking", "Disclosure form generation", "Guardian consent workflows", "Audit trail documentation"].map((t) => (
                     <li key={t} className="flex items-start gap-2 text-xs text-uc-gray-300">
                       <CheckCircle2 size={12} className="text-uc-green mt-0.5 shrink-0" /> {t}
                     </li>
@@ -308,7 +320,13 @@ export default function NilPage() {
             </div>
             <div className="bg-white/[0.02] rounded-lg p-4 border border-white/[0.04]">
               <p className="text-[11px] text-uc-gray-400 leading-relaxed">
-                <strong className="text-white">Legal Disclaimer:</strong> This platform provides structured templates, educational resources, and compliance tooling. It does not constitute legal advice. Athletes are responsible for compliance with their institution and applicable state law. Under Center recommends consulting with a qualified attorney for specific legal questions regarding NIL agreements.
+                <strong className="text-white">Legal Disclaimer:</strong> This platform provides educational resources, draft agreement structures, and compliance tooling. It does not constitute legal advice. 
+                Under Center is not a law firm, athlete agency, or compliance authority. Athletes are responsible for compliance with their institution and applicable state law. 
+                Under Center recommends consulting with a qualified attorney for specific legal questions regarding NIL agreements. 
+                See our{" "}
+                <Link href="/legal/disclaimer" className="text-uc-cyan underline underline-offset-2">Disclaimer</Link>,{" "}
+                <Link href="/legal/terms" className="text-uc-cyan underline underline-offset-2">Terms of Service</Link>, and{" "}
+                <Link href="/legal/privacy" className="text-uc-cyan underline underline-offset-2">Privacy Policy</Link>.
               </p>
             </div>
           </div>
@@ -345,13 +363,30 @@ export default function NilPage() {
           </div>
         </motion.section>
 
+        {/* ═══ BOTTOM PLATFORM ROLE NOTICE ═══ */}
+        <div className="glass rounded-xl p-4 border border-white/[0.06] mb-12 flex items-start gap-3">
+          <AlertTriangle size={14} className="text-yellow-400 shrink-0 mt-0.5" />
+          <p className="text-[11px] text-uc-gray-500 leading-relaxed">
+            This platform provides educational resources and workflow tools only. Under Center is not a law firm, athlete agency, or compliance authority.
+            All NIL content is for informational purposes and does not constitute legal, tax, or financial advice.
+            Users are responsible for engaging qualified professionals for their specific needs.
+          </p>
+        </div>
+
         {/* ═══ FOOTER ═══ */}
         <div className="text-center border-t border-white/5 pt-8">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Dna size={14} className="text-uc-cyan" />
             <span className="text-xs font-bold tracking-[0.15em] uppercase gradient-text-dna">Under Center</span>
           </div>
-          <p className="text-[10px] text-uc-gray-600">NIL Infrastructure & Compliance Center · March 2026</p>
+          <p className="text-[10px] text-uc-gray-600">NIL Infrastructure & Compliance Center</p>
+          <div className="flex items-center justify-center gap-3 mt-3">
+            <Link href="/legal/terms" className="text-[9px] text-uc-gray-600 hover:text-uc-cyan transition">Terms</Link>
+            <span className="text-uc-gray-700">·</span>
+            <Link href="/legal/privacy" className="text-[9px] text-uc-gray-600 hover:text-uc-cyan transition">Privacy</Link>
+            <span className="text-uc-gray-700">·</span>
+            <Link href="/legal/disclaimer" className="text-[9px] text-uc-gray-600 hover:text-uc-cyan transition">Disclaimer</Link>
+          </div>
         </div>
       </div>
     </main>

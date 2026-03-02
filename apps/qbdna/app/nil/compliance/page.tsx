@@ -170,11 +170,23 @@ export default function CompliancePage() {
         </motion.div>
 
         {/* Disclaimer */}
-        <div className="glass rounded-xl p-4 border border-yellow-400/10 mb-12 flex items-start gap-3">
+        <div className="glass rounded-xl p-4 border border-yellow-400/10 mb-6 flex items-start gap-3">
           <Info size={16} className="text-yellow-400 shrink-0 mt-0.5" />
           <p className="text-[11px] text-uc-gray-400 leading-relaxed">
-            <strong className="text-yellow-400">Important:</strong> This matrix is an educational reference compiled from publicly available state legislation and NCAA guidelines. Laws change frequently. Athletes should consult with a qualified attorney and their institution's compliance office before entering NIL agreements. Under Center does not provide legal advice.
+            <strong className="text-yellow-400">Important:</strong> This matrix is an educational reference compiled from publicly available state legislation and NCAA guidelines. Laws change frequently. Athletes should consult with a qualified attorney and their institution&apos;s compliance office before entering NIL agreements. Under Center does not provide legal advice.
           </p>
+        </div>
+
+        {/* Platform Role Notice */}
+        <div className="glass rounded-xl p-4 border border-uc-cyan/10 mb-12 flex items-start gap-3">
+          <Shield size={16} className="text-uc-cyan shrink-0 mt-0.5" />
+          <div className="text-[11px] text-uc-gray-400 leading-relaxed">
+            <strong className="text-uc-cyan">Platform Role:</strong>{" "}
+            Under Center is a technology platform providing educational resources and workflow tools. We are not a law firm, athlete agency, or compliance authority.
+            All state law data is for informational purposes only and does not constitute legal advice.
+            See our <Link href="/legal/disclaimer" className="text-uc-cyan underline underline-offset-2">Disclaimer</Link>{" "}
+            and <Link href="/legal/terms" className="text-uc-cyan underline underline-offset-2">Terms of Service</Link>.
+          </div>
         </div>
 
         {/* Search + Filter */}
@@ -332,6 +344,12 @@ export default function CompliancePage() {
               </ul>
             </div>
           </div>
+          <p className="text-[11px] text-uc-gray-500 mt-4 leading-relaxed">
+            Under Center is not a law firm, athlete agency, or compliance authority. All content on this page is for informational and educational purposes only.
+            See our <Link href="/legal/disclaimer" className="text-uc-cyan underline underline-offset-2">Disclaimer</Link>,{" "}
+            <Link href="/legal/terms" className="text-uc-cyan underline underline-offset-2">Terms of Service</Link>, and{" "}
+            <Link href="/legal/privacy" className="text-uc-cyan underline underline-offset-2">Privacy Policy</Link>.
+          </p>
         </div>
 
         {/* Footer */}
@@ -340,8 +358,15 @@ export default function CompliancePage() {
             <Dna size={14} className="text-uc-cyan" />
             <span className="text-xs font-bold tracking-[0.15em] uppercase gradient-text-dna">Under Center</span>
           </div>
-          <p className="text-[10px] text-uc-gray-600">NIL Compliance & State Law Intelligence · Updated March 2026</p>
+          <p className="text-[10px] text-uc-gray-600">NIL Compliance & State Law Intelligence</p>
           <p className="text-[10px] text-uc-gray-600">Educational reference only — not legal advice</p>
+          <div className="flex items-center justify-center gap-3 mt-3">
+            <Link href="/legal/terms" className="text-[9px] text-uc-gray-600 hover:text-uc-cyan transition">Terms</Link>
+            <span className="text-uc-gray-700">·</span>
+            <Link href="/legal/privacy" className="text-[9px] text-uc-gray-600 hover:text-uc-cyan transition">Privacy</Link>
+            <span className="text-uc-gray-700">·</span>
+            <Link href="/legal/disclaimer" className="text-[9px] text-uc-gray-600 hover:text-uc-cyan transition">Disclaimer</Link>
+          </div>
         </div>
       </div>
     </main>
