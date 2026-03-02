@@ -1,0 +1,232 @@
+# Under Center — The Verified Quarterback Index
+
+> "We're not building a site. We're building a QB identity engine that feels like Unreal Engine met Webflow and had a first-round draft pick."
+
+A cinematic, data-driven platform for high school quarterbacks to get verified, build their identity, and connect with college programs — making On3 look like a fax machine.
+
+---
+
+## Stack
+
+| Layer | Tech |
+|---|---|
+| Framework | Next.js 14 (App Router) + TypeScript |
+| Styling | Tailwind CSS 4 + custom design tokens |
+| 3D | Three.js via @react-three/fiber + drei |
+| Animation | Framer Motion + GSAP |
+| Charts | Recharts (radial gauges, percentile bars) |
+| State | Zustand |
+| Auth | NextAuth.js (credentials provider) |
+| Database | Prisma + PostgreSQL |
+| Payments | Stripe (checkout + webhooks) |
+| Card Export | html-to-image + qrcode.react |
+| AI (Future) | Stubs ready for OpenAI / Stability / Replicate |
+
+---
+
+## Getting Started
+
+### 1. Clone & Install
+
+```bash
+git clone https://github.com/your-org/under-center.git
+cd under-center
+npm install
+```
+
+### 2. Environment Variables
+
+```bash
+cp .env.example .env.local
+```
+
+Fill in your `DATABASE_URL`, `NEXTAUTH_SECRET`, and Stripe keys in `.env.local`.
+
+### 3. Database Setup
+
+```bash
+npx prisma migrate dev --name init
+npx prisma generate
+```
+
+### 4. Run Development Server
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+---
+
+## Project Structure
+
+```
+under-center/
+├── app/
+│   ├── page.tsx                    # Cinematic homepage — "Enter the Tunnel"
+│   ├── layout.tsx                  # Root layout + Navigation
+│   ├── globals.css                 # Design system tokens
+│   ├── athlete/[id]/page.tsx       # Athlete command center profile
+│   ├── card-generator/page.tsx     # Shareable verified card builder
+│   ├── search/page.tsx             # Coach discovery / filter engine
+│   ├── dashboard/
+│   │   ├── page.tsx                # Athlete dashboard
+│   │   └── nil/page.tsx            # NIL marketplace module
+│   ├── admin/page.tsx              # Admin verification control panel
+│   └── api/
+│       ├── auth/[...nextauth]/route.ts  # NextAuth credentials
+│       ├── checkout/route.ts            # Stripe checkout session
+│       └── webhook/route.ts             # Stripe webhook handler
+├── components/
+│   ├── Navigation.tsx              # Fixed glass nav + mobile menu
+│   ├── HeroTunnel.tsx              # 3D stadium tunnel (Three.js)
+│   ├── MetricCard.tsx              # Animated stat counters
+│   ├── RadialGauge.tsx             # Circular percentile gauge
+│   ├── PercentileBar.tsx           # Horizontal fill bar
+│   ├── VerifiedBadge.tsx           # Pulsing verified shield
+│   ├── StarRating.tsx              # 5-star animated display
+│   ├── RecruitingTimeline.tsx      # Vertical offer/visit timeline
+│   ├── ComparisonPanel.tsx         # Athlete vs NFL pro split-screen
+│   ├── VideoOverlayPlayer.tsx      # Film player with HUD overlay
+│   └── CardCanvas.tsx              # Card renderer + PNG export
+├── lib/
+│   ├── utils.ts                    # cn(), formatters, grading fns
+│   ├── animations.ts               # Reusable Framer Motion variants
+│   ├── store.ts                    # Zustand global state
+│   ├── prisma.ts                   # Prisma client singleton
+│   ├── placeholder-data.ts         # 6 demo athletes with full metrics
+│   └── ai/
+│       ├── index.ts                # AI service re-exports
+│       ├── video.ts                # Video enhancement stubs
+│       └── image.ts                # Image stylization stubs
+└── prisma/
+    └── schema.prisma               # Full data model (14 tables)
+```
+
+---
+
+## Design System
+
+| Token | Value | Usage |
+|---|---|---|
+| `uc-black` | `#0A0A0A` | Page background |
+| `uc-panel` | `#111111` | Cards, panels |
+| `uc-cyan` | `#00C2FF` | Primary accent, CTA glow |
+| `uc-silver` | `#C0C0C0` | Secondary text, badges |
+| `uc-green` | `#00FF88` | Positive metrics |
+| `uc-red` | `#FF3B5C` | Alerts, revoke actions |
+
+**Typography:** Inter (body) + JetBrains Mono (metrics/data)
+
+**Effects:** `.glass` (frosted panels), `.glow` (cyan shadow), `.gradient-text` (cyan→blue), `.light-sweep` (holographic sweep)
+
+---
+
+## Pages
+
+| Route | Description |
+|---|---|
+| `/` | Cinematic homepage with 3D tunnel, problem statement, features, stats bar |
+| `/athlete/[id]` | Full profile — metrics, film, recruiting timeline, NFL comparison, share CTA |
+| `/card-generator` | Build & download shareable verified QB cards (dark/holographic themes) |
+| `/search` | Coach-facing filter engine — search by name, grad year, velocity, verified status |
+| `/dashboard` | Athlete home — profile completion, verification payment CTA, action cards |
+| `/dashboard/nil` | NIL marketplace preview — brand interest, collectibles, analytics, valuation |
+| `/admin` | Verification control — approve/revoke athletes, view metrics, manage status |
+
+---
+
+## Demo Credentials
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@undercenter.com` | `admin123` |
+| Athlete | `jaxon@undercenter.com` | `demo123` |
+
+---
+
+## Stripe Integration
+
+The "Get Verified" flow charges **$149** via Stripe Checkout.
+
+- `POST /api/checkout` — Creates a checkout session
+- `POST /api/webhook` — Handles `checkout.session.completed` → marks athlete as PENDING verification
+
+For local testing:
+```bash
+stripe listen --forward-to localhost:3000/api/webhook
+```
+
+---
+
+## Roadmap
+
+- [x] Phase 1 — Cinematic front-end + verified identity system
+- [x] Phase 1.5 — Security hardening (rate limiting, middleware, validation, logging, analytics)
+- [ ] Phase 2 — Full auth flow, Prisma migrations, admin CRUD
+- [ ] Phase 3 — AI video enhancement + image stylization
+- [ ] Phase 4 — NIL marketplace (brand matching, deal tracking)
+- [ ] Phase 5 — Web3 collectible cards + on-chain verification
+- [ ] Phase 6 — Mobile app (React Native / Expo)
+
+---
+
+## Production Deployment (Vercel)
+
+### 1. Push to GitHub
+```bash
+git add .
+git commit -m "production hardening: rate limiting, middleware, analytics, logging"
+git push origin main
+```
+
+### 2. Deploy on Vercel
+1. Go to [vercel.com](https://vercel.com) → Import Git Repository
+2. Select `under-center`
+3. Framework preset: **Next.js** (auto-detected)
+4. Set environment variables (see `.env.example`)
+5. Deploy
+
+### 3. Required Environment Variables (Vercel Dashboard)
+```
+NEXTAUTH_SECRET=<generate with: openssl rand -base64 32>
+NEXTAUTH_URL=https://your-domain.vercel.app
+DATABASE_URL=postgresql://user:password@host:5432/undercenter
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
+NEXT_PUBLIC_BASE_URL=https://your-domain.vercel.app
+NEXT_PUBLIC_POSTHOG_KEY=phc_...
+NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
+UPSTASH_REDIS_REST_URL=https://...upstash.io
+UPSTASH_REDIS_REST_TOKEN=AX...
+```
+
+### 4. Database Migration
+```bash
+npx prisma migrate deploy
+npx prisma generate
+```
+
+### 5. Stripe Webhook Setup
+1. Go to Stripe Dashboard → Developers → Webhooks
+2. Add endpoint: `https://your-domain.vercel.app/api/webhook`
+3. Select events: `checkout.session.completed`
+4. Copy the signing secret → set as `STRIPE_WEBHOOK_SECRET`
+
+### 6. Upstash Redis Setup
+1. Go to [upstash.com](https://upstash.com) → Create Database
+2. Select region closest to Vercel deployment
+3. Copy REST URL and Token → set env vars
+
+### 7. PostHog Setup
+1. Go to [posthog.com](https://posthog.com) → Create Project
+2. Copy Project API Key → set as `NEXT_PUBLIC_POSTHOG_KEY`
+3. Set host to `https://us.i.posthog.com` (or EU: `https://eu.i.posthog.com`)
+
+---
+
+## License
+
+Proprietary — Under Center LLC. All rights reserved.

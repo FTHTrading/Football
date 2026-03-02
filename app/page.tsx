@@ -7,24 +7,19 @@ import Link from "next/link";
 import MetricCard from "@/components/MetricCard";
 import { PLACEHOLDER_ATHLETES } from "@/lib/placeholder-data";
 import VerifiedBadge from "@/components/VerifiedBadge";
-import DNAHelix, { DNAStrandDivider } from "@/components/DNAHelix";
-import { computeGAI } from "@/lib/genome-activation-index";
+import RadialGauge from "@/components/RadialGauge";
+import StarRating from "@/components/StarRating";
 import {
   ChevronRight,
   Target,
   Eye,
-  Activity,
   Shield,
-  Zap,
-  BarChart3,
   Play,
-  Flame,
-  Crown,
-  Sparkles,
-  DollarSign,
-  TrendingUp,
   ArrowRight,
   Dna,
+  Film,
+  Share2,
+  CheckCircle2,
 } from "lucide-react";
 
 const HeroTunnel = dynamic(() => import("@/components/HeroTunnel"), {
@@ -32,7 +27,7 @@ const HeroTunnel = dynamic(() => import("@/components/HeroTunnel"), {
   loading: () => <div className="absolute inset-0 -z-10 bg-uc-black" />,
 });
 
-/* ── Scroll Section Wrapper ── */
+/* ── Scroll-reveal wrapper ── */
 function RevealSection({
   children,
   className = "",
@@ -56,7 +51,7 @@ function RevealSection({
   );
 }
 
-/* ── Stat Counter ──────────── */
+/* ── Stat counter ── */
 function StatBlock({ value, label, delay = 0 }: { value: string; label: string; delay?: number }) {
   return (
     <motion.div
@@ -72,85 +67,119 @@ function StatBlock({ value, label, delay = 0 }: { value: string; label: string; 
   );
 }
 
+/* ── Featured athlete for profile preview (Mason Carter — mockup hero) ── */
+const featured = {
+  id: "mason-carter",
+  name: "Mason Carter",
+  gradYear: 2026,
+  position: "QB" as const,
+  height: "6'6\"",
+  weight: 220,
+  state: "Florida",
+  school: "Orlando, FL",
+  photoUrl: "/athletes/mason-carter.jpg",
+  verified: true,
+  rating: 5.0,
+  qbClass: "Pro-Style",
+  metrics: {
+    velocity: 52,
+    releaseTime: 0.41,
+    spinRate: 690,
+    mechanics: 89,
+    accuracy: 92,
+    decisionSpeed: 88,
+  },
+  offers: ["Ohio State", "Penn State", "Alabama", "Georgia", "Clemson", "USC"],
+  filmUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  comparisonPlayer: "Justin Herbert",
+};
+
 export default function Home() {
   return (
     <main className="relative">
-      {/* ═══════════ SECTION 1: HERO ═══════════ */}
+      {/* ═══════════════════════════════════════════
+          SECTION 1 — HERO
+          Dark stadium background, animated fog, bold headline
+      ═══════════════════════════════════════════ */}
       <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden">
         <HeroTunnel />
 
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-6 px-4 py-1.5 rounded-full glass text-[10px] tracking-[0.3em] uppercase text-uc-cyan border border-uc-cyan/20"
-        >
-          QBDNA — The Quarterback Genome
-        </motion.div>
+        {/* Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-uc-black pointer-events-none z-[1]" />
 
-        {/* Headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.7 }}
-          className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-none mb-6"
-        >
-          <span className="gradient-text">Decode Every Quarterback.</span>
-          <br />
-          <span className="text-uc-gray-400">Map the Genome.</span>
-        </motion.h1>
-
-        {/* Subtext */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7 }}
-          className="text-uc-gray-400 text-lg md:text-xl max-w-xl mb-10"
-        >
-          We decode the quarterback genome — objective throwing metrics,
-          verified performance DNA, and the identity blueprint college coaches trust.
-        </motion.p>
-
-        {/* Floating Metrics */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12"
-        >
-          <MetricCard label="Throw Velocity" value="61.8 MPH" numericValue={61.8} suffix=" MPH" delay={0.9} />
-          <MetricCard label="Release Time" value="0.38s" numericValue={0.38} suffix="s" delay={1.1} />
-          <MetricCard label="Spin Rate" value="Elite Tier" delay={1.3} />
-        </motion.div>
-
-        {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.4 }}
-          className="flex flex-col sm:flex-row gap-4"
-        >
-          <Link
-            href="/athlete/1"
-            className="group flex items-center gap-2 px-8 py-3.5 rounded-xl bg-uc-cyan text-uc-black font-bold text-sm tracking-wider uppercase hover:shadow-[0_0_30px_rgba(0,194,255,0.4)] transition-all duration-250"
+        <div className="relative z-10 flex flex-col items-center">
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mb-6 px-4 py-1.5 rounded-full glass text-[10px] tracking-[0.3em] uppercase text-uc-cyan border border-uc-cyan/20"
           >
-            View a Verified QB
-            <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-2 px-8 py-3.5 rounded-xl glass border border-white/10 text-uc-white font-semibold text-sm tracking-wider uppercase hover:border-uc-cyan/30 hover:text-uc-cyan transition-all duration-250"
+            The Verified Quarterback Index
+          </motion.div>
+
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.7 }}
+            className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-none mb-6"
           >
-            Get Verified
-          </Link>
-        </motion.div>
+            <span className="gradient-text">Verified Quarterbacks.</span>
+            <br />
+            <span className="text-uc-gray-400">No Guesswork.</span>
+          </motion.h1>
+
+          {/* Subtext */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+            className="text-uc-gray-400 text-lg md:text-xl max-w-xl mb-10"
+          >
+            Objective throwing metrics. Real recruiting signal.
+          </motion.p>
+
+          {/* Animated hero metrics */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+            className="grid grid-cols-3 gap-4 md:gap-6 mb-12"
+          >
+            <MetricCard label="Velocity" value="52 MPH" numericValue={52} suffix=" MPH" delay={0.9} />
+            <MetricCard label="Release" value="0.41s" numericValue={0.41} suffix="s" delay={1.1} />
+            <MetricCard label="Accuracy" value="92%" numericValue={92} suffix="%" delay={1.3} />
+          </motion.div>
+
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.4 }}
+            className="flex flex-col sm:flex-row gap-4"
+          >
+            <Link
+              href="/search"
+              className="group flex items-center gap-2 px-8 py-3.5 rounded-xl bg-uc-cyan text-uc-black font-bold text-sm tracking-wider uppercase hover:shadow-[0_0_30px_rgba(0,194,255,0.4)] transition-all duration-250"
+            >
+              View Verified QBs
+              <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/pricing"
+              className="flex items-center gap-2 px-8 py-3.5 rounded-xl glass border border-white/10 text-uc-white font-semibold text-sm tracking-wider uppercase hover:border-uc-cyan/30 hover:text-uc-cyan transition-all duration-250"
+            >
+              Get Verified
+            </Link>
+          </motion.div>
+        </div>
 
         {/* Scroll Indicator */}
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10"
         >
           <div className="w-5 h-8 rounded-full border-2 border-white/20 flex items-start justify-center pt-1.5">
             <div className="w-1 h-2 rounded-full bg-uc-cyan" />
@@ -158,246 +187,182 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* ═══════════ SECTION 2: THE PROBLEM ═══════════ */}
+      {/* ═══════════════════════════════════════════
+          SECTION 2 — WHAT "VERIFIED" MEANS
+          3 premium cards with subtle glow
+      ═══════════════════════════════════════════ */}
       <RevealSection className="py-32 px-6">
         <div className="max-w-5xl mx-auto">
           <p className="text-[10px] tracking-[0.4em] uppercase text-uc-cyan mb-4 text-center">
-            The Problem
+            Why Verified?
           </p>
           <h2 className="text-3xl md:text-5xl font-bold text-center mb-16 leading-tight">
-            Recruiting is broken.
-            <br />
-            <span className="text-uc-gray-400">We&apos;re fixing it.</span>
+            What &ldquo;Verified&rdquo; means.
           </h2>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            <motion.div
-              whileInView={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 30 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="glass rounded-2xl p-8 text-center"
-            >
-              <div className="w-14 h-14 rounded-xl bg-uc-red/10 flex items-center justify-center mx-auto mb-4">
-                <Eye className="text-uc-red" size={24} />
-              </div>
-              <p className="text-4xl font-bold text-uc-red mb-2">90%</p>
-              <p className="text-sm text-uc-gray-400">of recruiting is subjective opinion</p>
-            </motion.div>
-
-            <motion.div
-              whileInView={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 30 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="glass rounded-2xl p-8 text-center"
-            >
-              <div className="w-14 h-14 rounded-xl bg-yellow-400/10 flex items-center justify-center mx-auto mb-4">
-                <Target className="text-yellow-400" size={24} />
-              </div>
-              <p className="text-4xl font-bold text-yellow-400 mb-2">Inflated</p>
-              <p className="text-sm text-uc-gray-400">Camp ratings mask real skill gaps</p>
-            </motion.div>
-
-            <motion.div
-              whileInView={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 30 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="glass rounded-2xl p-8 text-center"
-            >
-              <div className="w-14 h-14 rounded-xl bg-uc-cyan/10 flex items-center justify-center mx-auto mb-4">
-                <Activity className="text-uc-cyan" size={24} />
-              </div>
-              <p className="text-4xl font-bold text-uc-cyan mb-2">Hidden</p>
-              <p className="text-sm text-uc-gray-400">Film alone can&apos;t reveal mechanics flaws</p>
-            </motion.div>
-          </div>
-
-          <motion.blockquote
-            whileInView={{ opacity: 1 }}
-            initial={{ opacity: 0 }}
-            viewport={{ once: true }}
-            className="text-center text-xl md:text-2xl text-uc-gray-400 italic max-w-3xl mx-auto border-l-2 border-uc-cyan pl-6"
-          >
-            &ldquo;We decode quarterback DNA using objective performance metrics.
-            No opinions. No politics. Just the genome.&rdquo;
-          </motion.blockquote>
-        </div>
-      </RevealSection>
-
-      {/* ═══════════ SECTION 2.5: THE QUARTERBACK GENOME ═══════════ */}
-      <RevealSection className="py-32 px-6 relative overflow-hidden">
-        <div className="max-w-6xl mx-auto">
-          {/* DNA background pattern */}
-          <div className="absolute inset-0 dna-bg-pattern pointer-events-none" />
-
-          <div className="text-center mb-16 relative z-10">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border border-uc-cyan/20 text-[10px] tracking-[0.3em] uppercase text-uc-cyan mb-6">
-              <Dna size={12} />
-              QBDNA Technology
-            </div>
-            <h2 className="text-4xl md:text-6xl font-bold mb-6">
-              <span className="gradient-text-dna">Decode the Genome.</span>
-            </h2>
-            <p className="text-uc-gray-400 text-lg max-w-2xl mx-auto">
-              Every quarterback has a unique genetic blueprint — a combination of arm talent,
-              processing speed, and mechanical DNA that defines their ceiling. We map it.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-[1fr_auto_1fr] gap-8 items-center relative z-10">
-            {/* Left: Gene traits */}
-            <div className="space-y-6">
-              {[
-                { icon: Zap, gene: "ARM VELOCITY", code: "VEL-α", desc: "Raw arm strength & ball speed measured at point of release", color: "text-uc-cyan", bg: "bg-uc-cyan/10" },
-                { icon: Target, gene: "ACCURACY STRAND", code: "ACC-γ", desc: "Precision mapping across short, medium, and deep targets", color: "text-uc-green", bg: "bg-uc-green/10" },
-                { icon: Activity, gene: "MECHANICS BLUEPRINT", code: "MECH-δ", desc: "Footwork, hip rotation, release mechanics, and throwing platform", color: "text-purple-400", bg: "bg-purple-400/10" },
-              ].map((trait, i) => (
-                <motion.div
-                  key={trait.gene}
-                  initial={{ opacity: 0, x: -30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.15 * i }}
-                  className="glass rounded-xl p-5 flex items-start gap-4 group hover:border-white/10 transition-all animate-genome-border"
-                >
-                  <div className={`w-10 h-10 rounded-lg ${trait.bg} flex items-center justify-center flex-shrink-0`}>
-                    <trait.icon size={18} className={trait.color} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`text-[10px] font-bold tracking-[0.2em] uppercase ${trait.color}`}>
-                        {trait.gene}
-                      </span>
-                      <span className="text-[8px] font-mono text-uc-gray-600">{trait.code}</span>
-                    </div>
-                    <p className="text-xs text-uc-gray-400">{trait.desc}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Center: DNA Helix */}
-            <div className="hidden md:flex items-center justify-center">
-              <DNAHelix size="lg" basePairs={14} speed={12} />
-            </div>
-
-            {/* Right: Gene traits */}
-            <div className="space-y-6">
-              {[
-                { icon: Eye, gene: "FIELD VISION", code: "FV-η", desc: "Pre-snap reads, progression speed, and coverage recognition", color: "text-yellow-400", bg: "bg-yellow-400/10" },
-                { icon: BarChart3, gene: "PROCESSING SPEED", code: "DEC-ε", desc: "Time to read defense, make decision, and deliver the ball", color: "text-uc-cyan", bg: "bg-uc-cyan/10" },
-                { icon: Shield, gene: "POISE UNDER PRESSURE", code: "POI-θ", desc: "Performance in clean vs. pressured pockets & late-game situations", color: "text-uc-green", bg: "bg-uc-green/10" },
-              ].map((trait, i) => (
-                <motion.div
-                  key={trait.gene}
-                  initial={{ opacity: 0, x: 30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.15 * i }}
-                  className="glass rounded-xl p-5 flex items-start gap-4 group hover:border-white/10 transition-all animate-genome-border"
-                >
-                  <div className={`w-10 h-10 rounded-lg ${trait.bg} flex items-center justify-center flex-shrink-0`}>
-                    <trait.icon size={18} className={trait.color} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`text-[10px] font-bold tracking-[0.2em] uppercase ${trait.color}`}>
-                        {trait.gene}
-                      </span>
-                      <span className="text-[8px] font-mono text-uc-gray-600">{trait.code}</span>
-                    </div>
-                    <p className="text-xs text-uc-gray-400">{trait.desc}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          {/* Bottom: Genome sequence ticker */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.6 }}
-            className="mt-16 text-center"
-          >
-            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full glass">
-              <div className="w-2 h-2 rounded-full bg-uc-green animate-nucleotide-drift" />
-              <span className="text-[9px] font-mono text-uc-gray-400 tracking-[0.2em]">
-                GENOME ACTIVATION INDEX — LIVE
-              </span>
-              <div className="w-2 h-2 rounded-full bg-uc-cyan animate-nucleotide-drift" style={{ animationDelay: "1s" }} />
-            </div>
-            <div className="mt-4">
-              <Link
-                href="/genome"
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-purple-500/15 text-purple-400 font-bold text-[10px] tracking-wider uppercase border border-purple-400/20 hover:bg-purple-500/25 hover:shadow-[0_0_20px_rgba(168,85,247,0.2)] transition-all duration-300"
-              >
-                <Dna size={12} />
-                Explore Genome Timeline
-                <ArrowRight size={12} />
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </RevealSection>
-
-      {/* DNA Strand Divider */}
-      <DNAStrandDivider className="opacity-30" />
-
-      {/* ═══════════ SECTION 3: THE EXPERIENCE ═══════════ */}
-      <RevealSection className="py-32 px-6 relative">
-        <div className="max-w-6xl mx-auto">
-          <p className="text-[10px] tracking-[0.4em] uppercase text-uc-cyan mb-4 text-center">
-            The Experience
-          </p>
-          <h2 className="text-3xl md:text-5xl font-bold text-center mb-16 leading-tight">
-            Not a profile.
-            <br />
-            <span className="text-uc-gray-400">A command center.</span>
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                icon: Shield,
-                title: "Verified Identity",
-                desc: "Objective metrics from Wilson QBX data. Every number earned, not given.",
+                icon: Target,
+                title: "Objective Metrics",
+                desc: "Captured using QBX & standardized tools. Velocity, release, spin rate, accuracy — no self-reported stats.",
+                color: "text-uc-cyan",
+                bg: "bg-uc-cyan/10",
+                glow: "group-hover:shadow-[0_0_40px_rgba(0,194,255,0.15)]",
               },
               {
-                icon: Zap,
-                title: "Live Metrics",
-                desc: "Animated dashboards with radial gauges, percentile bars, and velocity tracking.",
+                icon: Film,
+                title: "Film + Mechanics Grading",
+                desc: "Real breakdown from former D1 QBs. Footwork, hip rotation, platform, release — every throw analyzed.",
+                color: "text-uc-green",
+                bg: "bg-uc-green/10",
+                glow: "group-hover:shadow-[0_0_40px_rgba(0,255,136,0.15)]",
               },
               {
-                icon: BarChart3,
-                title: "Pro Comparison",
-                desc: "See how your mechanics compare to NFL quarterbacks at the same stage.",
+                icon: Eye,
+                title: "Recruiting Visibility",
+                desc: "Structured profiles coaches can trust. Filterable, searchable, verified signal — not guesswork.",
+                color: "text-purple-400",
+                bg: "bg-purple-400/10",
+                glow: "group-hover:shadow-[0_0_40px_rgba(168,85,247,0.15)]",
               },
-            ].map((item, i) => (
+            ].map((card, i) => (
               <motion.div
-                key={item.title}
+                key={card.title}
                 whileInView={{ opacity: 1, y: 0 }}
                 initial={{ opacity: 0, y: 40 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15 }}
-                whileHover={{ y: -4, boxShadow: "0 0 30px rgba(0,194,255,0.15)" }}
-                className="glass rounded-2xl p-8 cursor-default transition-all duration-300"
+                whileHover={{ y: -4 }}
+                className={`glass rounded-2xl p-8 cursor-default transition-all duration-300 group ${card.glow}`}
               >
-                <div className="w-12 h-12 rounded-xl bg-uc-cyan/10 flex items-center justify-center mb-4">
-                  <item.icon className="text-uc-cyan" size={22} />
+                <div className={`w-14 h-14 rounded-xl ${card.bg} flex items-center justify-center mb-5`}>
+                  <card.icon className={card.color} size={26} />
                 </div>
-                <h3 className="text-lg font-bold mb-2">{item.title}</h3>
-                <p className="text-sm text-uc-gray-400 leading-relaxed">{item.desc}</p>
+                <h3 className="text-lg font-bold mb-3">{card.title}</h3>
+                <p className="text-sm text-uc-gray-400 leading-relaxed">{card.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </RevealSection>
 
-      {/* ═══════════ SECTION 4: STATS ═══════════ */}
+      {/* ═══════════════════════════════════════════
+          SECTION 3 — PROFILE PREVIEW
+          Scroll-triggered mock QB profile (combine interface feel)
+      ═══════════════════════════════════════════ */}
+      <RevealSection className="py-32 px-6 border-t border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <p className="text-[10px] tracking-[0.4em] uppercase text-uc-cyan mb-4 text-center">
+            The Product
+          </p>
+          <h2 className="text-3xl md:text-5xl font-bold text-center mb-4 leading-tight">
+            What &ldquo;Verified&rdquo; means.
+          </h2>
+          <p className="text-sm text-uc-gray-500 text-center max-w-lg mx-auto mb-16">
+            Every verified QB gets a cinematic data page that feels like a draft combine interface.
+          </p>
+
+          {/* Mock profile card */}
+          <motion.div
+            initial={{ opacity: 0, y: 40, scale: 0.97 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="glass rounded-2xl p-6 md:p-8 max-w-4xl mx-auto relative overflow-hidden"
+          >
+            {/* Ambient glow */}
+            <div className="absolute top-0 right-0 w-[300px] h-[200px] bg-uc-cyan/5 blur-[80px] rounded-full pointer-events-none" />
+
+            {/* Identity header */}
+            <div className="flex flex-col sm:flex-row items-center gap-6 mb-8 relative z-10">
+              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-uc-cyan/20 to-uc-panel flex items-center justify-center border border-white/5 shrink-0">
+                <span className="text-4xl font-bold text-uc-cyan/40">{featured.name.charAt(0)}</span>
+              </div>
+              <div className="text-center sm:text-left flex-1">
+                <div className="flex items-center gap-2 justify-center sm:justify-start mb-1">
+                  <h3 className="text-2xl font-bold">{featured.name}</h3>
+                  <VerifiedBadge size="sm" />
+                </div>
+                <p className="text-sm text-uc-gray-400 mb-2">
+                  {featured.school} · Class of {featured.gradYear} · {featured.height} · {featured.weight} lbs
+                </p>
+                <StarRating rating={featured.rating} />
+              </div>
+              <div className="flex gap-3 shrink-0">
+                {featured.offers.slice(0, 2).map((school) => (
+                  <div key={school} className="glass rounded-xl px-3 py-2 text-center">
+                    <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-1 border border-white/10">
+                      <span className="text-xs font-bold text-uc-cyan/80">{school.split(" ").map(w => w[0]).join("")}</span>
+                    </div>
+                    <p className="text-[8px] text-uc-gray-400 whitespace-nowrap">{school}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Radial gauge row */}
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-6 relative z-10">
+              <RadialGauge label="Velocity" value={featured.metrics.velocity} maxValue={70} size={120} />
+              <RadialGauge label="Release" value={(1 - featured.metrics.releaseTime) * 100} maxValue={100} size={120} />
+              <RadialGauge label="Spin Rate" value={featured.metrics.spinRate} maxValue={800} size={120} />
+              <RadialGauge label="Mechanics" value={featured.metrics.mechanics} size={120} />
+              <RadialGauge label="Accuracy" value={featured.metrics.accuracy} size={120} />
+              <RadialGauge label="Decision" value={featured.metrics.decisionSpeed} size={120} />
+            </div>
+
+            {/* Film thumbnail */}
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="flex-1 rounded-xl bg-gradient-to-br from-uc-surface to-uc-panel aspect-video relative overflow-hidden border border-white/5 cursor-pointer group">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 group-hover:bg-uc-cyan/20 group-hover:border-uc-cyan/40 transition-all">
+                    <Play size={18} className="text-white ml-0.5 group-hover:text-uc-cyan transition-colors" fill="currentColor" />
+                  </div>
+                </div>
+                <div className="absolute bottom-3 left-3 flex gap-2">
+                  <span className="px-2 py-1 rounded-md bg-uc-cyan/10 backdrop-blur-sm text-[9px] font-bold text-uc-cyan border border-uc-cyan/20">
+                    61.8 MPH
+                  </span>
+                  <span className="px-2 py-1 rounded-md bg-uc-cyan/10 backdrop-blur-sm text-[9px] font-bold text-uc-cyan border border-uc-cyan/20">
+                    0.38s Release
+                  </span>
+                </div>
+              </div>
+
+              <div className="hidden md:flex flex-col gap-2 shrink-0 w-40">
+                <div className="glass rounded-lg p-3 text-center">
+                  <p className="text-[8px] tracking-wider uppercase text-uc-gray-400">Offers</p>
+                  <p className="text-lg font-bold">{featured.offers.length}</p>
+                </div>
+                <div className="glass rounded-lg p-3 text-center">
+                  <p className="text-[8px] tracking-wider uppercase text-uc-gray-400">Interest</p>
+                  <p className="text-lg font-bold text-uc-green">High</p>
+                </div>
+              </div>
+            </div>
+
+            {/* View profile CTAs */}
+            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
+              <Link
+                href={`/athlete/${PLACEHOLDER_ATHLETES[0].id}`}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl glass border border-uc-cyan/20 text-uc-cyan font-bold text-sm tracking-wider uppercase hover:bg-uc-cyan/10 transition-all"
+              >
+                View Profile
+              </Link>
+              <Link
+                href="/search"
+                className="inline-flex items-center gap-2 text-sm font-bold text-uc-gray-400 hover:text-uc-cyan transition-colors"
+              >
+                Explore Profiles <ArrowRight size={14} />
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </RevealSection>
+
+      {/* ═══════════════════════════════════════════
+          SECTION 4 — STATS BAR
+      ═══════════════════════════════════════════ */}
       <RevealSection className="py-24 px-6 border-y border-white/5">
         <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
           <StatBlock value="500+" label="QBs Verified" delay={0} />
@@ -407,154 +372,104 @@ export default function Home() {
         </div>
       </RevealSection>
 
-      {/* ═══════════ SECTION 5: FEATURED HIGHLIGHTS (Overtime-style) ═══════════ */}
+      {/* ═══════════════════════════════════════════
+          SECTION 5 — SOCIAL GROWTH / VERIFIED CARDS
+          Floating verified card mockups in a grid
+      ═══════════════════════════════════════════ */}
       <RevealSection className="py-32 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-uc-red/10 flex items-center justify-center">
-                <Flame size={20} className="text-uc-red" />
-              </div>
-              <div>
-                <p className="text-[10px] tracking-[0.4em] uppercase text-uc-red font-bold">
-                  Trending Now
-                </p>
-                <h2 className="text-2xl md:text-3xl font-bold">Top Highlights</h2>
-              </div>
-            </div>
-            <Link
-              href="/highlights"
-              className="flex items-center gap-2 text-sm text-uc-gray-400 hover:text-uc-cyan transition-colors"
-            >
-              View All
-              <ArrowRight size={14} />
-            </Link>
-          </div>
+        <div className="max-w-5xl mx-auto">
+          <p className="text-[10px] tracking-[0.4em] uppercase text-uc-cyan mb-4 text-center">
+            Social-First
+          </p>
+          <h2 className="text-3xl md:text-5xl font-bold text-center mb-6 leading-tight">
+            Built for the modern QB.
+          </h2>
+          <p className="text-sm text-uc-gray-500 text-center max-w-lg mx-auto mb-16">
+            Share your verified metrics. Let the data speak.
+          </p>
 
-          {/* Featured hero video cards */}
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            {[
-              {
-                title: "63.4 MPH BOMB — State Championship",
-                athlete: "Andre Mitchell",
-                athleteId: "6",
-                school: "IMG Academy",
-                gradient: "from-yellow-500/30 via-uc-panel to-purple-500/20",
-                views: "234K",
-                duration: "0:38",
-                metrics: ["63.4 MPH", "52 YDS", "Elite Spiral"],
-              },
-              {
-                title: "DUAL THREAT — 7 Total TDs vs. Bosco",
-                athlete: "Marcus Rivera",
-                athleteId: "2",
-                school: "Mater Dei HS",
-                gradient: "from-uc-red/30 via-uc-panel to-orange-500/20",
-                views: "156K",
-                duration: "1:42",
-                metrics: ["7 TDs", "128 Rush", "312 Pass"],
-              },
-            ].map((video, i) => (
+          {/* Floating card grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+            {PLACEHOLDER_ATHLETES.filter((a) => a.verified).slice(0, 3).map((athlete, i) => (
               <motion.div
-                key={video.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                key={athlete.id}
+                initial={{ opacity: 0, y: 30, rotate: i === 0 ? -3 : i === 2 ? 3 : 0 }}
+                whileInView={{ opacity: 1, y: 0, rotate: i === 0 ? -3 : i === 2 ? 3 : 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-                className="group relative rounded-2xl overflow-hidden cursor-pointer aspect-[16/10]"
+                transition={{ delay: i * 0.15, duration: 0.6 }}
+                whileHover={{ scale: 1.03, rotate: 0, y: -8 }}
+                className="glass rounded-2xl p-5 border border-white/10 cursor-pointer transition-all duration-300"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${video.gradient}`} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-
-                {/* Play button */}
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 group-hover:bg-uc-cyan/20 group-hover:border-uc-cyan/40 transition-all duration-300"
-                  >
-                    <Play size={24} className="text-white ml-1 group-hover:text-uc-cyan transition-colors" fill="currentColor" />
-                  </motion.div>
-                </div>
-
-                {/* Duration + views */}
-                <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
-                  <span className="px-2 py-1 rounded-lg bg-black/60 backdrop-blur-sm text-[10px] font-mono text-white/90">
-                    {video.duration}
-                  </span>
-                </div>
-                <div className="absolute top-4 left-4 z-10 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-uc-red/20 backdrop-blur-sm border border-uc-red/30">
-                  <Flame size={10} className="text-uc-red" />
-                  <span className="text-[10px] font-bold text-uc-red uppercase tracking-wider">Trending</span>
-                </div>
-
-                {/* Bottom content */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {video.metrics.map((m) => (
-                      <span key={m} className="px-2 py-1 rounded-md bg-uc-cyan/10 backdrop-blur-sm text-[9px] font-bold text-uc-cyan border border-uc-cyan/20">
-                        {m}
-                      </span>
-                    ))}
-                  </div>
-                  <h3 className="text-lg md:text-xl font-bold mb-2 group-hover:text-uc-cyan transition-colors">
-                    {video.title}
-                  </h3>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold">{video.athlete}</span>
-                    <span className="text-[10px] text-uc-gray-400">{video.school}</span>
-                    <span className="flex items-center gap-1 text-[10px] text-uc-gray-400 ml-auto">
-                      <Eye size={10} /> {video.views}
-                    </span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Highlight reel row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { title: "0.36s Release — Fastest in Class", athlete: "Dylan Park", views: "67K", gradient: "from-green-500/30 to-uc-cyan/10" },
-              { title: "Pre-Snap Read Breakdown", athlete: "Jaxon Smith", views: "89K", gradient: "from-uc-cyan/30 to-blue-500/10" },
-              { title: "Island Arm — Hawaii Pipeline", athlete: "Kai Nakamura", views: "45K", gradient: "from-teal-500/30 to-blue-500/10" },
-              { title: "Off-Platform Magic", athlete: "Jaxon Smith", views: "92K", gradient: "from-purple-500/30 to-pink-500/10" },
-            ].map((clip, i) => (
-              <motion.div
-                key={clip.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="group cursor-pointer"
-              >
-                <div className={`relative rounded-xl overflow-hidden aspect-video mb-2 bg-gradient-to-br ${clip.gradient}`}>
-                  <div className="absolute inset-0 bg-black/30" />
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="w-10 h-10 rounded-full bg-uc-cyan/20 backdrop-blur-sm flex items-center justify-center">
-                      <Play size={14} className="text-uc-cyan ml-0.5" fill="currentColor" />
+                {/* Card header */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-uc-cyan/20 to-uc-panel flex items-center justify-center border border-white/5">
+                      <span className="text-sm font-bold text-uc-cyan/60">{athlete.name.charAt(0)}</span>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold leading-tight">{athlete.name}</p>
+                      <p className="text-[8px] text-uc-gray-400">{athlete.school}</p>
                     </div>
                   </div>
+                  <CheckCircle2 size={14} className="text-uc-cyan" />
                 </div>
-                <p className="text-xs font-bold truncate group-hover:text-uc-cyan transition-colors">{clip.title}</p>
-                <p className="text-[10px] text-uc-gray-400 flex items-center gap-2">
-                  {clip.athlete} <span className="flex items-center gap-0.5"><Eye size={8} />{clip.views}</span>
-                </p>
+
+                {/* Mini metrics */}
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                  <div className="text-center">
+                    <p className="text-lg font-bold font-mono text-white">{athlete.metrics.velocity.toFixed(1)}</p>
+                    <p className="text-[7px] tracking-wider uppercase text-uc-gray-400">MPH</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-bold font-mono text-white">{athlete.metrics.releaseTime.toFixed(2)}</p>
+                    <p className="text-[7px] tracking-wider uppercase text-uc-gray-400">Release</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-bold font-mono text-white">{athlete.metrics.accuracy}%</p>
+                    <p className="text-[7px] tracking-wider uppercase text-uc-gray-400">Accuracy</p>
+                  </div>
+                </div>
+
+                {/* Stars + share */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-0.5">
+                    {Array.from({ length: 5 }).map((_, j) => (
+                      <div
+                        key={j}
+                        className={`w-2 h-2 rounded-full ${
+                          j < Math.floor(athlete.rating) ? "bg-yellow-400" : "bg-white/10"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <Share2 size={12} className="text-uc-gray-400" />
+                </div>
               </motion.div>
             ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link
+              href="/card-generator"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl glass border border-uc-cyan/20 text-uc-cyan font-bold text-sm tracking-wider uppercase hover:bg-uc-cyan/10 transition-all"
+            >
+              Start a Profile
+              <ArrowRight size={14} />
+            </Link>
           </div>
         </div>
       </RevealSection>
 
-      {/* ═══════════ SECTION 6: TOP PROSPECTS TICKER ═══════════ */}
+      {/* ═══════════════════════════════════════════
+          SECTION 6 — TOP PROSPECTS
+      ═══════════════════════════════════════════ */}
       <RevealSection className="py-16 px-6 border-y border-white/5 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <p className="text-[10px] tracking-[0.4em] uppercase text-uc-cyan mb-6 text-center font-bold">
-            2026 Top Prospects
+            2026 Verified Prospects
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {PLACEHOLDER_ATHLETES.map((athlete, i) => {
-              const gai = computeGAI(athlete.metrics);
-              return (
+            {PLACEHOLDER_ATHLETES.map((athlete, i) => (
               <motion.div
                 key={athlete.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -562,7 +477,10 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
               >
-                <Link href={`/athlete/${athlete.id}`} className="glass rounded-xl p-4 flex items-center gap-3 group hover:border-uc-cyan/20 transition-all duration-300 block">
+                <Link
+                  href={`/athlete/${athlete.id}`}
+                  className="glass rounded-xl p-4 flex items-center gap-3 group hover:border-uc-cyan/20 transition-all duration-300 block"
+                >
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-uc-cyan/20 to-uc-panel flex items-center justify-center flex-shrink-0 border border-white/5 group-hover:border-uc-cyan/30 transition-all">
                     <span className="text-sm font-bold text-uc-cyan/60 group-hover:text-uc-cyan transition-colors">
                       {athlete.name.charAt(0)}
@@ -577,156 +495,120 @@ export default function Home() {
                       {athlete.verified && <VerifiedBadge size="sm" />}
                     </div>
                   </div>
-                  <div className="flex-shrink-0 text-right">
-                    <p className="text-sm font-black font-mono" style={{ color: gai.tierColor }}>{gai.gai}</p>
-                    <p className="text-[7px] font-bold tracking-wider uppercase" style={{ color: gai.tierColor }}>{gai.tier}</p>
-                  </div>
                 </Link>
               </motion.div>
-              );
-            })}
+            ))}
           </div>
         </div>
       </RevealSection>
 
-      {/* ═══════════ SECTION 7: COLLECTIBLES PREVIEW ═══════════ */}
+      {/* ═══════════════════════════════════════════
+          SECTION 7 — HOW IT WORKS (5-step flow)
+      ═══════════════════════════════════════════ */}
       <RevealSection className="py-32 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="glass rounded-2xl p-8 md:p-12 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-purple-500/5 blur-[100px] rounded-full pointer-events-none" />
-
-            <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
-              <div className="flex-1">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-400/10 text-purple-400 text-[10px] tracking-[0.2em] uppercase font-bold mb-4">
-                  <Sparkles size={12} />
-                  Digital Collectibles
-                </div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                  <span className="gradient-text">Own the next</span>
-                  <br />
-                  <span className="text-purple-400">generation of talent.</span>
-                </h2>
-                <p className="text-uc-gray-400 mb-6 max-w-md">
-                  Every verified QB generates a digital collectible card backed by real performance data.
-                  Collect, trade, and own a piece of the next first-round pick.
-                </p>
-
-                <div className="flex items-center gap-6 mb-6">
-                  <div>
-                    <p className="text-2xl font-bold text-uc-green">$4,500+</p>
-                    <p className="text-[9px] text-uc-gray-400 tracking-wider uppercase">Volume Today</p>
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-purple-400">6</p>
-                    <p className="text-[9px] text-uc-gray-400 tracking-wider uppercase">Active Cards</p>
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-yellow-400">1</p>
-                    <p className="text-[9px] text-uc-gray-400 tracking-wider uppercase">Genesis Drop</p>
-                  </div>
-                </div>
-
-                <Link
-                  href="/collectibles"
-                  className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-purple-500/20 text-purple-400 font-bold text-sm tracking-wider uppercase border border-purple-400/20 hover:bg-purple-500/30 hover:shadow-[0_0_30px_rgba(168,85,247,0.2)] transition-all duration-300"
-                >
-                  Explore Collectibles
-                  <ArrowRight size={16} />
-                </Link>
-              </div>
-
-              {/* Preview cards stack */}
-              <div className="flex-shrink-0 relative w-52 h-72">
-                {[
-                  { name: "A. Mitchell", color: "border-yellow-400/30 shadow-[0_0_30px_rgba(250,204,21,0.15)]", label: "Genesis", offset: "rotate-[-6deg] translate-x-[-8px]" },
-                  { name: "J. Smith", color: "border-purple-400/30 shadow-[0_0_20px_rgba(168,85,247,0.1)]", label: "Legendary", offset: "rotate-[0deg]" },
-                  { name: "D. Park", color: "border-purple-400/20 shadow-[0_0_15px_rgba(168,85,247,0.08)]", label: "Legendary", offset: "rotate-[6deg] translate-x-[8px]" },
-                ].map((card, i) => (
-                  <motion.div
-                    key={card.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3 + i * 0.15 }}
-                    className={`absolute inset-0 rounded-xl bg-gradient-to-br from-uc-surface via-uc-panel to-uc-panel border p-4 flex flex-col justify-between ${card.color} ${card.offset}`}
-                    style={{ zIndex: 3 - i }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <Crown size={12} className="text-yellow-400/60" />
-                      <span className="text-[8px] font-bold text-uc-gray-400 tracking-wider uppercase">{card.label}</span>
-                    </div>
-                    <div className="text-center">
-                      <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center mx-auto mb-2">
-                        <span className="text-lg font-black text-uc-cyan/50">{card.name.charAt(0)}</span>
-                      </div>
-                      <p className="text-xs font-bold">{card.name}</p>
-                    </div>
-                    <div className="flex justify-between text-[8px] text-uc-gray-400">
-                      <span>VEL</span><span>MECH</span><span>ACC</span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </RevealSection>
-
-      {/* ═══════════ SECTION 8: NIL VALUE PREVIEW ═══════════ */}
-      <RevealSection className="py-24 px-6 border-t border-white/5">
-        <div className="max-w-5xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-uc-green/10 text-uc-green text-[10px] tracking-[0.2em] uppercase font-bold mb-4">
-            <DollarSign size={12} />
-            NIL Valuations
-          </div>
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            <span className="gradient-text">Know your value.</span>
-          </h2>
-          <p className="text-uc-gray-400 max-w-lg mx-auto mb-12">
-            AI-powered NIL valuations based on verified metrics, recruiting heat, 
-            social reach, and market signals. Every verified QB gets a live valuation.
+        <div className="max-w-4xl mx-auto">
+          <p className="text-[10px] tracking-[0.4em] uppercase text-uc-cyan mb-4 text-center">
+            How It Works
           </p>
+          <h2 className="text-3xl md:text-5xl font-bold text-center mb-16 leading-tight">
+            From sign-up to signing day.
+          </h2>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="space-y-6">
             {[
-              { name: "Andre Mitchell", value: "$67,500", tier: "Elite", trend: "+12.5%", color: "text-yellow-400" },
-              { name: "Jaxon Smith", value: "$42,200", tier: "Premium", trend: "+8.3%", color: "text-purple-400" },
-              { name: "Dylan Park", value: "$38,800", tier: "Premium", trend: "+5.1%", color: "text-purple-400" },
-            ].map((qb, i) => (
+              {
+                step: "1",
+                title: "Create your profile",
+                desc: "Sign up and build your quarterback identity in minutes.",
+                color: "bg-uc-cyan/20 text-uc-cyan",
+              },
+              {
+                step: "2",
+                title: "Book an on-field evaluation",
+                desc: "Train with our coaching staff (former D1 QBs) so we can evaluate your skills objectively.",
+                color: "bg-uc-green/20 text-uc-green",
+              },
+              {
+                step: "3",
+                title: "We formulate a plan together",
+                desc: "Custom development roadmap — training consistently to get you better now and for the future.",
+                color: "bg-purple-400/20 text-purple-400",
+              },
+              {
+                step: "4",
+                title: "Put in the work",
+                desc: "Maximize your potential with verified metrics, film review, and recruiting visibility.",
+                color: "bg-yellow-400/20 text-yellow-400",
+              },
+              {
+                step: "5",
+                title: "Achieve your dream",
+                desc: "Get recruited to play college football with real data backing every conversation.",
+                color: "bg-uc-cyan/20 text-uc-cyan",
+              },
+            ].map((item, i) => (
               <motion.div
-                key={qb.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                key={item.step}
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.12 }}
-                className="glass rounded-2xl p-6 text-center group hover:border-uc-green/20 transition-all duration-300"
+                transition={{ delay: i * 0.08 }}
+                className="flex items-start gap-5 glass rounded-xl p-6"
               >
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-uc-green/20 to-uc-panel flex items-center justify-center mx-auto mb-3 border border-white/5">
-                  <span className="text-lg font-bold text-uc-green/60">{qb.name.charAt(0)}</span>
+                <div className={`w-10 h-10 rounded-full ${item.color} flex items-center justify-center shrink-0 text-sm font-bold`}>
+                  {item.step}
                 </div>
-                <p className="text-sm font-bold mb-1">{qb.name}</p>
-                <p className="text-3xl font-bold text-uc-green font-mono mb-1">{qb.value}</p>
-                <div className="flex items-center justify-center gap-2">
-                  <span className={`text-[9px] font-bold tracking-wider uppercase ${qb.color}`}>{qb.tier}</span>
-                  <span className="flex items-center gap-0.5 text-xs text-uc-green">
-                    <TrendingUp size={10} /> {qb.trend}
-                  </span>
+                <div>
+                  <h3 className="text-lg font-bold mb-1">{item.title}</h3>
+                  <p className="text-sm text-uc-gray-400">{item.desc}</p>
                 </div>
               </motion.div>
             ))}
           </div>
-
-          <Link
-            href="/dashboard/nil"
-            className="inline-flex items-center gap-2 mt-10 px-8 py-3.5 rounded-xl glass border border-uc-green/20 text-uc-green font-bold text-sm tracking-wider uppercase hover:bg-uc-green/10 hover:shadow-[0_0_25px_rgba(0,255,136,0.15)] transition-all duration-300"
-          >
-            Explore NIL Hub
-            <ArrowRight size={16} />
-          </Link>
         </div>
       </RevealSection>
 
-      {/* ═══════════ SECTION 9: PARTNERS ═══════════ */}
+      {/* ═══════════════════════════════════════════
+          SECTION 8 — TRAINING LOCATIONS
+      ═══════════════════════════════════════════ */}
+      <RevealSection className="py-24 px-6 border-t border-white/5">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-[10px] tracking-[0.4em] uppercase text-uc-cyan mb-4">
+            On-Field Training
+          </p>
+          <h2 className="text-2xl md:text-4xl font-bold mb-12">
+            Our training locations
+          </h2>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              "Ponte Vedra / Fruit Cove",
+              "Tampa, FL",
+              "Port St Lucie, FL",
+              "Saint Augustine, FL",
+              "Daytona, FL",
+              "Melbourne, FL",
+              "Gainesville, FL",
+              "Green Bay, WI",
+            ].map((loc, i) => (
+              <motion.div
+                key={loc}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="glass rounded-xl px-4 py-3 text-sm font-medium text-uc-gray-300 border border-white/5 hover:border-uc-cyan/20 hover:text-white transition-all"
+              >
+                {loc}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </RevealSection>
+
+      {/* ═══════════════════════════════════════════
+          SECTION 9 — PARTNERS
+      ═══════════════════════════════════════════ */}
       <RevealSection className="py-20 px-6">
         <div className="max-w-5xl mx-auto">
           <p className="text-center text-[10px] tracking-[0.4em] uppercase text-uc-gray-400 mb-12">
@@ -734,26 +616,10 @@ export default function Home() {
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
             {[
-              {
-                name: "Dome Headwear Co.",
-                url: "https://www.domeheadwear.com",
-                tagline: "Premium Athletic Headwear",
-              },
-              {
-                name: "Spartan Orthopedic Institute",
-                url: "https://www.spartanorthopedic.com",
-                tagline: "Sports Medicine & Recovery",
-              },
-              {
-                name: "Tork Sports Performance",
-                url: "https://www.torksportsperformance.com",
-                tagline: "Strength & Conditioning",
-              },
-              {
-                name: "Rhythm Sports Nutrition",
-                url: "https://www.rhythmsportsnutrition.com",
-                tagline: "Fuel The Machine",
-              },
+              { name: "Dome Headwear Co.", url: "https://www.domeheadwear.com", tagline: "Premium Athletic Headwear" },
+              { name: "Spartan Orthopedic Institute", url: "https://www.spartanorthopedic.com", tagline: "Sports Medicine & Recovery" },
+              { name: "Tork Sports Performance", url: "https://www.torksportsperformance.com", tagline: "Strength & Conditioning" },
+              { name: "Rhythm Sports Nutrition", url: "https://www.rhythmsportsnutrition.com", tagline: "Fuel The Machine" },
             ].map((partner, i) => (
               <motion.a
                 key={partner.name}
@@ -764,49 +630,52 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 0 25px rgba(0,194,255,0.12)",
-                }}
+                whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(0,194,255,0.12)" }}
                 className="glass rounded-xl p-6 flex flex-col items-center justify-center text-center gap-2 cursor-pointer transition-all duration-300 group"
               >
                 <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-1 group-hover:bg-uc-cyan/10 transition-colors">
-                  <span className="text-xl font-black gradient-text">
-                    {partner.name.split(" ")[0][0]}
-                  </span>
+                  <span className="text-xl font-black gradient-text">{partner.name.split(" ")[0][0]}</span>
                 </div>
-                <p className="text-xs font-bold tracking-wider uppercase text-white/90">
-                  {partner.name}
-                </p>
-                <p className="text-[10px] text-uc-gray-400 tracking-wide">
-                  {partner.tagline}
-                </p>
+                <p className="text-xs font-bold tracking-wider uppercase text-white/90">{partner.name}</p>
+                <p className="text-[10px] text-uc-gray-400 tracking-wide">{partner.tagline}</p>
               </motion.a>
             ))}
           </div>
         </div>
       </RevealSection>
 
-      {/* ═══════════ SECTION 10: CTA ═══════════ */}
-      <RevealSection className="py-32 px-6 text-center">
+      {/* ═══════════════════════════════════════════
+          SECTION 10 — CTA + CONTACT
+      ═══════════════════════════════════════════ */}
+      <RevealSection className="py-32 px-6 text-center border-t border-white/5">
         <div className="max-w-3xl mx-auto">
-          <p className="text-[10px] tracking-[0.4em] uppercase text-uc-cyan mb-4">
-            The Draft Pipeline
-          </p>
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
-            <span className="gradient-text-dna">Get your DNA decoded.</span>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+            <span className="gradient-text">The Verified Identity Standard</span>
+            <br />
+            <span className="text-uc-gray-400">for Quarterbacks.</span>
           </h2>
-          <p className="text-uc-gray-400 text-lg mb-10 max-w-xl mx-auto">
-            Join the verified quarterback genome. Get your blueprint mapped.
-            Get discovered by college coaches who trust data over hype.
+          <p className="text-uc-gray-400 text-lg mb-4 max-w-xl mx-auto">
+            Our goal is to make you the best possible quarterback you can be.
+            Through on-field training, film review, and verified metrics.
           </p>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 px-10 py-4 rounded-xl bg-uc-cyan text-uc-black font-bold text-sm tracking-wider uppercase hover:shadow-[0_0_40px_rgba(0,194,255,0.4)] transition-all duration-250"
-          >
-            Get Decoded Now
-            <ChevronRight size={16} />
-          </Link>
+          <p className="text-sm text-uc-gray-500 mb-10">
+            Call us: <a href="tel:+19044846916" className="text-uc-cyan hover:underline">(904) 484-6916</a>
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/pricing"
+              className="inline-flex items-center gap-2 px-10 py-4 rounded-xl bg-uc-cyan text-uc-black font-bold text-sm tracking-wider uppercase hover:shadow-[0_0_40px_rgba(0,194,255,0.4)] transition-all duration-250"
+            >
+              Start Your Profile
+              <ChevronRight size={16} />
+            </Link>
+            <Link
+              href="/product"
+              className="inline-flex items-center gap-2 px-10 py-4 rounded-xl glass border border-white/10 text-white font-semibold text-sm tracking-wider uppercase hover:border-uc-cyan/30 hover:text-uc-cyan transition-all duration-250"
+            >
+              Learn More
+            </Link>
+          </div>
         </div>
       </RevealSection>
 
@@ -815,21 +684,16 @@ export default function Home() {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Dna size={16} className="text-uc-cyan" />
-            <span className="text-sm font-bold tracking-[0.15em] uppercase gradient-text-dna">Under Center</span>
+            <span className="text-sm font-bold tracking-[0.15em] uppercase gradient-text">Under Center</span>
           </div>
           <p className="text-xs text-uc-gray-600">
-            &copy; {new Date().getFullYear()} Under Center &bull; QBDNA — The Quarterback Genome.
+            &copy; {new Date().getFullYear()} Under Center — The Verified Quarterback Index. #BeTheOne
           </p>
           <div className="flex gap-6">
-            <Link href="/search" className="text-xs text-uc-gray-400 hover:text-uc-cyan transition-colors">
-              Discover
-            </Link>
-            <Link href="/card-generator" className="text-xs text-uc-gray-400 hover:text-uc-cyan transition-colors">
-              Card Lab
-            </Link>
-            <Link href="/dashboard" className="text-xs text-uc-gray-400 hover:text-uc-cyan transition-colors">
-              Dashboard
-            </Link>
+            <Link href="/search" className="text-xs text-uc-gray-400 hover:text-uc-cyan transition-colors">Discover</Link>
+            <Link href="/product" className="text-xs text-uc-gray-400 hover:text-uc-cyan transition-colors">Product</Link>
+            <Link href="/pricing" className="text-xs text-uc-gray-400 hover:text-uc-cyan transition-colors">Pricing</Link>
+            <Link href="/dashboard" className="text-xs text-uc-gray-400 hover:text-uc-cyan transition-colors">Dashboard</Link>
           </div>
         </div>
       </footer>

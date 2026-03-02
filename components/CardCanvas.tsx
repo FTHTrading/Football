@@ -55,7 +55,7 @@ export default function CardCanvas({
     setDownloading(true);
     try {
       const dataUrl = await toPng(cardRef.current, {
-        pixelRatio: 3,
+        pixelRatio: 2.7, // 400 * 2.7 ≈ 1080px (Instagram optimized 1080×1350)
         backgroundColor: "#0A0A0A",
       });
       const link = document.createElement("a");
@@ -79,7 +79,7 @@ export default function CardCanvas({
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6 }}
         className={cn(
-          "relative w-[400px] rounded-2xl overflow-hidden p-8",
+          "relative w-[400px] aspect-[1080/1350] rounded-2xl overflow-hidden p-8 flex flex-col justify-between",
           theme === "dark" &&
             "bg-gradient-to-br from-[#111111] via-[#0A0A0A] to-[#111111] border border-white/5",
           theme === "holographic" &&

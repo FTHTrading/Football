@@ -46,3 +46,11 @@ export const log = {
   analytics: (msg: string, data?: Record<string, unknown>) =>
     logger.child({ module: "analytics" }).info(data ?? {}, msg),
 };
+
+// ─── Named Domain Loggers ──────────────────────────────
+// Use these for direct imports: import { authLogger } from "@/lib/logger"
+
+export const authLogger = logger.child({ module: "auth" });
+export const stripeLogger = logger.child({ module: "stripe" });
+export const adminLogger = logger.child({ module: "admin" });
+export const analyticsLogger = logger.child({ module: "analytics" });

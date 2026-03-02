@@ -91,4 +91,25 @@ export const track = {
       posthog.capture("film_played", { athleteId, filmTitle });
     }
   },
+
+  /** Verified card downloaded (with badge) */
+  verifiedCardDownloaded: (athleteId: string, theme: string) => {
+    if (typeof window !== "undefined" && posthog.__loaded) {
+      posthog.capture("verified_card_downloaded", { athleteId, theme });
+    }
+  },
+
+  /** Verification completed by admin */
+  verificationCompleted: (athleteId: string, result: string) => {
+    if (typeof window !== "undefined" && posthog.__loaded) {
+      posthog.capture("verification_completed", { athleteId, result });
+    }
+  },
+
+  /** NIL deal created */
+  nilDealCreated: (athleteId: string, dealValue?: number, brand?: string) => {
+    if (typeof window !== "undefined" && posthog.__loaded) {
+      posthog.capture("nil_deal_created", { athleteId, dealValue, brand });
+    }
+  },
 };

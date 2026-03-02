@@ -2,13 +2,16 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { FileText, Palette, Layers, ArrowRight, Download, Dna } from "lucide-react";
+import {
+  FileText, Palette, Layers, ArrowRight, Download, Dna,
+  Shield, DollarSign, Target, Users
+} from "lucide-react";
 
 const DOCS = [
   {
     title: "Platform Overview",
-    subtitle: "What Under Center Is & What's Been Built",
-    description: "Complete walkthrough of the platform architecture, 36+ routes, the GAI core primitive, and technology stack. Designed for stakeholders and new team members.",
+    subtitle: "System Architecture & Route Map",
+    description: "Complete walkthrough of the platform architecture, 38+ routes, the GAI core primitive, and full technology stack. Designed for stakeholders and engineering partners.",
     href: "/docs/platform-overview",
     icon: FileText,
     color: "from-uc-cyan to-blue-500",
@@ -17,7 +20,7 @@ const DOCS = [
   {
     title: "Design System",
     subtitle: "Visual Language, Components & Brand Identity",
-    description: "Color palette, typography, component library, animation patterns, icon system, and DNA theming. Everything a designer needs to extend the brand.",
+    description: "Color palette, typography, component library, animation patterns, icon system, and DNA theming. Everything a designer or engineer needs to extend the brand.",
     href: "/docs/design-system",
     icon: Palette,
     color: "from-purple-500 to-pink-500",
@@ -25,12 +28,48 @@ const DOCS = [
   },
   {
     title: "Capabilities & Customization",
-    subtitle: "Features, Video/Imagery, Logo & Personalization",
+    subtitle: "Features, Video/Imagery & Personalization",
     description: "Full feature map with video integration points, imagery upload areas, logo customization, shareable cards, and white-label configuration options.",
     href: "/docs/capabilities",
     icon: Layers,
     color: "from-uc-green to-emerald-500",
     accent: "text-uc-green",
+  },
+  {
+    title: "Security & Hardening",
+    subtitle: "Production-Grade Security Report",
+    description: "8-layer security architecture covering middleware, auth, Stripe webhook HMAC, Zod validation, rate limiting, structured logging, environment validation, and database security.",
+    href: "/docs/security-hardening",
+    icon: Shield,
+    color: "from-uc-red to-orange-500",
+    accent: "text-uc-red",
+  },
+  {
+    title: "NIL Expansion Blueprint",
+    subtitle: "Revenue Architecture & Market Strategy",
+    description: "NIL infrastructure design with 5 revenue streams, valuation engine, brand partnership pipeline, compliance framework, and 3-phase expansion timeline.",
+    href: "/docs/nil-expansion",
+    icon: DollarSign,
+    color: "from-amber-500 to-yellow-500",
+    accent: "text-amber-400",
+  },
+  {
+    title: "Recruiting Intelligence",
+    subtitle: "Workflow, Signal System & Evaluation",
+    description: "6-metric evaluation framework, percentile tier system, NFL Pro Comparison engine, coach discovery tools, and the signal-vs-noise recruiting advantage.",
+    href: "/docs/recruiting-intelligence",
+    icon: Target,
+    color: "from-indigo-500 to-blue-400",
+    accent: "text-indigo-400",
+  },
+  {
+    title: "Coach & Athlete Onboarding",
+    subtitle: "Discovery, Verification & Identity",
+    description: "How coaches discover and evaluate talent through Under Center, and how athletes build their verified identity — from signup to shareable card.",
+    href: "/docs/coach-onboarding",
+    icon: Users,
+    color: "from-violet-500 to-fuchsia-500",
+    accent: "text-violet-400",
   },
 ];
 
@@ -47,7 +86,7 @@ export default function DocsHubPage() {
             Platform <span className="gradient-text-dna">Documentation</span>
           </h1>
           <p className="text-uc-gray-400 max-w-lg mx-auto">
-            Downloadable PDF documents covering the full Under Center build — architecture, design system, and customization capabilities. Built for your team.
+            Institutional documentation covering architecture, security, NIL strategy, recruiting intelligence, and onboarding workflows. Each document is print-optimized and PDF-ready.
           </p>
         </motion.div>
 
