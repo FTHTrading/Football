@@ -25,7 +25,7 @@ import {
   Star,
 } from "lucide-react";
 
-/* ── NIL Value Calculator (simplified from component) ── */
+/* ── NIL Value Calculator ── */
 function calculateNILValue(a: Athlete) {
   const perfScore = Math.round((a.metrics.velocity / 70) * 30 + (a.metrics.mechanics / 100) * 35 + (a.metrics.accuracy / 100) * 35);
   const recruitScore = Math.min(100, Math.round(a.offers.length * 12 + (a.rating / 5) * 40));
@@ -35,9 +35,16 @@ function calculateNILValue(a: Athlete) {
   const verifiedScore = a.verified ? 95 : 30;
 
   const composite = perfScore * 0.35 + recruitScore * 0.25 + socialScore * 0.15 + marketScore * 0.15 + verifiedScore * 0.10;
-  const total = Math.round((composite * composite * 0.15) / 50) * 50;
+
+  // Exponential formula: produces realistic values from $1K–$150K
+  const rawValue = Math.pow(1.065, composite) * 12;
+  const total = Math.round(rawValue / 50) * 50;
+
   const tier = total >= 50000 ? "Elite" : total >= 20000 ? "Premium" : total >= 8000 ? "Rising" : total >= 3000 ? "Emerging" : "Developing";
-  const trend = +(Math.random() * 18 - 3).toFixed(1);
+
+  // Deterministic trend based on composite + athlete identity hash
+  const idSeed = a.id.split("").reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
+  const trend = +((composite - 60) * 0.35 + Math.sin(idSeed * 2.7) * 4).toFixed(1);
 
   return { total, composite, tier, trend, perfScore, recruitScore, socialScore, marketScore, verifiedScore };
 }

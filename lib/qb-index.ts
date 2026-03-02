@@ -2,6 +2,8 @@
 // Weighted scoring algorithm that creates a single "QB Index"
 // score from verified metrics. This is the moat.
 
+import type { AthleteMetrics } from "./store";
+
 export interface QBIndexInput {
   velocity: number;       // mph (typically 40–70)
   releaseTime: number;    // seconds (lower is better, typically 0.3–0.7)
@@ -99,4 +101,21 @@ export function rankAthletes<T extends { qbIndex: number }>(
   return [...athletes]
     .sort((a, b) => b.qbIndex - a.qbIndex)
     .map((a, i) => ({ ...a, rank: i + 1 }));
+}
+
+/**
+ * Convert AthleteMetrics (store format) to QBIndexInput.
+ * Uses actual fields when available.
+ */
+export function metricsToIndexInput(m: AthleteMetrics): QBIndexInput {
+  return {
+    velocity: m.velocity,
+    releaseTime: m.releaseTime,
+    accuracy: m.accuracy,
+    mechanics: m.mechanics,
+    footwork: m.footwork,
+    poise: m.poise,
+    fieldVision: m.fieldVision,
+    clutchFactor: m.clutchFactor,
+  };
 }

@@ -8,6 +8,10 @@ export interface AthleteMetrics {
   mechanics: number;
   accuracy: number;
   decisionSpeed: number;
+  footwork: number;
+  poise: number;
+  fieldVision: number;
+  clutchFactor: number;
 }
 
 export interface Athlete {

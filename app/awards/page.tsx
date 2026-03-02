@@ -179,7 +179,8 @@ interface GenomeRecord {
 
 function generateRecords(): GenomeRecord[] {
   const records: GenomeRecord[] = [];
-  const keys: (keyof AthleteMetrics)[] = ["velocity", "accuracy", "releaseTime", "mechanics", "decisionSpeed", "spinRate"];
+  const keys = ["velocity", "accuracy", "releaseTime", "mechanics", "decisionSpeed", "spinRate"] as const;
+  type GeneKey = (typeof keys)[number];
   for (const key of keys) {
     const sorted = [...PLACEHOLDER_ATHLETES].sort((a, b) =>
       key === "releaseTime" ? a.metrics[key] - b.metrics[key] : b.metrics[key] - a.metrics[key]

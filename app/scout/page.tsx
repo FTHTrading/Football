@@ -7,7 +7,7 @@ import { PLACEHOLDER_ATHLETES } from "@/lib/placeholder-data";
 import type { Athlete } from "@/lib/store";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import { DNAStrandDivider } from "@/components/DNAHelix";
-import { calculateQBIndex, type QBIndexInput } from "@/lib/qb-index";
+import { calculateQBIndex, metricsToIndexInput } from "@/lib/qb-index";
 import { computeGAI } from "@/lib/genome-activation-index";
 import {
   Dna,
@@ -31,20 +31,6 @@ import {
   MapPin,
   GraduationCap,
 } from "lucide-react";
-
-/* ── Metrics adapter ── */
-function metricsToIndexInput(m: { velocity: number; releaseTime: number; accuracy: number; mechanics: number; decisionSpeed: number }): QBIndexInput {
-  return {
-    velocity: m.velocity,
-    releaseTime: m.releaseTime,
-    accuracy: m.accuracy,
-    mechanics: m.mechanics,
-    footwork: m.mechanics * 0.9,
-    poise: m.decisionSpeed,
-    fieldVision: m.decisionSpeed * 0.95,
-    clutchFactor: (m.accuracy + m.decisionSpeed) / 2,
-  };
-}
 
 /* ── Athlete scout card ── */
 function ScoutCard({ athlete, rank, delay }: { athlete: Athlete; rank: number; delay: number }) {

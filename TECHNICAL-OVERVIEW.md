@@ -117,12 +117,16 @@ Zod schemas for all critical data flows:
 ## 5. NIL Readiness
 
 ### Current State
+- **NIL Hub:** `/nil` — NIL Infrastructure & Compliance Center
+- **NIL Marketplace:** `/nil/marketplace` — public NIL marketplace with valuations
+- **NIL Compliance:** `/nil/compliance` — 50-state law matrix + compliance guide
+- **NIL Agreements:** `/nil/agreements` — agreement template library
+- **NIL Resources:** `/nil/resources` — education center
 - **NIL Dashboard:** `/dashboard/nil` — dedicated NIL management page
-- **NIL Marketplace:** `/nil` — public NIL page
 - **NIL Offers:** `/offers` — offer tracking
-- **NIL Valuation Component:** `components/NILValuation.tsx` — valuation engine
+- **NIL Valuation:** Inline in marketplace page — exponential formula based on composite score
 - **Analytics:** `nil_deal_created` event tracked via PostHog
-- **Data Model:** Prisma schema includes `NilDeal` model with brand, value, status tracking
+- **Data Model:** Prisma schema includes `NilProfile`, `NilDeal`, `StateLaw`, `InstitutionRule`, `ComplianceRecord`, `ContractVersion`
 
 ### Ready For
 - Brand partnership matching
