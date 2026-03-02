@@ -2,42 +2,30 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "NIL33 — Deterministic NIL Valuation & Compliance Infrastructure | Norcross, GA",
+  title: "NIL33 — Capital Discipline Software for NIL Collectives | Norcross, GA",
   description:
-    "NIL33 is the deterministic NIL infrastructure layer — athlete identity verification, performance-based valuation, 50-state compliance routing, and verifiable deal receipts. Built from 33 measurable signals. Based in Norcross, Georgia 30092. Serving athletes, coaches, brands, and institutions nationwide.",
+    "NIL33 is capital discipline software for NIL collectives. Validate athlete valuations, check 50-state compliance, and prevent overpay — before you sign the deal. Based in Norcross, Georgia.",
   keywords: [
-    "NIL valuation platform",
-    "NIL compliance infrastructure",
-    "quarterback NIL valuation",
-    "verified athlete identity system",
+    "NIL valuation software",
+    "NIL compliance tool",
+    "NIL collective software",
+    "NIL overpay prevention",
+    "NIL capital allocation",
+    "NIL deal validation",
+    "collective NIL management",
     "Georgia NIL compliance",
-    "NIL marketplace Georgia",
-    "NIL contract infrastructure",
-    "high school quarterback NIL",
-    "NIL analytics platform",
-    "athlete valuation engine",
-    "NIL platform Norcross GA",
-    "NIL compliance Norcross Georgia",
-    "athlete NIL valuation Atlanta",
-    "Georgia NIL contracts",
-    "Gwinnett County NIL platform",
-    "Norcross sports tech company",
-    "Atlanta NIL marketplace",
-    "how to calculate NIL value for quarterbacks",
-    "high school NIL valuation formula",
-    "Georgia NIL compliance rules 2026",
-    "athlete digital identity infrastructure",
-    "NIL Web3 integration platform",
-    "blockchain NIL contract verification",
     "NIL33",
-    "NIL33 Index",
-    "33 signals athlete value",
-    "deterministic NIL valuation",
-    "NIL receipt verification",
-    "NIL identity hashing",
-    "Ed25519 athlete signature",
-    "SEC recruiting NIL",
-    "NCAA NIL compliance engine",
+    "NIL valuation tool for collectives",
+    "NIL compliance scoring",
+    "athlete fair market value",
+    "NIL deal compliance check",
+    "50 state NIL rules",
+    "NCAA NIL compliance",
+    "SEC NIL compliance",
+    "NIL ROI tool",
+    "NIL capital discipline",
+    "Norcross sports tech",
+    "Atlanta NIL software",
   ],
   authors: [{ name: "UnyKorn", url: "https://nil33.com" }],
   creator: "NIL33 — A UnyKorn Company",
@@ -57,9 +45,9 @@ export const metadata: Metadata = {
     canonical: "https://nil33.com",
   },
   openGraph: {
-    title: "NIL33 — The Deterministic NIL Valuation Engine",
+    title: "NIL33 — Capital Discipline Software for NIL Collectives",
     description:
-      "Verified athlete identity, performance-based NIL valuation, 50-state compliance routing, and cryptographic deal receipts. Infrastructure for the NIL industry. Based in Norcross, GA.",
+      "Validate athlete valuations, check 50-state compliance, and prevent overpay — before you sign the deal. Built for collectives. Based in Norcross, GA.",
     url: "https://nil33.com",
     siteName: "NIL33",
     type: "website",
@@ -75,9 +63,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "NIL33 — Deterministic NIL Valuation Engine",
+    title: "NIL33 — Capital Discipline Software for Collectives",
     description:
-      "The 33-signal athlete valuation index. Compliance routing. Identity verification. Deal receipts. Based in Norcross, GA.",
+      "Validate athlete valuations, check compliance, prevent overpay. Built for NIL collectives. Norcross, GA.",
     images: ["https://nil33.com/nil33-og.png"],
   },
   category: "Sports Technology",
@@ -98,7 +86,7 @@ function SchemaOrg() {
     url: "https://nil33.com",
     logo: "https://nil33.com/nil33-logo-light.png",
     description:
-      "Deterministic NIL infrastructure — athlete identity verification, performance-based valuation, 50-state compliance routing, and verifiable deal receipts built from 33 measurable signals.",
+      "Capital discipline software for NIL collectives — athlete valuation, 50-state compliance, and deal validation. Prevent overpay. Prove compliance.",
     address: {
       "@type": "PostalAddress",
       streetAddress: "5655 Peachtree Parkway",
@@ -134,11 +122,11 @@ function SchemaOrg() {
   const softwareSchema = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    name: "NIL33 Valuation Engine",
-    applicationCategory: "Sports Technology",
+    name: "NIL33",
+    applicationCategory: "Business Software",
     operatingSystem: "Web",
     description:
-      "The 33-signal deterministic NIL valuation index for collegiate and high school athletes. Covers 14 sports with AI-powered analytics, compliance routing, and identity verification.",
+      "Capital discipline software for NIL collectives. Validate athlete valuations, check 50-state compliance, and prevent overpay before signing.",
     url: "https://nil33.com",
     offers: {
       "@type": "Offer",
@@ -173,7 +161,7 @@ function SchemaOrg() {
     url: "https://nil33.com",
     priceRange: "$$",
     description:
-      "NIL infrastructure company based in Norcross, Georgia, providing deterministic athlete valuation, compliance routing, and identity verification for the NIL industry.",
+      "Capital discipline software company based in Norcross, Georgia. NIL valuation, compliance scoring, and deal validation for collectives and institutions.",
   };
 
   return (
