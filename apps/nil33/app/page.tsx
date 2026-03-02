@@ -3,69 +3,157 @@
 import { useEffect, useRef, useState } from "react";
 
 /* ═══════════════════════════════════════════════════
-   NIL33 — Product Demonstration Homepage
+   NIL33 — Premium Product Homepage
    
-   This is not a pitch. This is what we built.
-   Show the product. Show the engine. Show the output.
+   Every section has a UNIQUE layout.
+   Product UIs are the visual anchors.
+   Nothing looks like documentation.
    ═══════════════════════════════════════════════════ */
 
-/* ---------- Scroll Reveal Hook ---------- */
-function useReveal() {
+/* ── Scroll Reveal ── */
+function useReveal(threshold = 0.12) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  const [vis, setVis] = useState(false);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold: 0.15 }
+    const o = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setVis(true);
+          o.disconnect();
+        }
+      },
+      { threshold }
     );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return { ref, className: visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6" };
+    o.observe(el);
+    return () => o.disconnect();
+  }, [threshold]);
+  return { ref, vis };
 }
 
-function Section({ children, id, className = "" }: { children: React.ReactNode; id?: string; className?: string }) {
-  const reveal = useReveal();
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const { ref, vis } = useReveal();
   return (
-    <section id={id} ref={reveal.ref} className={`transition-all duration-700 ease-out ${reveal.className} ${className}`}>
+    <div
+      ref={ref}
+      className={`transition-all duration-[800ms] ease-out ${
+        vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+      } ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
       {children}
-    </section>
+    </div>
   );
 }
 
-/* ──────────────────────────────────────────────────
-   NAVIGATION
-   ────────────────────────────────────────────────── */
+/* ── Gradient Divider ── */
+function Divider({ color = "#00ff88" }: { color?: string }) {
+  return (
+    <div
+      className="h-px w-full"
+      style={{
+        background: `linear-gradient(90deg, transparent, ${color}40, transparent)`,
+      }}
+    />
+  );
+}
+
+/* ── Reusable Window Chrome ── */
+function MockWindow({
+  title,
+  children,
+  glow,
+  className = "",
+}: {
+  title: string;
+  children: React.ReactNode;
+  glow?: string;
+  className?: string;
+}) {
+  return (
+    <div className={`relative ${className}`}>
+      {glow && (
+        <div
+          className="absolute -inset-6 rounded-3xl blur-[80px] opacity-60 pointer-events-none"
+          style={{ background: glow }}
+        />
+      )}
+      <div className="relative bg-[#111] border border-white/[0.08] rounded-2xl overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
+        <div className="flex items-center gap-2 px-5 py-3 border-b border-white/[0.06] bg-[#0a0a0a]">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
+          <span className="ml-3 text-[11px] text-gray-600 font-mono truncate">
+            {title}
+          </span>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   1 · NAVIGATION
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function Nav() {
-  const [scrolled, setScrolled] = useState(false);
+  const [s, setS] = useState(false);
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
+    const h = () => setS(window.scrollY > 48);
+    window.addEventListener("scroll", h, { passive: true });
+    return () => window.removeEventListener("scroll", h);
   }, []);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-[#0a0a0a]/95 backdrop-blur-lg border-b border-white/[0.06] shadow-2xl" : "bg-transparent"}`}>
-      <div className="max-w-7xl mx-auto px-8 h-18 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-1.5">
-          <div className="w-8 h-8 rounded-lg bg-[#00ff88] flex items-center justify-center">
-            <span className="text-black font-black text-sm">33</span>
+    <nav
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+        s
+          ? "bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-white/[0.06]"
+          : ""
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-8 h-[72px] flex items-center justify-between">
+        <a href="#" className="flex items-center gap-2 group">
+          <div className="w-8 h-8 rounded-lg bg-[#00ff88] flex items-center justify-center group-hover:shadow-[0_0_20px_#00ff8860] transition-shadow duration-300">
+            <span className="text-[#0a0a0a] font-black text-sm leading-none">
+              33
+            </span>
           </div>
-          <span className="text-lg font-bold tracking-tight text-white">NIL33</span>
+          <span className="text-lg font-bold tracking-tight text-white">
+            NIL33
+          </span>
         </a>
 
-        <div className="hidden lg:flex items-center gap-10 text-[13px] font-medium tracking-wide uppercase">
-          <a href="#valuation" className="text-gray-500 hover:text-white transition-colors duration-200">Valuation</a>
-          <a href="#compliance" className="text-gray-500 hover:text-white transition-colors duration-200">Compliance</a>
-          <a href="#receipts" className="text-gray-500 hover:text-white transition-colors duration-200">Receipts</a>
-          <a href="#architecture" className="text-gray-500 hover:text-white transition-colors duration-200">Architecture</a>
+        <div className="hidden lg:flex items-center gap-10 text-[13px] font-medium tracking-wide uppercase text-gray-600">
+          <a href="#engine" className="hover:text-white transition-colors">
+            Engine
+          </a>
+          <a href="#compliance" className="hover:text-white transition-colors">
+            Compliance
+          </a>
+          <a href="#receipts" className="hover:text-white transition-colors">
+            Receipts
+          </a>
+          <a
+            href="#architecture"
+            className="hover:text-white transition-colors"
+          >
+            Architecture
+          </a>
         </div>
 
         <a
           href="mailto:kevanbtc@gmail.com?subject=NIL33 — Demo Request"
-          className="bg-white text-black px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-200 transition-colors duration-200"
+          className="bg-white text-[#0a0a0a] px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-200 transition-colors"
         >
           Request Demo
         </a>
@@ -74,115 +162,362 @@ function Nav() {
   );
 }
 
-/* ──────────────────────────────────────────────────
-   HERO — Statement + Product Preview
-   ────────────────────────────────────────────────── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   2 · HERO  —  Centered text + floating product card
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function Hero() {
-  return (
-    <section className="relative min-h-screen flex items-center pt-24 pb-32 px-8 overflow-hidden">
-      {/* Background grid */}
-      <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[#00ff88]/[0.04] rounded-full blur-[120px]" />
+  const [animated, setAnimated] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
-      <div className="relative max-w-7xl mx-auto w-full">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left — Statement */}
-          <div>
-            <div className="inline-flex items-center gap-2 bg-white/[0.04] border border-white/[0.08] rounded-full px-4 py-1.5 text-xs font-medium text-gray-400 uppercase tracking-widest mb-8">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88] animate-pulse" />
-              Infrastructure — Not a Marketplace
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const o = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setTimeout(() => setAnimated(true), 500);
+          o.disconnect();
+        }
+      },
+      { threshold: 0.25 }
+    );
+    o.observe(el);
+    return () => o.disconnect();
+  }, []);
+
+  const factors = [
+    { label: "On-Field Performance", value: 91, color: "#00ff88" },
+    { label: "Recruiting Interest", value: 87, color: "#00ff88" },
+    { label: "Social Reach", value: 72, color: "#f59e0b" },
+    { label: "Brand Safety", value: 95, color: "#00ff88" },
+    { label: "Compliance Status", value: 100, color: "#00d4ff" },
+    { label: "Deal History", value: 64, color: "#f59e0b" },
+  ];
+
+  return (
+    <section className="relative min-h-screen flex flex-col items-center justify-center pt-28 pb-12 px-6 sm:px-8 overflow-hidden">
+      {/* ── Background ── */}
+      <div
+        className="absolute inset-0 opacity-[0.035]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px)",
+          backgroundSize: "72px 72px",
+        }}
+      />
+      <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[900px] h-[500px] rounded-full blur-[140px] bg-[radial-gradient(circle,#00ff8810_0%,transparent_70%)]" />
+
+      {/* ── Text ── */}
+      <Reveal className="relative z-10 text-center max-w-5xl mx-auto mb-20">
+        <div className="inline-flex items-center gap-2.5 bg-white/[0.04] border border-white/[0.08] rounded-full px-5 py-2 text-[11px] font-semibold text-gray-400 uppercase tracking-[0.18em] mb-10">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88] animate-pulse" />
+          Infrastructure — Not a Marketplace
+        </div>
+
+        <h1 className="text-[clamp(2.8rem,8vw,7rem)] font-black tracking-[-0.035em] leading-[0.92] mb-8">
+          <span className="text-white block">NIL valuation</span>
+          <span className="text-white block">and compliance</span>
+          <span className="text-[#00ff88] block">infrastructure.</span>
+        </h1>
+
+        <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-14 leading-relaxed">
+          33 measurable factors. 50-state compliance routing. Cryptographic deal
+          receipts. Built for athletes, collectives, and institutions that need
+          real numbers — not guesswork.
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
+          <a
+            href="mailto:kevanbtc@gmail.com?subject=NIL33 — Early Access"
+            className="bg-[#00ff88] text-[#0a0a0a] px-8 py-4 rounded-xl text-sm font-bold shadow-[0_0_0_1px_#00ff8840] hover:shadow-[0_0_40px_#00ff8840] transition-all duration-300"
+          >
+            Request Early Access
+          </a>
+          <a
+            href="#engine"
+            className="text-gray-500 text-sm font-medium hover:text-white transition-colors group"
+          >
+            See the engine{" "}
+            <span className="inline-block group-hover:translate-y-0.5 transition-transform">
+              ↓
+            </span>
+          </a>
+        </div>
+      </Reveal>
+
+      {/* ── Floating Product Card ── */}
+      <Reveal delay={300} className="relative z-10 w-full max-w-4xl mx-auto">
+        <MockWindow
+          title="nil33 — athlete valuation report"
+          glow="radial-gradient(circle, #00ff880d 0%, transparent 70%)"
+        >
+          <div ref={cardRef} className="p-6 md:p-8">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div>
+                <div className="text-[10px] text-gray-600 uppercase tracking-[0.2em] mb-1.5">
+                  Athlete Valuation Report
+                </div>
+                <div className="text-xl md:text-2xl font-black text-white">
+                  Marcus Johnson
+                </div>
+                <div className="text-sm text-gray-500 mt-0.5">
+                  QB · Georgia · Class of 2027
+                </div>
+              </div>
+              <div className="sm:text-right">
+                <div className="text-4xl md:text-[56px] font-black text-[#00ff88] font-mono leading-none">
+                  84.7
+                </div>
+                <div className="text-[10px] text-gray-600 uppercase tracking-[0.2em] mt-2">
+                  NIL Score
+                </div>
+              </div>
             </div>
 
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[0.95] mb-8">
-              <span className="text-white">NIL valuation</span>
-              <br />
-              <span className="text-white">and compliance</span>
-              <br />
-              <span className="text-[#00ff88]">infrastructure.</span>
-            </h1>
+            <div className="h-px bg-white/[0.06] mb-6" />
 
-            <p className="text-lg text-gray-400 leading-relaxed max-w-lg mb-12">
-              33 measurable factors. 50-state compliance routing.
-              Cryptographic deal receipts. Built for athletes, collectives, 
-              and institutions that need real numbers — not guesswork.
-            </p>
+            {/* Animated factor bars — 2 cols */}
+            <div className="grid md:grid-cols-2 gap-x-10 gap-y-4 mb-6">
+              {factors.map((f, i) => (
+                <div key={i}>
+                  <div className="flex justify-between text-xs mb-1.5">
+                    <span className="text-gray-400">{f.label}</span>
+                    <span className="text-white font-mono font-bold">
+                      {f.value}
+                    </span>
+                  </div>
+                  <div className="h-2 bg-white/[0.04] rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all ease-out"
+                      style={{
+                        width: animated ? `${f.value}%` : "0%",
+                        backgroundColor: f.color,
+                        transitionDuration: `${800 + i * 180}ms`,
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
 
-            <div className="flex items-center gap-6">
-              <a
-                href="mailto:kevanbtc@gmail.com?subject=NIL33 — Early Access"
-                className="bg-[#00ff88] text-black px-7 py-4 rounded-xl text-sm font-bold hover:bg-[#00ff88]/90 transition-all duration-200 hover:shadow-[0_0_30px_rgba(0,255,136,0.3)]"
-              >
-                Request Early Access
-              </a>
-              <a href="#valuation" className="text-gray-500 text-sm font-medium hover:text-white transition-colors duration-200">
-                See the engine ↓
-              </a>
+            <div className="h-px bg-white/[0.06] mb-6" />
+
+            {/* Bottom */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="text-[10px] text-gray-600 uppercase tracking-[0.2em] mb-1">
+                  Estimated Annual Value
+                </div>
+                <div className="text-xl md:text-2xl font-black text-white">
+                  $185,000 — $340,000
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-[#00ff88] animate-pulse" />
+                <span className="text-xs text-gray-500 font-mono">
+                  33/33 factors computed
+                </span>
+              </div>
             </div>
           </div>
+        </MockWindow>
+      </Reveal>
+    </section>
+  );
+}
 
-          {/* Right — Mock Product UI */}
-          <div className="relative">
-            <div className="bg-[#111] border border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl">
-              {/* Window chrome */}
-              <div className="flex items-center gap-2 px-4 py-3 border-b border-white/[0.06] bg-[#0d0d0d]">
-                <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
-                <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
-                <div className="w-3 h-3 rounded-full bg-[#28c840]" />
-                <span className="ml-3 text-xs text-gray-600 font-mono">nil33 / valuation-engine</span>
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   3 · STAT BAR  —  Big numbers, dark ground
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function StatBar() {
+  return (
+    <>
+      <Divider />
+      <Reveal className="py-20 px-8 bg-[#060606]">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-0 md:divide-x md:divide-white/[0.06]">
+          {[
+            { n: "33", label: "Measurable Factors", sub: "Six weighted categories" },
+            { n: "50", label: "States Covered", sub: "Full compliance routing" },
+            { n: "14", label: "Sports Supported", sub: "Revenue & Olympic" },
+            { n: "<200ms", label: "Valuation Speed", sub: "Rust computation engine" },
+          ].map((s, i) => (
+            <div key={i} className="md:px-10 first:md:pl-0 last:md:pr-0 text-center md:text-left">
+              <div className="text-4xl md:text-5xl font-black text-white tracking-tight font-mono">
+                {s.n}
               </div>
+              <div className="text-sm text-[#00ff88] font-semibold mt-2">
+                {s.label}
+              </div>
+              <div className="text-xs text-gray-600 mt-0.5">{s.sub}</div>
+            </div>
+          ))}
+        </div>
+      </Reveal>
+      <Divider />
+    </>
+  );
+}
 
-              {/* Mock scorecard */}
-              <div className="p-6 space-y-5">
-                <div className="flex items-center justify-between mb-2">
-                  <div>
-                    <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Athlete Valuation Report</div>
-                    <div className="text-xl font-bold text-white">Marcus Johnson</div>
-                    <div className="text-sm text-gray-400">QB · Georgia · Class of 2027</div>
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   4 · VALUATION ENGINE  —  Heatmap + Categories
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function ValuationEngine() {
+  const { ref, vis } = useReveal();
+
+  const heatColors = [
+    "#00ff88","#00ff88","#00ff88","#f59e0b","#00ff88","#00ff88",
+    "#00ff88","#f59e0b","#00ff88","#00ff88","#00ff88","#f59e0b",
+    "#00ff88","#00ff88","#ef4444","#00ff88","#f59e0b","#00ff88",
+    "#00ff88","#00ff88","#00ff88","#f59e0b","#00ff88","#00ff88",
+    "#00ff88","#00d4ff","#00d4ff","#00ff88","#00ff88","#f59e0b",
+    "#f59e0b","#00ff88","#00ff88",
+  ];
+
+  return (
+    <section id="engine" className="py-32 md:py-40 px-6 sm:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header — centered */}
+        <Reveal className="text-center mb-20">
+          <div className="text-[#00ff88] text-xs font-bold uppercase tracking-[0.25em] mb-5">
+            Valuation Engine
+          </div>
+          <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-[1]">
+            33 factors.{" "}
+            <span className="text-gray-600">Not follower counts.</span>
+          </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto mt-6 text-lg leading-relaxed">
+            Most platforms estimate NIL value from social media followers. NIL33
+            computes a deterministic score from 33 measurable signals across six
+            weighted categories.
+          </p>
+        </Reveal>
+
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
+          {/* Left — Heatmap */}
+          <Reveal>
+            <MockWindow title="nil33 — 33-factor heatmap">
+              <div ref={ref} className="p-6 md:p-8">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="text-[10px] text-gray-600 uppercase tracking-[0.2em]">
+                    Factor Analysis
                   </div>
-                  <div className="text-right">
-                    <div className="text-4xl font-black text-[#00ff88]">84.7</div>
-                    <div className="text-xs text-gray-500 uppercase tracking-wider">NIL Score</div>
+                  <div className="flex items-center gap-4 text-[10px] text-gray-600">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded bg-[#00ff88]" /> Strong
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded bg-[#f59e0b]" /> Moderate
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded bg-[#ef4444]" /> Weak
+                    </span>
                   </div>
                 </div>
 
-                <div className="h-px bg-white/[0.06]" />
-
-                {/* Factor bars */}
-                <div className="space-y-3">
-                  {[
-                    { label: "On-Field Performance", value: 91, color: "#00ff88" },
-                    { label: "Recruiting Interest", value: 87, color: "#00ff88" },
-                    { label: "Social Reach", value: 72, color: "#f59e0b" },
-                    { label: "Brand Safety", value: 95, color: "#00ff88" },
-                    { label: "Compliance Status", value: 100, color: "#00d4ff" },
-                    { label: "Deal History", value: 64, color: "#f59e0b" },
-                  ].map((f, i) => (
-                    <div key={i}>
-                      <div className="flex justify-between text-xs mb-1">
-                        <span className="text-gray-400">{f.label}</span>
-                        <span className="text-white font-mono font-bold">{f.value}</span>
-                      </div>
-                      <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                        <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${f.value}%`, backgroundColor: f.color }} />
-                      </div>
-                    </div>
+                <div className="grid grid-cols-6 gap-2">
+                  {heatColors.map((c, i) => (
+                    <div
+                      key={i}
+                      className="aspect-square rounded-lg transition-all duration-500 hover:scale-110 cursor-default"
+                      style={{
+                        backgroundColor: c,
+                        opacity: vis ? 0.75 : 0,
+                        transitionDelay: `${i * 30}ms`,
+                      }}
+                      title={`Factor ${i + 1}`}
+                    />
+                  ))}
+                  {/* Fill remaining 3 cells transparent */}
+                  {[0, 1, 2].map((i) => (
+                    <div key={`empty-${i}`} className="aspect-square" />
                   ))}
                 </div>
 
-                <div className="h-px bg-white/[0.06]" />
-
-                <div className="flex items-center justify-between">
+                <div className="mt-6 pt-6 border-t border-white/[0.06] flex items-center justify-between">
                   <div>
-                    <div className="text-xs text-gray-500 mb-0.5">Estimated Range</div>
-                    <div className="text-lg font-bold text-white">$185K — $340K</div>
+                    <div className="text-[10px] text-gray-600 uppercase tracking-[0.2em]">
+                      Composite Score
+                    </div>
+                    <div className="text-3xl font-black text-[#00ff88] font-mono mt-1">
+                      84.7 / 100
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-[#00ff88]" />
-                    <span className="text-xs text-gray-400">All 33 factors computed</span>
+                  <div className="text-right">
+                    <div className="text-[10px] text-gray-600 uppercase tracking-[0.2em]">
+                      Confidence
+                    </div>
+                    <div className="text-sm font-mono text-white mt-1">
+                      High — 31/33 verified
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </MockWindow>
+          </Reveal>
+
+          {/* Right — Categories */}
+          <div className="space-y-5">
+            {[
+              {
+                cat: "Identity Verification",
+                weight: "12%",
+                color: "#00ff88",
+                desc: "KYC status, age eligibility, enrollment verification, guardian consent status.",
+              },
+              {
+                cat: "On-Field Performance",
+                weight: "28%",
+                color: "#00ff88",
+                desc: "Game statistics, film grades, seasonal trajectory, positional rankings.",
+              },
+              {
+                cat: "Recruiting Interest",
+                weight: "22%",
+                color: "#00ff88",
+                desc: "Service rankings, D1 offers, official visits, portal activity, commit status.",
+              },
+              {
+                cat: "Social & Brand Reach",
+                weight: "18%",
+                color: "#f59e0b",
+                desc: "Follower count, engagement rate, content quality, brand safety score.",
+              },
+              {
+                cat: "Compliance Status",
+                weight: "12%",
+                color: "#00d4ff",
+                desc: "State law match, school policy adherence, prior violations, active flags.",
+              },
+              {
+                cat: "Deal History",
+                weight: "8%",
+                color: "#a855f7",
+                desc: "Past contracts, fulfillment rate, dispute record, payment history.",
+              },
+            ].map((c, i) => (
+              <Reveal key={i} delay={i * 80}>
+                <div className="group flex items-start gap-5 bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.06] hover:border-white/[0.1] rounded-xl p-5 transition-all duration-300">
+                  <div
+                    className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-black font-mono"
+                    style={{
+                      backgroundColor: `${c.color}12`,
+                      color: c.color,
+                    }}
+                  >
+                    {c.weight}
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-white group-hover:text-[#00ff88] transition-colors">
+                      {c.cat}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1 leading-relaxed">
+                      {c.desc}
+                    </div>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </div>
@@ -190,576 +525,788 @@ function Hero() {
   );
 }
 
-/* ──────────────────────────────────────────────────
-   SYSTEM STATS BAR
-   ────────────────────────────────────────────────── */
-function SystemStats() {
-  return (
-    <Section className="py-16 px-8 border-y border-white/[0.06]">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 md:divide-x md:divide-white/[0.06]">
-          {[
-            { value: "33", label: "Measurable Factors", sub: "Six categories" },
-            { value: "50", label: "States Covered", sub: "Compliance routing" },
-            { value: "14", label: "Sports Supported", sub: "Revenue & Olympic" },
-            { value: "< 200ms", label: "Valuation Speed", sub: "Per athlete" },
-          ].map((stat, i) => (
-            <div key={i} className="md:px-10 first:md:pl-0 last:md:pr-0">
-              <div className="text-3xl md:text-4xl font-black text-white tracking-tight">{stat.value}</div>
-              <div className="text-sm text-gray-300 font-medium mt-1">{stat.label}</div>
-              <div className="text-xs text-gray-600 mt-0.5">{stat.sub}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </Section>
-  );
-}
-
-/* ──────────────────────────────────────────────────
-   VALUATION ENGINE — Show the product
-   ────────────────────────────────────────────────── */
-function ValuationEngine() {
-  return (
-    <Section id="valuation" className="py-32 px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-20 items-start">
-          {/* Left — Explanation */}
-          <div>
-            <div className="text-[#00ff88] text-xs font-bold uppercase tracking-[0.2em] mb-6">Valuation Engine</div>
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.05] mb-8">
-              33 factors.<br />
-              <span className="text-gray-500">Not follower counts.</span>
-            </h2>
-            <p className="text-gray-400 leading-relaxed mb-10 max-w-lg">
-              Most platforms estimate NIL value from social media followers. 
-              NIL33 computes a deterministic score from 33 measurable signals 
-              across six weighted categories.
-            </p>
-
-            <div className="space-y-6">
-              {[
-                { cat: "Identity Verification", desc: "KYC, age, eligibility, school enrollment", weight: "12%" },
-                { cat: "On-Field Performance", desc: "Game stats, film grades, seasonal trajectory", weight: "28%" },
-                { cat: "Recruiting Interest", desc: "Rankings, offers, visit history, portal activity", weight: "22%" },
-                { cat: "Social & Brand Reach", desc: "Followers, engagement rate, content quality, brand safety", weight: "18%" },
-                { cat: "Compliance Status", desc: "State law, school rules, prior violations, active flags", weight: "12%" },
-                { cat: "Deal History", desc: "Past contracts, fulfillment rate, dispute record", weight: "8%" },
-              ].map((c, i) => (
-                <div key={i} className="group">
-                  <div className="flex items-baseline justify-between mb-1">
-                    <span className="text-sm font-semibold text-white group-hover:text-[#00ff88] transition-colors duration-200">{c.cat}</span>
-                    <span className="text-xs font-mono text-[#00ff88]/60">{c.weight}</span>
-                  </div>
-                  <p className="text-xs text-gray-500 leading-relaxed">{c.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right — Mock 33-factor grid */}
-          <div className="bg-[#111] border border-white/[0.08] rounded-2xl p-8">
-            <div className="flex items-center justify-between mb-6">
-              <div className="text-xs text-gray-500 uppercase tracking-widest">33 Factor Heatmap</div>
-              <div className="flex items-center gap-3 text-[10px] text-gray-600">
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-[#00ff88]" /> Strong</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-[#f59e0b]" /> Moderate</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-[#ef4444]" /> Weak</span>
-              </div>
-            </div>
-            <div className="grid grid-cols-6 gap-1.5">
-              {/* 33 cells + 3 empty for clean 6x6 grid */}
-              {[
-                "#00ff88","#00ff88","#00ff88","#f59e0b","#00ff88","#00ff88",
-                "#00ff88","#f59e0b","#00ff88","#00ff88","#00ff88","#f59e0b",
-                "#00ff88","#00ff88","#ef4444","#00ff88","#f59e0b","#00ff88",
-                "#00ff88","#00ff88","#00ff88","#f59e0b","#00ff88","#00ff88",
-                "#00ff88","#00d4ff","#00d4ff","#00ff88","#00ff88","#f59e0b",
-                "#f59e0b","#00ff88","#00ff88","transparent","transparent","transparent",
-              ].map((color, i) => (
-                <div
-                  key={i}
-                  className={`aspect-square rounded-md transition-all duration-300 ${color === "transparent" ? "" : "hover:scale-110 hover:shadow-lg cursor-default"}`}
-                  style={{ backgroundColor: color === "transparent" ? "transparent" : color, opacity: color === "transparent" ? 0 : 0.7 }}
-                  title={i < 33 ? `Factor ${i + 1}` : ""}
-                />
-              ))}
-            </div>
-            <div className="mt-6 pt-6 border-t border-white/[0.06] flex items-center justify-between">
-              <div>
-                <div className="text-xs text-gray-500">Composite Score</div>
-                <div className="text-2xl font-black text-[#00ff88] font-mono">84.7 / 100</div>
-              </div>
-              <div className="text-right">
-                <div className="text-xs text-gray-500">Confidence</div>
-                <div className="text-sm font-mono text-white">High — 31/33 verified</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Section>
-  );
-}
-
-/* ──────────────────────────────────────────────────
-   COMPLIANCE ENGINE — Show the system
-   ────────────────────────────────────────────────── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   5 · COMPLIANCE ENGINE  —  Flow diagram + Check UI
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function ComplianceEngine() {
+  const steps = [
+    { emoji: "📜", title: "State Law", sub: "50-state coverage" },
+    { emoji: "🏛️", title: "School Rules", sub: "Institution policies" },
+    { emoji: "🏈", title: "NCAA / Conf.", sub: "Association rules" },
+    { emoji: "⚠️", title: "Risk Score", sub: "Flag & resolve" },
+  ];
+
+  const checks = [
+    {
+      status: "pass" as const,
+      title: "Georgia State Law — Passed",
+      detail:
+        "SB 290 (2021) — No institutional involvement required. Agent disclosure required for deals >$5,000.",
+    },
+    {
+      status: "pass" as const,
+      title: "University Policy — Passed",
+      detail:
+        "72-hour disclosure window met. No use of institutional marks. Compliance office notified.",
+    },
+    {
+      status: "pass" as const,
+      title: "NCAA Guidelines — Passed",
+      detail:
+        "No pay-for-play indicators. No recruiting inducement flags. Deal structure compliant.",
+    },
+    {
+      status: "warn" as const,
+      title: "Agent Disclosure — Action Required",
+      detail:
+        "Deal value exceeds $5,000. Georgia law requires agent disclosure filing within 7 days of execution.",
+    },
+  ];
+
   return (
-    <Section id="compliance" className="py-32 px-8 bg-[#0d0d0d]">
+    <section
+      id="compliance"
+      className="py-32 md:py-40 px-6 sm:px-8 bg-[#070709]"
+    >
       <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-20 items-start">
-          {/* Left — Mock compliance check UI */}
-          <div className="bg-[#111] border border-white/[0.08] rounded-2xl overflow-hidden order-2 lg:order-1">
-            <div className="px-6 py-4 border-b border-white/[0.06] bg-[#0d0d0d]">
-              <div className="text-xs text-gray-500 uppercase tracking-widest">Compliance Check — Real-Time</div>
-            </div>
-            <div className="p-6 space-y-4">
-              {/* State check */}
-              <div className="flex items-start gap-3 p-4 bg-[#00ff88]/[0.04] border border-[#00ff88]/20 rounded-lg">
-                <div className="w-6 h-6 rounded-full bg-[#00ff88]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-[#00ff88] text-xs">✓</span>
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-white">Georgia State Law — Passed</div>
-                  <div className="text-xs text-gray-500 mt-0.5">SB 290 (2021) — No institutional involvement required. Agent disclosure required for deals &gt;$5,000.</div>
-                </div>
-              </div>
+        {/* Header */}
+        <Reveal className="text-center mb-20">
+          <div className="text-[#00d4ff] text-xs font-bold uppercase tracking-[0.25em] mb-5">
+            Compliance Engine
+          </div>
+          <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-[1]">
+            50-state{" "}
+            <span className="text-gray-600">compliance routing.</span>
+          </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto mt-6 text-lg leading-relaxed">
+            Every state has different NIL laws. Every school has its own rules.
+            NIL33 checks every deal against all of them — automatically — and
+            flags issues before they become violations.
+          </p>
+        </Reveal>
 
-              {/* School check */}
-              <div className="flex items-start gap-3 p-4 bg-[#00ff88]/[0.04] border border-[#00ff88]/20 rounded-lg">
-                <div className="w-6 h-6 rounded-full bg-[#00ff88]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-[#00ff88] text-xs">✓</span>
+        {/* ── HORIZONTAL FLOW DIAGRAM ── */}
+        <Reveal className="mb-20">
+          <div className="flex flex-col md:flex-row items-stretch justify-center gap-0 max-w-4xl mx-auto">
+            {steps.map((step, i) => (
+              <div key={i} className="flex items-center">
+                <div className="flex-1 bg-[#111] border border-white/[0.08] rounded-xl p-5 md:p-6 text-center min-w-[140px] hover:border-[#00d4ff]/30 transition-colors duration-300">
+                  <div className="text-2xl mb-2">{step.emoji}</div>
+                  <div className="text-sm font-bold text-white">
+                    {step.title}
+                  </div>
+                  <div className="text-[11px] text-gray-600 mt-1">
+                    {step.sub}
+                  </div>
                 </div>
-                <div>
-                  <div className="text-sm font-semibold text-white">University Policy — Passed</div>
-                  <div className="text-xs text-gray-500 mt-0.5">72-hour disclosure window. No use of institutional marks without approval. Compliance office notified.</div>
-                </div>
+                {i < steps.length - 1 && (
+                  <div className="hidden md:flex items-center justify-center w-10 text-[#00d4ff] text-lg flex-shrink-0">
+                    →
+                  </div>
+                )}
+                {i < steps.length - 1 && (
+                  <div className="flex md:hidden items-center justify-center h-6 text-[#00d4ff] text-lg">
+                    ↓
+                  </div>
+                )}
               </div>
+            ))}
+          </div>
+        </Reveal>
 
-              {/* NCAA check */}
-              <div className="flex items-start gap-3 p-4 bg-[#00ff88]/[0.04] border border-[#00ff88]/20 rounded-lg">
-                <div className="w-6 h-6 rounded-full bg-[#00ff88]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-[#00ff88] text-xs">✓</span>
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-white">NCAA Guidelines — Passed</div>
-                  <div className="text-xs text-gray-500 mt-0.5">No pay-for-play indicators. No recruiting inducement flags. Deal structure compliant.</div>
-                </div>
-              </div>
+        {/* ── COMPLIANCE CHECK MOCKUP ── */}
+        <Reveal>
+          <div className="max-w-3xl mx-auto">
+            <MockWindow
+              title="nil33 — compliance check (real-time)"
+              glow="radial-gradient(circle, #00d4ff08 0%, transparent 70%)"
+            >
+              <div className="p-5 md:p-7 space-y-3">
+                {checks.map((c, i) => {
+                  const isPass = c.status === "pass";
+                  const accent = isPass ? "#00ff88" : "#f59e0b";
+                  return (
+                    <div
+                      key={i}
+                      className="flex items-start gap-3 rounded-lg p-4"
+                      style={{
+                        backgroundColor: `${accent}08`,
+                        border: `1px solid ${accent}25`,
+                      }}
+                    >
+                      <div
+                        className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold"
+                        style={{
+                          backgroundColor: `${accent}20`,
+                          color: accent,
+                        }}
+                      >
+                        {isPass ? "✓" : "!"}
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold text-white">
+                          {c.title}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                          {c.detail}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
 
-              {/* Warning example */}
-              <div className="flex items-start gap-3 p-4 bg-[#f59e0b]/[0.04] border border-[#f59e0b]/20 rounded-lg">
-                <div className="w-6 h-6 rounded-full bg-[#f59e0b]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-[#f59e0b] text-xs">!</span>
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-white">Agent Disclosure — Action Required</div>
-                  <div className="text-xs text-gray-500 mt-0.5">Deal value exceeds $5,000. Georgia law requires agent disclosure filing within 7 days of execution.</div>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-white/[0.06]">
-                <div className="flex items-center justify-between">
+                <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-[#00ff88]" />
-                    <span className="text-xs text-gray-400">3 of 4 checks passed</span>
+                    <span className="text-xs text-gray-400">
+                      3 of 4 checks passed
+                    </span>
                   </div>
-                  <span className="text-xs font-mono text-[#f59e0b]">1 action required</span>
+                  <span className="text-xs font-mono text-[#f59e0b]">
+                    1 action required
+                  </span>
                 </div>
               </div>
-            </div>
+            </MockWindow>
           </div>
-
-          {/* Right — Explanation */}
-          <div className="order-1 lg:order-2">
-            <div className="text-[#00d4ff] text-xs font-bold uppercase tracking-[0.2em] mb-6">Compliance Engine</div>
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.05] mb-8">
-              50-state<br />
-              <span className="text-gray-500">compliance routing.</span>
-            </h2>
-            <p className="text-gray-400 leading-relaxed mb-10 max-w-lg">
-              Every state has different NIL laws. Every school has its own rules. 
-              NIL33 checks every deal against all of them — automatically — and 
-              flags issues before they become violations.
-            </p>
-
-            <div className="space-y-4">
-              {[
-                { label: "State Law Check", desc: "Automated match against current legislation in the athlete's home state and school state." },
-                { label: "Institution Rules", desc: "Cross-reference with school-specific NIL policies, disclosure windows, and mark usage rules." },
-                { label: "NCAA / Conference", desc: "Verify deal structure doesn't trigger pay-for-play or inducement flags." },
-                { label: "Risk Scoring", desc: "Each deal receives a compliance risk score. High-risk deals are flagged before execution." },
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-4 py-3 border-b border-white/[0.04] last:border-0">
-                  <div className="w-8 h-8 rounded-lg bg-[#00d4ff]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-[#00d4ff] text-xs font-bold">{String(i + 1).padStart(2, "0")}</span>
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-white">{item.label}</div>
-                    <div className="text-xs text-gray-500 mt-0.5 leading-relaxed">{item.desc}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        </Reveal>
       </div>
-    </Section>
+    </section>
   );
 }
 
-/* ──────────────────────────────────────────────────
-   DEAL RECEIPTS — Show the output
-   ────────────────────────────────────────────────── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   6 · DEAL RECEIPTS  —  Proof, not promises
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function DealReceipts() {
   return (
-    <Section id="receipts" className="py-32 px-8">
+    <section id="receipts" className="py-32 md:py-40 px-6 sm:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-20 items-start">
-          {/* Left — Explanation */}
-          <div>
-            <div className="text-[#a855f7] text-xs font-bold uppercase tracking-[0.2em] mb-6">Deal Receipts</div>
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.05] mb-8">
-              Verifiable proof.<br />
-              <span className="text-gray-500">Every deal. Every time.</span>
-            </h2>
-            <p className="text-gray-400 leading-relaxed mb-10 max-w-lg">
-              Every NIL deal processed through NIL33 generates a cryptographic 
-              receipt — timestamped, signed, and immutable. No more handshake deals. 
-              No more he-said-she-said.
-            </p>
+        {/* Header */}
+        <Reveal className="text-center mb-20">
+          <div className="text-[#a855f7] text-xs font-bold uppercase tracking-[0.25em] mb-5">
+            Deal Receipts
+          </div>
+          <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-[1]">
+            Verifiable proof.{" "}
+            <span className="text-gray-600">Every deal.</span>
+          </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto mt-6 text-lg leading-relaxed">
+            Every NIL deal processed through NIL33 generates a cryptographic
+            receipt — timestamped, signed, and immutable. No more handshake
+            deals.
+          </p>
+        </Reveal>
 
-            <div className="space-y-4">
-              {[
-                "Timestamped at execution with SHA-256 hash",
-                "Both parties digitally sign the receipt",
-                "Compliance status recorded at time of deal",
-                "Immutable — cannot be altered after creation",
-                "Exportable for audits, tax filings, and disputes",
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#a855f7]" />
-                  <span className="text-sm text-gray-300">{item}</span>
+        <div className="grid lg:grid-cols-5 gap-16 items-start">
+          {/* Left — Key points */}
+          <Reveal className="lg:col-span-2 space-y-6">
+            {[
+              {
+                title: "SHA-256 Hashed",
+                desc: "Every receipt is fingerprinted with a cryptographic hash at execution time.",
+              },
+              {
+                title: "Dual Signatures",
+                desc: "Both parties digitally sign the receipt. No more he-said-she-said.",
+              },
+              {
+                title: "Compliance Snapshot",
+                desc: "Compliance status at deal time is recorded permanently on the receipt.",
+              },
+              {
+                title: "Immutable Record",
+                desc: "Once created, receipts cannot be altered. Exportable for audits and tax filings.",
+              },
+              {
+                title: "Fair Market Validation",
+                desc: "Deal value is compared against the NIL33 valuation range at time of signing.",
+              },
+            ].map((item, i) => (
+              <div key={i} className="flex items-start gap-4 group">
+                <div className="w-2 h-2 rounded-full bg-[#a855f7] mt-2 flex-shrink-0 group-hover:shadow-[0_0_12px_#a855f760] transition-shadow" />
+                <div>
+                  <div className="text-sm font-bold text-white">{item.title}</div>
+                  <div className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                    {item.desc}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </Reveal>
+
+          {/* Right — Receipt card */}
+          <Reveal delay={200} className="lg:col-span-3">
+            <MockWindow
+              title="nil33 — deal receipt #NIL33-2026-00847"
+              glow="radial-gradient(circle, #a855f708 0%, transparent 70%)"
+            >
+              <div className="p-6 md:p-8 font-mono text-xs space-y-5">
+                {/* Deal details */}
+                <div className="space-y-3">
+                  {[
+                    ["Receipt ID", "NIL33-2026-00847"],
+                    ["Athlete", "Marcus Johnson"],
+                    ["Brand", "SportFuel Athletics"],
+                    ["Deal Type", "Social Media Campaign"],
+                  ].map(([k, v], i) => (
+                    <div key={i} className="flex justify-between">
+                      <span className="text-gray-600">{k}</span>
+                      <span className="text-white">{v}</span>
+                    </div>
+                  ))}
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Value</span>
+                    <span className="text-[#00ff88] font-bold text-sm">
+                      $12,500.00
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Duration</span>
+                    <span className="text-white">90 days</span>
+                  </div>
+                </div>
+
+                <div className="h-px bg-white/[0.06]" />
+
+                {/* Compliance & value */}
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Compliance</span>
+                    <span className="text-[#00ff88]">PASSED — 4/4</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">NIL Score at Signing</span>
+                    <span className="text-white">84.7</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Market Range</span>
+                    <span className="text-white">$9,200 — $18,400</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Fair Market</span>
+                    <span className="text-[#00ff88] font-bold">
+                      WITHIN RANGE
+                    </span>
+                  </div>
+                </div>
+
+                <div className="h-px bg-white/[0.06]" />
+
+                {/* Crypto data */}
+                <div className="space-y-3">
+                  <div>
+                    <div className="text-gray-600 mb-1">Executed</div>
+                    <div className="text-white">2026-02-14T18:32:07Z</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-600 mb-1">SHA-256</div>
+                    <div className="text-[#a855f7]/50 break-all leading-relaxed text-[11px]">
+                      a7f3b2c1d4e5f6a8b9c0d1e2f3a4b5c6
+                      <br />
+                      d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-[#a855f7]" />
+                    <span className="text-gray-500">
+                      Digitally signed by both parties
+                    </span>
+                  </div>
+                  <span className="text-[#a855f7] font-bold text-[10px] uppercase tracking-widest">
+                    Verified
+                  </span>
+                </div>
+              </div>
+            </MockWindow>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   7 · ARCHITECTURE  —  3-Layer Diagram + Tech Stack
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function Architecture() {
+  const layers = [
+    {
+      n: "01",
+      title: "Data Ingestion",
+      color: "#00ff88",
+      items: [
+        "Identity verification (KYC)",
+        "Performance data feeds",
+        "Social media APIs",
+        "Recruiting databases",
+        "State law database",
+        "School policy registry",
+      ],
+    },
+    {
+      n: "02",
+      title: "Computation Engine",
+      color: "#00d4ff",
+      items: [
+        "33-factor scoring model",
+        "Weighted category analysis",
+        "Compliance rule matching",
+        "Fair market calculation",
+        "Risk scoring algorithm",
+        "Deal simulation engine",
+      ],
+    },
+    {
+      n: "03",
+      title: "Output & Verification",
+      color: "#a855f7",
+      items: [
+        "Valuation reports",
+        "Compliance certificates",
+        "Deal receipts (SHA-256)",
+        "Audit trail logs",
+        "REST API endpoints",
+        "Institutional dashboards",
+      ],
+    },
+  ];
+
+  const techStack = [
+    { name: "Next.js", role: "Frontend", color: "#ffffff" },
+    { name: "TypeScript", role: "Type Safety", color: "#3178c6" },
+    { name: "Prisma", role: "Data Layer", color: "#5a67d8" },
+    { name: "Rust", role: "Computation", color: "#dea584" },
+    { name: "PostgreSQL", role: "Storage", color: "#336791" },
+    { name: "Tailwind", role: "Design", color: "#06b6d4" },
+  ];
+
+  return (
+    <section
+      id="architecture"
+      className="py-32 md:py-40 px-6 sm:px-8 bg-[#070709]"
+    >
+      <div className="max-w-7xl mx-auto">
+        <Reveal className="text-center mb-20">
+          <div className="text-[#00d4ff] text-xs font-bold uppercase tracking-[0.25em] mb-5">
+            System Architecture
+          </div>
+          <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-[1]">
+            How it&apos;s built.
+          </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto mt-6 text-lg leading-relaxed">
+            Three layers. Each independently verifiable. Data flows in, scores
+            come out, receipts are sealed.
+          </p>
+        </Reveal>
+
+        {/* ── 3-Layer Diagram ── */}
+        <Reveal className="mb-20">
+          <div className="grid md:grid-cols-3 gap-0 items-stretch">
+            {layers.map((layer, i) => (
+              <div key={i} className="flex items-stretch">
+                <div
+                  className="flex-1 rounded-2xl p-7 md:p-8 mx-1.5 border transition-colors duration-300"
+                  style={{
+                    borderColor:
+                      i === 1
+                        ? `${layer.color}30`
+                        : "rgba(255,255,255,0.06)",
+                    backgroundColor:
+                      i === 1 ? `${layer.color}06` : "rgba(255,255,255,0.02)",
+                  }}
+                >
+                  <div
+                    className="text-xs font-black uppercase tracking-[0.25em] mb-2 font-mono"
+                    style={{ color: layer.color }}
+                  >
+                    Layer {layer.n}
+                  </div>
+                  <h3 className="text-xl font-black text-white mb-6">
+                    {layer.title}
+                  </h3>
+                  <div className="space-y-3">
+                    {layer.items.map((item, j) => (
+                      <div
+                        key={j}
+                        className="flex items-center gap-3 group"
+                      >
+                        <div
+                          className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: layer.color }}
+                        />
+                        <span className="text-sm text-gray-500 group-hover:text-white transition-colors">
+                          {item}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Arrow */}
+                {i < 2 && (
+                  <div className="hidden md:flex items-center justify-center w-6 flex-shrink-0">
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="w-px h-8 bg-gradient-to-b from-transparent to-white/20" />
+                      <span className="text-white/30 text-sm">→</span>
+                      <div className="w-px h-8 bg-gradient-to-b from-white/20 to-transparent" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </Reveal>
+
+        {/* ── Tech Stack ── */}
+        <Reveal>
+          <Divider />
+          <div className="py-12">
+            <div className="text-[10px] text-gray-600 uppercase tracking-[0.25em] text-center mb-8">
+              Technology Stack
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-14">
+              {techStack.map((t, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3 group"
+                >
+                  <div
+                    className="w-3 h-3 rounded-full transition-shadow duration-300"
+                    style={{
+                      backgroundColor: t.color,
+                      boxShadow: "none",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.boxShadow = `0 0 16px ${t.color}60`)
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.boxShadow = "none")
+                    }
+                  />
+                  <div>
+                    <div className="text-sm font-bold text-white">
+                      {t.name}
+                    </div>
+                    <div className="text-[10px] text-gray-600">{t.role}</div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
-
-          {/* Right — Mock receipt */}
-          <div className="bg-[#111] border border-white/[0.08] rounded-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-white/[0.06] bg-[#0d0d0d] flex items-center justify-between">
-              <div className="text-xs text-gray-500 uppercase tracking-widest">Deal Receipt</div>
-              <div className="text-xs font-mono text-[#a855f7]">VERIFIED</div>
-            </div>
-            <div className="p-6 space-y-5 font-mono text-xs">
-              <div className="space-y-3">
-                <div className="flex justify-between"><span className="text-gray-500">Receipt ID</span><span className="text-white">NIL33-2026-00847</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Athlete</span><span className="text-white">Marcus Johnson</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Brand</span><span className="text-white">SportFuel Athletics</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Deal Type</span><span className="text-white">Social Media Campaign</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Value</span><span className="text-[#00ff88] font-bold">$12,500.00</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Duration</span><span className="text-white">90 days</span></div>
-              </div>
-
-              <div className="h-px bg-white/[0.06]" />
-
-              <div className="space-y-3">
-                <div className="flex justify-between"><span className="text-gray-500">Compliance</span><span className="text-[#00ff88]">PASSED — 4/4</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">NIL Score at Signing</span><span className="text-white">84.7</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Market Range</span><span className="text-white">$9,200 — $18,400</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Fair Market</span><span className="text-[#00ff88]">WITHIN RANGE</span></div>
-              </div>
-
-              <div className="h-px bg-white/[0.06]" />
-
-              <div className="space-y-2">
-                <div className="text-gray-500">Executed</div>
-                <div className="text-white">2026-02-14T18:32:07Z</div>
-              </div>
-              <div className="space-y-2">
-                <div className="text-gray-500">SHA-256</div>
-                <div className="text-[#a855f7]/60 break-all leading-relaxed">a7f3b2c1d4e5f6a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2</div>
-              </div>
-
-              <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-[#a855f7]" />
-                  <span className="text-gray-400">Digitally signed by both parties</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+          <Divider />
+        </Reveal>
       </div>
-    </Section>
+    </section>
   );
 }
 
-/* ──────────────────────────────────────────────────
-   ARCHITECTURE — System diagram
-   ────────────────────────────────────────────────── */
-function Architecture() {
-  return (
-    <Section id="architecture" className="py-32 px-8 bg-[#0d0d0d]">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-20">
-          <div className="text-[#00d4ff] text-xs font-bold uppercase tracking-[0.2em] mb-6">System Architecture</div>
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.05] mb-6">
-            How it&apos;s built.
-          </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed">
-            NIL33 is a three-layer system: data ingestion, computation engine, 
-            and output layer. Each layer is independently verifiable.
-          </p>
-        </div>
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   8 · WHO IT'S FOR  —  4 cards, distinct colors
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function Stakeholders() {
+  const cards = [
+    {
+      title: "Athletes",
+      color: "#00ff88",
+      desc: "Know your real value. Verify compliance before signing. Build a verifiable deal history.",
+      features: [
+        "Free valuation",
+        "Compliance pre-check",
+        "Deal receipts",
+        "Score tracking",
+      ],
+    },
+    {
+      title: "Collectives",
+      color: "#f59e0b",
+      desc: "Data-backed valuations before writing checks. Simulate deals. Track capital with discipline.",
+      features: [
+        "Roster valuations",
+        "Deal simulation",
+        "Spend analytics",
+        "API access",
+      ],
+    },
+    {
+      title: "Compliance Officers",
+      color: "#00d4ff",
+      desc: "50-state coverage. Automated rule checks. Full audit trails. Protect your program.",
+      features: [
+        "Auto rule-check",
+        "Violation prevention",
+        "Audit export",
+        "Risk scoring",
+      ],
+    },
+    {
+      title: "Brands",
+      color: "#a855f7",
+      desc: "Find the right athlete. Verify the value matches the ask. Execute deals that are compliant.",
+      features: [
+        "Athlete matching",
+        "Value verification",
+        "Risk screening",
+        "Deal structuring",
+      ],
+    },
+  ];
 
-        {/* Architecture flow diagram */}
-        <div className="grid md:grid-cols-3 gap-0">
-          {[
-            {
-              layer: "Layer 1",
-              title: "Data Ingestion",
-              color: "#00ff88",
-              items: ["Identity verification", "Performance data feeds", "Social media APIs", "Recruiting databases", "State law database", "School policy registry"],
-            },
-            {
-              layer: "Layer 2",
-              title: "Computation Engine",
-              color: "#00d4ff",
-              items: ["33-factor scoring model", "Weighted category analysis", "Compliance rule matching", "Fair market calculation", "Risk scoring algorithm", "Deal simulation engine"],
-            },
-            {
-              layer: "Layer 3",
-              title: "Output & Verification",
-              color: "#a855f7",
-              items: ["Valuation reports", "Compliance certificates", "Deal receipts (SHA-256)", "Audit logs", "API endpoints", "Institutional dashboards"],
-            },
-          ].map((layer, i) => (
-            <div key={i} className="relative">
-              <div className={`border border-white/[0.08] rounded-2xl p-8 mx-2 h-full ${i === 1 ? "bg-white/[0.02] border-white/[0.12]" : ""}`}>
-                <div className="text-xs font-bold uppercase tracking-[0.2em] mb-2" style={{ color: layer.color }}>{layer.layer}</div>
-                <h3 className="text-xl font-black text-white mb-6">{layer.title}</h3>
-                <div className="space-y-3">
-                  {layer.items.map((item, j) => (
-                    <div key={j} className="flex items-center gap-3 group">
-                      <div className="w-1 h-1 rounded-full" style={{ backgroundColor: layer.color }} />
-                      <span className="text-sm text-gray-400 group-hover:text-white transition-colors duration-200">{item}</span>
+  return (
+    <section className="py-32 md:py-40 px-6 sm:px-8">
+      <div className="max-w-7xl mx-auto">
+        <Reveal className="text-center mb-16">
+          <h2 className="text-4xl md:text-6xl font-black tracking-tight">
+            Built for the NIL ecosystem.
+          </h2>
+        </Reveal>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+          {cards.map((card, i) => (
+            <Reveal key={i} delay={i * 100}>
+              <div
+                className="h-full rounded-2xl p-7 border transition-all duration-300 hover:-translate-y-1 group bg-white/[0.02] hover:bg-white/[0.04]"
+                style={{
+                  borderColor: "rgba(255,255,255,0.06)",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.borderColor = `${card.color}40`)
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.borderColor =
+                    "rgba(255,255,255,0.06)")
+                }
+              >
+                {/* Color accent bar */}
+                <div
+                  className="w-8 h-1 rounded-full mb-6"
+                  style={{ backgroundColor: card.color }}
+                />
+                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[#00ff88] transition-colors">
+                  {card.title}
+                </h3>
+                <p className="text-sm text-gray-500 leading-relaxed mb-6">
+                  {card.desc}
+                </p>
+                <div className="space-y-2.5">
+                  {card.features.map((f, j) => (
+                    <div
+                      key={j}
+                      className="flex items-center gap-2.5 text-xs text-gray-400"
+                    >
+                      <div
+                        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: card.color }}
+                      />
+                      {f}
                     </div>
                   ))}
                 </div>
               </div>
-              {/* Arrow between columns */}
-              {i < 2 && (
-                <div className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 w-8 h-8 bg-[#111] border border-white/[0.08] rounded-full items-center justify-center">
-                  <span className="text-gray-500 text-xs">→</span>
-                </div>
-              )}
-            </div>
+            </Reveal>
           ))}
         </div>
-
-        {/* Tech stack */}
-        <div className="mt-20 border border-white/[0.06] rounded-xl p-8 bg-[#111]">
-          <div className="text-xs text-gray-500 uppercase tracking-widest mb-6">Technology Stack</div>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            {[
-              { tech: "Next.js", role: "Frontend" },
-              { tech: "TypeScript", role: "Type Safety" },
-              { tech: "Prisma", role: "Data Layer" },
-              { tech: "Rust", role: "Valuation Engine" },
-              { tech: "PostgreSQL", role: "Storage" },
-              { tech: "Tailwind", role: "Design System" },
-            ].map((t, i) => (
-              <div key={i} className="text-center">
-                <div className="text-sm font-bold text-white">{t.tech}</div>
-                <div className="text-xs text-gray-600 mt-0.5">{t.role}</div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
-    </Section>
+    </section>
   );
 }
 
-/* ──────────────────────────────────────────────────
-   WHO THIS IS FOR — Clear segmentation
-   ────────────────────────────────────────────────── */
-function WhoItsFor() {
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   9 · CTA  —  One action
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function CallToAction() {
   return (
-    <Section className="py-32 px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight">
-            Built for the NIL ecosystem.
+    <section className="py-32 md:py-40 px-6 sm:px-8 bg-[#070709] relative overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full blur-[120px] bg-[radial-gradient(circle,#00ff8808_0%,transparent_70%)] pointer-events-none" />
+      <div className="relative max-w-3xl mx-auto text-center">
+        <Reveal>
+          <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-6">
+            See it in action.
           </h2>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            {
-              title: "Athletes",
-              desc: "Know your value. Verify compliance. Build a real track record of deals.",
-              color: "#00ff88",
-              items: ["Free valuation", "Compliance pre-check", "Deal receipts", "Score history"],
-            },
-            {
-              title: "Collectives",
-              desc: "Stop guessing. See data-backed valuations. Manage capital with discipline.",
-              color: "#f59e0b",
-              items: ["Roster valuations", "Deal simulation", "Spend tracking", "API access"],
-            },
-            {
-              title: "Compliance",
-              desc: "Audit trails. Risk flags. 50-state coverage. Protect your program.",
-              color: "#00d4ff",
-              items: ["Auto rule-check", "Violation prevention", "Audit export", "Risk scoring"],
-            },
-            {
-              title: "Brands",
-              desc: "Find the right athlete. Verify the value. Execute compliant deals.",
-              color: "#a855f7",
-              items: ["Athlete matching", "Value verification", "Risk screening", "Deal structure"],
-            },
-          ].map((item, i) => (
-            <div key={i} className="bg-[#111] border border-white/[0.08] rounded-2xl p-7 hover:border-white/[0.15] transition-all duration-300 group">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${item.color}12` }}>
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-              </div>
-              <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[#00ff88] transition-colors duration-200">{item.title}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed mb-5">{item.desc}</p>
-              <div className="space-y-2">
-                {item.items.map((feat, j) => (
-                  <div key={j} className="flex items-center gap-2 text-xs text-gray-400">
-                    <div className="w-1 h-1 rounded-full" style={{ backgroundColor: item.color }} />
-                    {feat}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+          <p className="text-lg text-gray-400 leading-relaxed mb-14 max-w-xl mx-auto">
+            NIL33 is in early access. Request a demo to see the valuation
+            engine, compliance checks, and deal receipt system working.
+          </p>
+          <a
+            href="mailto:kevanbtc@gmail.com?subject=NIL33 — Demo Request"
+            className="inline-flex items-center gap-3 bg-[#00ff88] text-[#0a0a0a] px-10 py-5 rounded-xl text-lg font-bold hover:shadow-[0_0_60px_#00ff8830] transition-all duration-300"
+          >
+            Request a Demo
+            <span className="opacity-50">→</span>
+          </a>
+          <p className="text-xs text-gray-600 mt-8">
+            Early access · No commitment · Response within 24 hours
+          </p>
+        </Reveal>
       </div>
-    </Section>
+    </section>
   );
 }
 
-/* ──────────────────────────────────────────────────
-   CTA — One clear action
-   ────────────────────────────────────────────────── */
-function CTA() {
-  return (
-    <Section className="py-32 px-8 bg-[#0d0d0d]">
-      <div className="max-w-3xl mx-auto text-center">
-        <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6">
-          See it in action.
-        </h2>
-        <p className="text-lg text-gray-400 leading-relaxed mb-12 max-w-xl mx-auto">
-          NIL33 is in early access. Request a demo to see the valuation engine, 
-          compliance checks, and deal receipt system for yourself.
-        </p>
-        <a
-          href="mailto:kevanbtc@gmail.com?subject=NIL33 — Demo Request"
-          className="inline-flex items-center gap-3 bg-[#00ff88] text-black px-10 py-5 rounded-xl text-lg font-bold hover:bg-[#00ff88]/90 transition-all duration-200 hover:shadow-[0_0_40px_rgba(0,255,136,0.3)]"
-        >
-          Request a Demo
-          <span className="text-sm opacity-60">→</span>
-        </a>
-        <p className="text-xs text-gray-600 mt-6">
-          Early access · No commitment · Response within 24 hours
-        </p>
-      </div>
-    </Section>
-  );
-}
-
-/* ──────────────────────────────────────────────────
-   FOOTER — Professional, complete
-   ────────────────────────────────────────────────── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   10 · FOOTER  —  Clean, professional, no placeholders
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function Footer() {
   return (
-    <footer className="py-20 px-8 border-t border-white/[0.06]">
+    <footer className="py-20 px-6 sm:px-8 border-t border-white/[0.06] bg-[#050505]">
       <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-12 mb-16">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Brand */}
-          <div className="md:col-span-1">
-            <div className="flex items-center gap-1.5 mb-4">
+          <div>
+            <div className="flex items-center gap-2 mb-4">
               <div className="w-7 h-7 rounded-md bg-[#00ff88] flex items-center justify-center">
-                <span className="text-black font-black text-[10px]">33</span>
+                <span className="text-[#0a0a0a] font-black text-[10px] leading-none">
+                  33
+                </span>
               </div>
               <span className="text-base font-bold text-white">NIL33</span>
             </div>
-            <p className="text-sm text-gray-500 leading-relaxed mb-4">
-              Deterministic NIL valuation and compliance infrastructure.
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Deterministic NIL valuation
+              <br />
+              and compliance infrastructure.
             </p>
-            <p className="text-xs text-gray-600">
-              Norcross, Georgia 30092<br />
-              A UnyKorn Company
+            <p className="text-xs text-gray-700 mt-4">
+              Norcross, Georgia 30092
+              <br />A UnyKorn Company
             </p>
           </div>
 
           {/* Product */}
           <div>
-            <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Product</h4>
-            <ul className="space-y-2.5 text-sm text-gray-500">
-              <li><a href="#valuation" className="hover:text-white transition-colors duration-200">Valuation Engine</a></li>
-              <li><a href="#compliance" className="hover:text-white transition-colors duration-200">Compliance Engine</a></li>
-              <li><a href="#receipts" className="hover:text-white transition-colors duration-200">Deal Receipts</a></li>
-              <li><a href="#architecture" className="hover:text-white transition-colors duration-200">Architecture</a></li>
+            <h4 className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-5">
+              Product
+            </h4>
+            <ul className="space-y-3 text-sm text-gray-600">
+              <li>
+                <a
+                  href="#engine"
+                  className="hover:text-white transition-colors"
+                >
+                  Valuation Engine
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#compliance"
+                  className="hover:text-white transition-colors"
+                >
+                  Compliance Engine
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#receipts"
+                  className="hover:text-white transition-colors"
+                >
+                  Deal Receipts
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#architecture"
+                  className="hover:text-white transition-colors"
+                >
+                  Architecture
+                </a>
+              </li>
             </ul>
           </div>
 
           {/* Company */}
           <div>
-            <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Company</h4>
-            <ul className="space-y-2.5 text-sm text-gray-500">
-              <li><a href="https://github.com/FTHTrading/nil33" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-200">GitHub</a></li>
-              <li><a href="mailto:kevanbtc@gmail.com" className="hover:text-white transition-colors duration-200">Contact</a></li>
-              <li><a href="mailto:kevanbtc@gmail.com?subject=NIL33 — Demo Request" className="hover:text-white transition-colors duration-200">Request Demo</a></li>
+            <h4 className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-5">
+              Company
+            </h4>
+            <ul className="space-y-3 text-sm text-gray-600">
+              <li>
+                <a
+                  href="https://github.com/FTHTrading/nil33"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  GitHub
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:kevanbtc@gmail.com"
+                  className="hover:text-white transition-colors"
+                >
+                  Contact
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:kevanbtc@gmail.com?subject=NIL33 — Demo Request"
+                  className="hover:text-white transition-colors"
+                >
+                  Request Demo
+                </a>
+              </li>
             </ul>
           </div>
 
           {/* Legal */}
           <div>
-            <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Legal</h4>
-            <ul className="space-y-2.5 text-sm text-gray-500">
-              <li className="text-gray-600">Privacy Policy — Coming Soon</li>
-              <li className="text-gray-600">Terms of Service — Coming Soon</li>
-              <li className="text-gray-600">Security — SOC 2 Planned</li>
+            <h4 className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-5">
+              Legal
+            </h4>
+            <ul className="space-y-3 text-sm text-gray-600">
+              <li>
+                <a href="#" className="hover:text-white transition-colors">
+                  Privacy Policy
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-white transition-colors">
+                  Terms of Service
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-white transition-colors">
+                  Security
+                </a>
+              </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-white/[0.06] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-gray-600">
+        <Divider />
+
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-gray-700">
             © 2026 NIL33 — A UnyKorn Company. All rights reserved.
           </p>
-          <p className="text-xs text-gray-700">
-            Identity · Value · Legacy
-          </p>
+          <p className="text-xs text-gray-700">Identity · Value · Legacy</p>
         </div>
       </div>
     </footer>
   );
 }
 
-/* ──────────────────────────────────────────────────
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    PAGE
-   ────────────────────────────────────────────────── */
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 export default function HomePage() {
   return (
-    <main className="bg-[#0a0a0a] text-white min-h-screen antialiased">
+    <main className="bg-[#0a0a0a] text-white min-h-screen antialiased selection:bg-[#00ff88] selection:text-[#0a0a0a]">
       <Nav />
       <Hero />
-      <SystemStats />
+      <StatBar />
       <ValuationEngine />
+      <Divider color="#00d4ff" />
       <ComplianceEngine />
+      <Divider color="#a855f7" />
       <DealReceipts />
+      <Divider color="#00d4ff" />
       <Architecture />
-      <WhoItsFor />
-      <CTA />
+      <Stakeholders />
+      <CallToAction />
       <Footer />
     </main>
   );
