@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
     }
 
     const validProviders: ImageProvider[] = [
+      "huggingface",
       "openai",
       "replicate",
       "stability",

@@ -1,16 +1,16 @@
 /**
  * AI Image Generation Service
- * Multi-provider support: OpenAI (DALL-E 3), Replicate (Flux/SDXL), Stability AI
+ * Multi-provider: OpenAI (DALL-E 3), Replicate (Flux), Stability AI, Hugging Face (Free/Open Source)
  *
  * Usage:
- *   const result = await generateImage({ prompt: "...", provider: "openai" });
+ *   const result = await generateImage({ prompt: "...", provider: "huggingface" });
  */
 
 import OpenAI from "openai";
 
 // ─── Types ─────────────────────────────────────────
 
-export type ImageProvider = "openai" | "replicate" | "stability";
+export type ImageProvider = "openai" | "replicate" | "stability" | "huggingface";
 export type ImageStyle =
   | "cinematic"
   | "holographic"
@@ -241,6 +241,70 @@ async function generateWithStability(
   }
 }
 
+// ─── Hugging Face (Free / Open Source) ────────────
+
+async function generateWithHuggingFace(
+  prompt: string,
+  size: ImageSize
+): Promise<ImageResult> {
+  const token = process.env.HUGGINGFACE_API_TOKEN;
+  // HF Inference API works without a token (rate-limited) or with a free token
+  const model = "black-forest-labs/FLUX.1-schnell";
+
+  try {
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const resp = await fetch(
+      `https://api-inference.huggingface.co/models/${model}`,
+      {
+        method: "POST",
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inputs: prompt,
+          parameters: {
+            width: parseInt(size.split("x")[0]),
+            height: parseInt(size.split("x")[1]),
+          },
+        }),
+      }
+    );
+
+    if (!resp.ok) {
+      const errText = await resp.text();
+      throw new Error(`HuggingFace API ${resp.status}: ${errText}`);
+    }
+
+    // HF returns raw image bytes
+    const buffer = await resp.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString("base64");
+    const mimeType = resp.headers.get("content-type") || "image/png";
+
+    return {
+      imageUrl: `data:${mimeType};base64,${base64}`,
+      provider: "huggingface",
+      model: "FLUX.1-schnell",
+      status: "generated",
+      generatedAt: new Date().toISOString(),
+    };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return {
+      imageUrl: "",
+      provider: "huggingface",
+      model: "FLUX.1-schnell",
+      status: "failed",
+      error: message,
+      generatedAt: new Date().toISOString(),
+    };
+  }
+}
+
 // ─── Main Generate Function ───────────────────────
 
 export async function generateImage(
@@ -248,7 +312,7 @@ export async function generateImage(
 ): Promise<ImageResult> {
   const {
     prompt: rawPrompt,
-    provider = "openai",
+    provider = "huggingface",
     style = "cinematic",
     size = "1024x1024",
     quality = "hd",
@@ -275,6 +339,8 @@ export async function generateImage(
     " Do not include any text, words, letters, numbers, watermarks, or logos in the image.";
 
   switch (provider) {
+    case "huggingface":
+      return generateWithHuggingFace(fullPrompt, size);
     case "openai":
       return generateWithOpenAI(fullPrompt, size, quality);
     case "replicate":

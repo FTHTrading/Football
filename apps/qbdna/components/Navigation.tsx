@@ -9,6 +9,7 @@ const navLinks = [
   { href: "/search", label: "QBs" },
   { href: "/nil", label: "NIL" },
   { href: "/card-generator", label: "Card Lab" },
+  { href: "/graphics", label: "Graphics" },
   { href: "/studio", label: "Studio" },
   { href: "/demo", label: "Demo" },
 ];

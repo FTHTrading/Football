@@ -31,7 +31,7 @@ type ImageStyle =
   | "stadium"
   | "dark-premium";
 type ImageSize = "1024x1024" | "1024x1792" | "1792x1024";
-type ImageProvider = "openai" | "replicate" | "stability";
+type ImageProvider = "huggingface" | "openai" | "replicate" | "stability";
 type VideoModel =
   | "minimax-video"
   | "luma-dream-machine"
@@ -159,7 +159,7 @@ export default function StudioPage() {
   const [prompt, setPrompt] = useState("");
   const [style, setStyle] = useState<ImageStyle>("cinematic");
   const [size, setSize] = useState<ImageSize>("1024x1024");
-  const [provider, setProvider] = useState<ImageProvider>("openai");
+  const [provider, setProvider] = useState<ImageProvider>("huggingface");
   const [videoModel, setVideoModel] = useState<VideoModel>("minimax-video");
   const [videoAspect, setVideoAspect] = useState<VideoAspect>("16:9");
   const [selectedAthlete, setSelectedAthlete] = useState("");
@@ -478,9 +478,10 @@ export default function StudioPage() {
                       <Zap size={10} className="inline mr-1" />
                       Provider
                     </label>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       {(
                         [
+                          { key: "huggingface", label: "FLUX Free" },
                           { key: "openai", label: "DALL-E 3" },
                           { key: "replicate", label: "Flux Pro" },
                           { key: "stability", label: "SDXL" },
