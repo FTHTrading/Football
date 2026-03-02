@@ -6,7 +6,6 @@ const columns = [
     links: [
       { href: "/product", label: "How it works" },
       { href: "/demo", label: "Live demo" },
-      { href: "/pricing", label: "Pricing" },
       { href: "/athletes", label: "Verified roster" },
     ],
   },
@@ -30,7 +29,6 @@ const columns = [
     title: "Company",
     links: [
       { href: "mailto:partnerships@nil33.com", label: "Contact", external: true },
-      { href: "https://undercenter.netlify.app", label: "Under Center", external: true },
     ],
   },
 ];
@@ -112,11 +110,7 @@ export default function Footer() {
             © {new Date().getFullYear()} NIL33 — A UnyKorn Company. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-nil-muted/40 text-[11px]">
-            <span>Built with Rust, Next.js & Ed25519</span>
-            <span className="text-nil-border/40">|</span>
-            <a href="https://undercenter.netlify.app" target="_blank" rel="noopener noreferrer" className="hover:text-nil-green transition-colors">
-              Powered by Under Center
-            </a>
+            <span>Built with Rust, Next.js, Solidity & Ed25519</span>
           </div>
         </div>
       </div>

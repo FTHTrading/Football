@@ -432,7 +432,7 @@ function AthleteDetail({ athlete, onClose }: { athlete: Athlete; onClose: () => 
             ✕
           </button>
           <div className="absolute top-4 left-4 flex gap-2">
-            <Badge status="pass" label="UC Verified" />
+            <Badge status="pass" label="Verified" />
             <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${SPORT_COLORS[athlete.sport] || "bg-nil-green/20 text-nil-green border-nil-green/30"}`}>
               {athlete.sport}
             </span>
@@ -527,7 +527,7 @@ function AthleteDetail({ athlete, onClose }: { athlete: Athlete; onClose: () => 
                 <DataRow label="Receipt ID" value={athlete.receiptId} />
                 <DataRow label="Athlete" value={`${athlete.name} \u2014 ${athlete.pos}, ${athlete.school}`} />
                 <DataRow label="Sport" value={athlete.sport} />
-                <DataRow label="UC Verified" value={<span className="text-nil-cyan">&#10003; Identity Hash + Ed25519</span>} />
+                <DataRow label="Verified" value={<span className="text-nil-cyan">&#10003; Identity Hash + Ed25519</span>} />
                 <DataRow label="Composite" value={<span className="text-nil-green font-bold">{athlete.nil.composite}/99</span>} />
                 <DataRow label="Fair Value" value={`$${athlete.nil.low.toLocaleString()} \u2013 $${athlete.nil.high.toLocaleString()}`} />
                 <DataDivider />
@@ -591,7 +591,7 @@ export default function AthletesPage() {
             <span className="gradient-text"> Real valuations.</span>
           </h1>
           <p className="mt-6 text-body-lg text-nil-muted max-w-xl">
-            Every athlete on this roster has been identity-verified through Under Center
+            Every athlete on this roster has been identity-verified
             and scored through the NIL33 33-factor valuation engine. Football, basketball,
             gymnastics &mdash; every sport, every market.
           </p>
@@ -722,7 +722,7 @@ export default function AthletesPage() {
             <SectionHeader
               overline="The Pipeline"
               title="Verified identity. Scored valuation. Signed receipt."
-              subtitle="Under Center captures the metrics. NIL33 turns them into a defensible valuation. Every step is cryptographically signed and audit-ready."
+              subtitle="NIL33 captures the metrics and turns them into a defensible valuation. Every step is cryptographically signed and audit-ready."
             />
             <div className="mt-8 flex flex-wrap gap-4">
               <Button href="/demo" size="lg">Score a Deal</Button>
@@ -731,7 +731,7 @@ export default function AthletesPage() {
           </div>
           <CodePreview title="pipeline.txt">
             <pre className="text-nil-text whitespace-pre leading-relaxed text-xs sm:text-sm overflow-x-auto">
-{`Under Center          NIL33 Engine
+{`Identity Layer       NIL33 Engine
 \u250C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510      \u250C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510
 \u2502  Capture     \u2502      \u2502  Score       \u2502
 \u2502  Metrics     \u2502\u2500\u2500\u2500\u2500\u2500\u25B6\u2502  33 Factors  \u2502

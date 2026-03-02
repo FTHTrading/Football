@@ -74,7 +74,7 @@ function TypeWriter({ text, speed = 40 }: { text: string; speed?: number }) {
   return <span ref={ref}>{displayed}{!done && <span className="animate-pulse text-nil-green">|</span>}</span>;
 }
 
-/* ═══ Verified athletes from Under Center — real NIL data ═══ */
+/* ═══ Verified athletes — real NIL data ═══ */
 const VERIFIED_ATHLETES = [
   {
     id: "arch-manning", name: "Arch Manning", sport: "Football", pos: "QB", school: "Texas Longhorns", state: "Texas",
@@ -223,7 +223,7 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center stagger">
             {[
               { value: "$52.7M+", label: "Capital Scored", sub: "Total deal value evaluated" },
-              { value: "10", label: "Verified Athletes", sub: "Under Center pipeline" },
+              { value: "10", label: "Verified Athletes", sub: "NIL33 verified pipeline" },
               { value: "20+", label: "Active States", sub: "Compliance rulesets loaded" },
               { value: "0", label: "Missed Overpays", sub: "Every dollar accounted" },
             ].map((s) => (
@@ -289,25 +289,25 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* ═══ 5 · POWERED BY UNDER CENTER — Pipeline ═══ */}
+      {/* ═══ 5 · VERIFICATION PIPELINE ═══ */}
       <Section dark>
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div>
             <p className="text-overline mb-5">Verified Pipeline</p>
             <h2 className="text-h1 text-nil-white mb-4">
-              Under Center verifies.
-              <span className="gradient-text"> NIL33 values.</span>
+              Identity verified.
+              <span className="gradient-text"> NIL33 valued.</span>
             </h2>
             <p className="text-nil-muted text-body-lg mb-8 leading-relaxed">
-              Every athlete scored by NIL33 is first verified through Under Center&apos;s
-              identity and metrics platform. Velocity, release time, accuracy — measured,
-              hashed, and signed before a single dollar is discussed.
+              Every athlete scored by NIL33 goes through our identity verification
+              pipeline. Metrics captured, hashed, and cryptographically signed
+              before a single dollar is discussed.
             </p>
             <div className="space-y-4">
               {[
-                { step: "01", text: "Under Center captures and verifies athlete metrics", color: "text-nil-cyan" },
+                { step: "01", text: "NIL33 captures and verifies athlete identity & metrics", color: "text-nil-cyan" },
                 { step: "02", text: "Identity hash created with SHA-256 + Ed25519 signature", color: "text-nil-green" },
-                { step: "03", text: "NIL33 ingests verified identity into 33-factor scoring", color: "text-nil-gold" },
+                { step: "03", text: "Verified identity feeds into 33-factor scoring engine", color: "text-nil-gold" },
                 { step: "04", text: "Valuation, compliance check, and receipt generated", color: "text-nil-purple" },
               ].map((s) => (
                 <div key={s.step} className="flex items-start gap-4 group">
@@ -329,7 +329,7 @@ export default function Home() {
                 <Image src={featured.image} alt={featured.name} fill className="object-cover object-top" />
                 <div className="absolute inset-0 bg-gradient-to-t from-nil-dark via-nil-dark/30 to-transparent" />
                 <div className="absolute top-4 right-4 flex gap-2">
-                  <Badge status="pass" label="UC Verified" />
+                  <Badge status="pass" label="Verified" />
                   <span className="bg-nil-gold/20 text-nil-gold text-[10px] font-bold px-2.5 py-1 rounded-full border border-nil-gold/30">
                     ★ {featured.rating}
                   </span>
@@ -392,7 +392,7 @@ export default function Home() {
             <SectionHeader
               overline="Live output"
               title="What a scored deal looks like."
-              subtitle={`Arch Manning — 5-star QB, Texas Longhorns. Verified by Under Center. Scored by NIL33. Every deal your collective evaluates produces a structured, auditable record like this.`}
+              subtitle={`Arch Manning — 5-star QB, Texas Longhorns. Verified and scored by NIL33. Every deal your collective evaluates produces a structured, auditable record like this.`}
             />
             <div className="flex flex-wrap items-center gap-3 mt-8">
               <Badge status="pass" label="TX State Law" />
@@ -410,7 +410,7 @@ export default function Home() {
               <CodePreview title="nil33 score-deal --athlete manning --output json">
                 <div className="space-y-0.5 text-[13px]">
                   <DataRow label="Athlete" value="Arch Manning — QB, Texas Longhorns" />
-                  <DataRow label="UC Verified" value={<span className="text-nil-cyan">✓ SHA-256 + Ed25519</span>} />
+                  <DataRow label="Verified" value={<span className="text-nil-cyan">✓ SHA-256 + Ed25519</span>} />
                   <DataRow label="Composite Score" value={<span className="text-nil-green font-bold text-xl">96</span>} />
                   <DataRow label="Valuation Band" value="$3,200,000 – $4,500,000" />
                   <DataRow label="Proposed Deal" value={<span className="text-nil-white">$3,800,000</span>} />
@@ -474,7 +474,7 @@ export default function Home() {
         <SectionHeader
           center
           overline="Verified Athletes"
-          title="Under Center athletes. NIL33 valuations."
+          title="Verified athletes. NIL33 valuations."
           subtitle="Every athlete on this roster has been identity-verified, metrics-captured, and scored through the NIL33 engine."
         />
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger">
@@ -637,29 +637,29 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ 11 · ROI ═══ */}
+      {/* ═══ 11 · SMART CONTRACTS & ATHLETE PROTECTION ═══ */}
       <Section>
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div>
             <SectionHeader
-              overline="ROI"
-              title="Catch one overpay. Paid for the year."
-              subtitle="Most collectives see 5x–10x return. The math is simple."
+              overline="Self-Executing Deals"
+              title="Solidity contracts. Automatic payouts. Zero middlemen."
+              subtitle="NIL33 uses on-chain smart contracts so deals execute themselves — milestones hit, payments fire, receipts generated. Athletes get paid on time, every time."
             />
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button href="/pricing" variant="ghost" size="sm">See all pricing →</Button>
-              <Button href="/demo" variant="ghost" size="sm">Run a free valuation →</Button>
+              <Button href="/product" variant="ghost" size="sm">How it works →</Button>
+              <Button href="/demo" variant="ghost" size="sm">Run a demo →</Button>
             </div>
           </div>
           <div className="bg-nil-black border border-nil-border/60 rounded-2xl p-8 glow-green">
-            <InlineStat label="NIL33 Pro (monthly)" value="$1,200" />
-            <InlineStat label="NIL33 Pro (annual)" value="$14,400" />
+            <InlineStat label="Contract execution" value="Automatic" />
+            <InlineStat label="Payout trigger" value="Milestone-based" />
             <div className="h-px bg-nil-border/40 my-3" />
-            <InlineStat label="Avg. overpay caught per deal" value="$28,000" valueColor="var(--color-nil-red)" />
+            <InlineStat label="Settlement time" value="<60 sec" valueColor="var(--color-nil-green)" />
             <div className="h-px bg-nil-border/40 my-3" />
-            <InlineStat label="Deals to break even" value="1" valueColor="var(--color-nil-green)" />
+            <InlineStat label="Disputes from missed payouts" value="0" valueColor="var(--color-nil-green)" />
             <div className="h-px bg-nil-border/40 my-3" />
-            <InlineStat label="Annual ROI at 10 deals" value="1,844%" valueColor="var(--color-nil-green)" />
+            <InlineStat label="Every deal on-chain" value="Immutable" valueColor="var(--color-nil-cyan)" />
           </div>
         </div>
       </Section>
@@ -734,7 +734,7 @@ export default function Home() {
             <span className="gradient-text">Before the money moves.</span>
           </h2>
           <p className="text-nil-muted text-lg mb-10 max-w-md mx-auto">
-            Under Center verified athletes. NIL33 scored. 33 factors. 50 states. Zero guesswork.
+            Verified athletes. NIL33 scored. 33 factors. 50 states. Zero guesswork.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Button href="/demo" size="lg">Open Demo →</Button>
