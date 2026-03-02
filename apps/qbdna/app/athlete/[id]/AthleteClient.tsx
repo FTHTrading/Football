@@ -3,6 +3,7 @@
 import { use } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { PLACEHOLDER_ATHLETES } from "@/lib/placeholder-data";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import StarRating from "@/components/StarRating";
@@ -100,70 +101,90 @@ export default function AthleteProfilePage({
           </Link>
         </motion.div>
 
-        {/* ═══════════ IDENTITY HEADER ═══════════ */}
+        {/* ═══════════ IDENTITY HEADER — EDITORIAL ═══════════ */}
         <motion.section
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="glass rounded-2xl p-8 mb-8"
+          className="rounded-2xl overflow-hidden mb-8"
         >
-          <div className="flex flex-col md:flex-row gap-8">
-            {/* Photo */}
-            <div className="flex-shrink-0">
-              <div className="w-40 h-40 rounded-2xl bg-gradient-to-br from-uc-cyan/20 to-uc-panel flex items-center justify-center overflow-hidden border border-white/5">
-                <span className="text-6xl font-bold text-uc-cyan/30">
-                  {athlete.name.charAt(0)}
-                </span>
-              </div>
-            </div>
+          {/* Cinematic photo header */}
+          <div className="relative h-56 md:h-72">
+            <Image
+              src="/images/athlete-action.jpg"
+              alt={`${athlete?.name ?? "Athlete"} action shot`}
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-uc-panel via-uc-panel/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-uc-panel/60 via-transparent to-uc-panel/40" />
+          </div>
 
-            {/* Info */}
-            <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-3 mb-3">
-                <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-                  {athlete.name}
-                </h1>
-                {athlete.verified && <VerifiedBadge size="lg" />}
-              </div>
-
-              <p className="text-sm text-uc-gray-400 mb-4">
-                {athlete.qbClass} Quarterback
-              </p>
-
-              <StarRating rating={athlete.rating} />
-
-              <div className="flex flex-wrap gap-6 mt-6">
-                <div className="flex items-center gap-2 text-sm text-uc-gray-400">
-                  <GraduationCap size={14} className="text-uc-cyan" />
-                  Class of {athlete.gradYear}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-uc-gray-400">
-                  <Ruler size={14} className="text-uc-cyan" />
-                  {athlete.height}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-uc-gray-400">
-                  <Weight size={14} className="text-uc-cyan" />
-                  {athlete.weight} lbs
-                </div>
-                <div className="flex items-center gap-2 text-sm text-uc-gray-400">
-                  <MapPin size={14} className="text-uc-cyan" />
-                  {athlete.state}
+          {/* Identity info overlaid at bottom of photo + below */}
+          <div className="bg-uc-panel border border-white/[0.04] p-6 md:p-8 -mt-20 relative z-10">
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Profile photo */}
+              <div className="flex-shrink-0 -mt-16">
+                <div className="w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden border-4 border-uc-panel shadow-2xl">
+                  <Image
+                    src="/images/athlete-profile.jpg"
+                    alt={athlete?.name ?? "Athlete"}
+                    width={160}
+                    height={160}
+                    className="object-cover w-full h-full"
+                  />
                 </div>
               </div>
-            </div>
 
-            {/* Status Box */}
-            <div className="flex flex-col items-end gap-3">
-              <div className="glass rounded-xl p-4 text-center min-w-[140px]">
-                <p className="text-[10px] tracking-[0.2em] uppercase text-uc-gray-400 mb-1">Status</p>
-                <p className={`text-lg font-bold ${athlete.verified ? "text-uc-green" : "text-yellow-400"}`}>
-                  {athlete.verified ? "VERIFIED" : "PENDING"}
+              {/* Info */}
+              <div className="flex-1">
+                <div className="flex flex-wrap items-center gap-3 mb-2">
+                  <h1 className="text-4xl md:text-6xl font-black tracking-tight">
+                    {athlete.name}
+                  </h1>
+                  {athlete.verified && <VerifiedBadge size="lg" />}
+                </div>
+
+                <p className="text-sm text-uc-gray-400 mb-3 font-medium">
+                  {athlete.qbClass} Quarterback
                 </p>
+
+                <StarRating rating={athlete.rating} />
+
+                <div className="flex flex-wrap gap-6 mt-5">
+                  <div className="flex items-center gap-2 text-sm text-uc-gray-400">
+                    <GraduationCap size={14} className="text-uc-cyan" />
+                    Class of {athlete.gradYear}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-uc-gray-400">
+                    <Ruler size={14} className="text-uc-cyan" />
+                    {athlete.height}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-uc-gray-400">
+                    <Weight size={14} className="text-uc-cyan" />
+                    {athlete.weight} lbs
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-uc-gray-400">
+                    <MapPin size={14} className="text-uc-cyan" />
+                    {athlete.state}
+                  </div>
+                </div>
               </div>
-              <button className="flex items-center gap-2 px-4 py-2 rounded-lg glass text-sm text-uc-gray-400 hover:text-uc-cyan transition-colors">
-                <Share2 size={14} />
-                Share
-              </button>
+
+              {/* Status Box */}
+              <div className="flex flex-col items-end gap-3">
+                <div className="glass rounded-xl p-4 text-center min-w-[140px]">
+                  <p className="text-[10px] tracking-[0.2em] uppercase text-uc-gray-400 mb-1">Status</p>
+                  <p className={`text-lg font-bold ${athlete.verified ? "text-uc-green" : "text-yellow-400"}`}>
+                    {athlete.verified ? "VERIFIED" : "PENDING"}
+                  </p>
+                </div>
+                <button className="flex items-center gap-2 px-4 py-2 rounded-lg glass text-sm text-uc-gray-400 hover:text-uc-cyan transition-colors">
+                  <Share2 size={14} />
+                  Share
+                </button>
+              </div>
             </div>
           </div>
         </motion.section>
