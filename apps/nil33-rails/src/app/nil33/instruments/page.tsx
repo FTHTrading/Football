@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { formatCents, formatDate, formatBps } from "@/lib/utils";
+import Link from "next/link";
 
 const STATUS_BADGE: Record<string, string> = {
   OPEN: "badge-green",
@@ -45,7 +46,9 @@ export default async function InstrumentsPage() {
           <tbody>
             {instruments.map((ins) => (
               <tr key={ins.id} className="border-b border-surface-border/50 table-row-hover">
-                <td className="px-4 py-3 font-medium text-rails-text max-w-xs truncate">{ins.name}</td>
+                <td className="px-4 py-3 font-medium text-rails-text max-w-xs truncate">
+                  <Link href={`/nil33/instruments/${ins.id}`} className="hover:text-rails-green">{ins.name}</Link>
+                </td>
                 <td className="px-4 py-3 text-rails-text-dim text-xs">{ins.spv.legalName}</td>
                 <td className="px-4 py-3 font-mono text-rails-green">{formatCents(ins.totalIssuanceAmtCents)}</td>
                 <td className="px-4 py-3 font-mono text-rails-cyan">{formatBps(ins.participationRateBps)}</td>

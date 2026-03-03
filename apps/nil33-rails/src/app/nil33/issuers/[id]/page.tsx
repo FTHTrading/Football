@@ -3,9 +3,11 @@ import { notFound } from "next/navigation";
 import { formatCents, formatDate, formatBps } from "@/lib/utils";
 import Link from "next/link";
 
-export default async function SpvDetailPage({ params }: { params: { id: string } }) {
+export default async function SpvDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
   const spv = await prisma.spv.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       athletes: { include: { nilContracts: { where: { status: "ACTIVE" } } } },
       instruments: {
@@ -50,7 +52,7 @@ export default async function SpvDetailPage({ params }: { params: { id: string }
               {spv.instruments.map((ins) => (
                 <li key={ins.id} className="rounded-lg border border-surface-border p-3">
                   <div className="flex justify-between">
-                    <Link href={`/nil33/instruments`} className="font-medium text-rails-text hover:text-rails-green text-sm">
+                    <Link href={`/nil33/instruments/${ins.id}`} className="font-medium text-rails-text hover:text-rails-green text-sm">
                       {ins.name}
                     </Link>
                     <span className="badge badge-cyan text-[10px]">{ins.status}</span>

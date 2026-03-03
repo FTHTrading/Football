@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { formatCents, formatDate } from "@/lib/utils";
+import Link from "next/link";
 
 const STATUS_BADGE: Record<string, string> = {
   COMPLETE: "badge-green",
@@ -45,7 +46,9 @@ export default async function DistributionsPage() {
           <tbody>
             {distributions.map((d) => (
               <tr key={d.id} className="border-b border-surface-border/50 table-row-hover">
-                <td className="px-4 py-3 font-medium text-rails-text max-w-[200px] truncate">{d.instrument.name}</td>
+                <td className="px-4 py-3 font-medium text-rails-text max-w-[200px] truncate">
+                  <Link href={`/nil33/distributions/${d.id}`} className="hover:text-rails-green">{d.instrument.name}</Link>
+                </td>
                 <td className="px-4 py-3 text-xs text-rails-text-dim">
                   {formatDate(d.periodStart)} – {formatDate(d.periodEnd)}
                 </td>

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { formatCents, formatDate } from "@/lib/utils";
+import Link from "next/link";
 
 const KYC_BADGE: Record<string, string> = {
   APPROVED: "badge-green",
@@ -50,7 +51,9 @@ export default async function InvestorsPage() {
           <tbody>
             {investors.map((inv) => (
               <tr key={inv.id} className="border-b border-surface-border/50 table-row-hover">
-                <td className="px-4 py-3 font-medium text-rails-text">{inv.legalName}</td>
+                <td className="px-4 py-3 font-medium text-rails-text">
+                  <Link href={`/nil33/investors/${inv.id}`} className="hover:text-rails-green">{inv.legalName}</Link>
+                </td>
                 <td className="px-4 py-3 text-rails-text-dim text-xs">{inv.email}</td>
                 <td className="px-4 py-3 text-rails-text-dim">{inv.entityType}</td>
                 <td className="px-4 py-3">
