@@ -8,54 +8,8 @@ import {
 } from "@/lib/athletes";
 import { useEffect, useRef, useState, useMemo } from "react";
 import Link from "next/link";
-
-/* ─── Intersection Observer Hook ─── */
-function useReveal(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
-      },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
-}
-
-/* ─── Reveal Wrapper ─── */
-function Reveal({
-  children,
-  delay = 0,
-  className = "",
-}: {
-  children: React.ReactNode;
-  delay?: number;
-  className?: string;
-}) {
-  const { ref, visible } = useReveal();
-  return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(24px)",
-        transition: `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s`,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
+import Reveal from "@/components/Reveal";
+import Stars from "@/components/Stars";
 
 /* ─── Metric Bar (small, horizontal) ─── */
 function MetricBar({
@@ -84,22 +38,6 @@ function MetricBar({
       <span className="text-xs font-mono font-semibold text-uc-white w-7 text-right">
         {value}
       </span>
-    </div>
-  );
-}
-
-/* ─── Star Rating ─── */
-function Stars({ count }: { count: number }) {
-  return (
-    <div className="flex gap-0.5">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <span
-          key={i}
-          className={`text-sm ${i < count ? "text-uc-gold" : "text-uc-border"}`}
-        >
-          ★
-        </span>
-      ))}
     </div>
   );
 }
@@ -172,7 +110,7 @@ function AthleteCard({
 
           {/* Star Rating */}
           <div className="flex items-center gap-3 mb-5">
-            <Stars count={athlete.starRating} />
+            <Stars count={athlete.starRating} size="sm" />
             <span className="text-[11px] text-uc-muted uppercase tracking-wider">
               {athlete.starRating}-Star Prospect
             </span>
@@ -321,12 +259,18 @@ export default function Home() {
             >
               Compare
             </Link>
-            <a
-              href="#how"
+            <Link
+              href="/lab"
               className="text-sm text-uc-muted hover:text-uc-white transition-colors"
             >
-              How It Works
-            </a>
+              DNA Lab
+            </Link>
+            <Link
+              href="/methodology"
+              className="text-sm text-uc-muted hover:text-uc-white transition-colors"
+            >
+              Methodology
+            </Link>
             <button className="text-sm bg-uc-gold/10 text-uc-gold border border-uc-gold/20 px-4 py-1.5 rounded-lg hover:bg-uc-gold/20 transition-colors cursor-pointer">
               Request Invite
             </button>

@@ -9,55 +9,10 @@ import {
 } from "@/lib/athletes";
 import type { Athlete } from "@/lib/athletes";
 import RadarChart from "@/components/RadarChart";
+import Reveal from "@/components/Reveal";
+import Stars from "@/components/Stars";
 import Link from "next/link";
-import { useState, useMemo, useRef, useEffect } from "react";
-
-/* ─── Reveal ─── */
-function useReveal(threshold = 0.12) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
-      },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
-}
-
-function Reveal({
-  children,
-  delay = 0,
-  className = "",
-}: {
-  children: React.ReactNode;
-  delay?: number;
-  className?: string;
-}) {
-  const { ref, visible } = useReveal();
-  return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(20px)",
-        transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
+import { useState, useMemo } from "react";
 
 /* ─── Sort Options ─── */
 type SortKey = "dnaScore" | "starRating" | "yards" | "touchdowns" | "qbr" | "accuracy";
@@ -321,7 +276,7 @@ function RankingRow({
             <span className="text-uc-white font-semibold truncate">
               {athlete.name}
             </span>
-            <Stars count={athlete.starRating} />
+            <Stars count={athlete.starRating} size="sm" />
           </div>
           <p className="text-uc-muted text-xs truncate">
             {athlete.highSchool} · {athlete.state} · Class of {athlete.class}
@@ -427,21 +382,6 @@ function RankingRow({
 }
 
 /* ─── Tiny Helpers ─── */
-
-function Stars({ count }: { count: number }) {
-  return (
-    <div className="flex gap-0.5">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <span
-          key={i}
-          className={`text-xs ${i < count ? "text-uc-gold" : "text-uc-border"}`}
-        >
-          ★
-        </span>
-      ))}
-    </div>
-  );
-}
 
 function StatCell({ label, value }: { label: string; value: string | number }) {
   return (

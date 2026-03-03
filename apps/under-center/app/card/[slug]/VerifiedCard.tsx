@@ -1,6 +1,8 @@
 "use client";
 
 import type { Athlete } from "@/lib/athletes";
+import { computeDnaScore, dnaGrade, dnaGradeColor, getRadarData } from "@/lib/athletes";
+import Stars from "@/components/Stars";
 import Link from "next/link";
 
 /* ─── Mini Metric Row ─── */
@@ -25,26 +27,16 @@ function CardMetric({
   );
 }
 
-/* ─── Stars ─── */
-function Stars({ count }: { count: number }) {
-  return (
-    <div className="flex gap-0.5">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <span
-          key={i}
-          className={`text-base ${i < count ? "text-uc-gold" : "text-uc-border"}`}
-        >
-          ★
-        </span>
-      ))}
-    </div>
-  );
-}
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 /*  VERIFIED CARD — Shareable Instagram-Format                    */
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 export default function VerifiedCard({ athlete }: { athlete: Athlete }) {
+  const score = computeDnaScore(athlete.metrics);
+  const grade = dnaGrade(score);
+  const gradeColor = dnaGradeColor(score);
+  const radarData = getRadarData(athlete.metrics);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-uc-black">
       {/* Back nav */}
@@ -114,13 +106,97 @@ export default function VerifiedCard({ athlete }: { athlete: Athlete }) {
           </div>
 
           {/* — Verified + Stars — */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-5">
             <Stars count={athlete.starRating} />
             <div className="flex items-center gap-1.5 bg-uc-gold/10 border border-uc-gold/30 rounded-full px-3 py-1 animate-verified">
               <span className="w-2 h-2 rounded-full bg-uc-gold" />
               <span className="text-uc-gold text-[11px] font-semibold uppercase tracking-wider">
                 Verified
               </span>
+            </div>
+          </div>
+
+          {/* — DNA Score Badge — */}
+          <div
+            className="rounded-2xl p-4 mb-6"
+            style={{
+              background: `linear-gradient(135deg, ${gradeColor}08, ${athlete.accentColor}05)`,
+              border: `1px solid ${gradeColor}25`,
+            }}
+          >
+            <div className="flex items-center gap-4">
+              {/* Mini Radar */}
+              <div className="shrink-0">
+                <svg width="72" height="72" viewBox="0 0 72 72">
+                  {/* Grid rings */}
+                  {[0.33, 0.66, 1].map((r) => (
+                    <polygon
+                      key={r}
+                      points={radarData
+                        .map((_, i) => {
+                          const angle = (Math.PI * 2 * i) / radarData.length - Math.PI / 2;
+                          const radius = 30 * r;
+                          return `${36 + radius * Math.cos(angle)},${36 + radius * Math.sin(angle)}`;
+                        })
+                        .join(" ")}
+                      fill="none"
+                      stroke="rgba(255,255,255,0.06)"
+                      strokeWidth="0.5"
+                    />
+                  ))}
+                  {/* Data polygon */}
+                  <polygon
+                    points={radarData
+                      .map((p, i) => {
+                        const angle = (Math.PI * 2 * i) / radarData.length - Math.PI / 2;
+                        const radius = (p.value / 100) * 30;
+                        return `${36 + radius * Math.cos(angle)},${36 + radius * Math.sin(angle)}`;
+                      })
+                      .join(" ")}
+                    fill={`${athlete.accentColor}20`}
+                    stroke={athlete.accentColor}
+                    strokeWidth="1.5"
+                  />
+                  {/* Data dots */}
+                  {radarData.map((p, i) => {
+                    const angle = (Math.PI * 2 * i) / radarData.length - Math.PI / 2;
+                    const radius = (p.value / 100) * 30;
+                    return (
+                      <circle
+                        key={i}
+                        cx={36 + radius * Math.cos(angle)}
+                        cy={36 + radius * Math.sin(angle)}
+                        r="2"
+                        fill={athlete.accentColor}
+                      />
+                    );
+                  })}
+                </svg>
+              </div>
+
+              {/* Score + Grade */}
+              <div className="flex-1">
+                <p className="text-[9px] text-uc-muted uppercase tracking-widest mb-1">
+                  QB DNA Score
+                </p>
+                <div className="flex items-baseline gap-2">
+                  <span
+                    className="text-3xl font-mono font-bold leading-none"
+                    style={{ color: gradeColor }}
+                  >
+                    {score}
+                  </span>
+                  <span
+                    className="text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: gradeColor }}
+                  >
+                    {grade}
+                  </span>
+                </div>
+                <p className="text-[9px] text-uc-muted mt-1">
+                  Weighted composite across 8 verified metrics
+                </p>
+              </div>
             </div>
           </div>
 

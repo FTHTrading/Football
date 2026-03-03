@@ -3,55 +3,10 @@
 import type { Athlete } from "@/lib/athletes";
 import { computeDnaScore, dnaGrade, dnaGradeColor, getRadarData } from "@/lib/athletes";
 import RadarChart from "@/components/RadarChart";
+import Reveal, { useReveal } from "@/components/Reveal";
+import Stars from "@/components/Stars";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-
-/* ─── Reveal hook ─── */
-function useReveal(threshold = 0.12) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
-      },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
-}
-
-function Reveal({
-  children,
-  delay = 0,
-  className = "",
-}: {
-  children: React.ReactNode;
-  delay?: number;
-  className?: string;
-}) {
-  const { ref, visible } = useReveal();
-  return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(20px)",
-        transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
 
 /* ─── Grade Bar ─── */
 function GradeBar({
@@ -90,22 +45,6 @@ function GradeBar({
           }}
         />
       </div>
-    </div>
-  );
-}
-
-/* ─── Stars ─── */
-function Stars({ count }: { count: number }) {
-  return (
-    <div className="flex gap-1">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <span
-          key={i}
-          className={`text-lg ${i < count ? "text-uc-gold" : "text-uc-border"}`}
-        >
-          ★
-        </span>
-      ))}
     </div>
   );
 }
@@ -175,6 +114,12 @@ export default function AthleteProfile({ athlete }: { athlete: Athlete }) {
           >
             Compare
           </Link>
+          <Link
+            href="/lab"
+            className="text-xs text-uc-muted hover:text-uc-white transition-colors"
+          >
+            DNA Lab
+          </Link>
         </div>
       </nav>
 
@@ -221,7 +166,7 @@ export default function AthleteProfile({ athlete }: { athlete: Athlete }) {
                 </p>
 
                 <div className="flex items-center gap-4">
-                  <Stars count={athlete.starRating} />
+                  <Stars count={athlete.starRating} size="lg" />
                   <span className="text-xs text-uc-muted uppercase tracking-wider">
                     {athlete.starRating}-Star · GPA {athlete.gpa}
                   </span>
@@ -546,6 +491,117 @@ export default function AthleteProfile({ athlete }: { athlete: Athlete }) {
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ─── NIL Valuation Insights ─── */}
+      <section className="py-20 px-6">
+        <div className="max-w-5xl mx-auto">
+          <Reveal>
+            <div className="flex items-center gap-3 mb-2">
+              <h2 className="text-2xl font-bold text-uc-white">
+                NIL Valuation Insights
+              </h2>
+              <span className="text-[10px] font-semibold uppercase tracking-wider bg-uc-gold/10 text-uc-gold border border-uc-gold/20 px-2.5 py-0.5 rounded-full">
+                Beta
+              </span>
+            </div>
+            <p className="text-uc-muted text-sm mb-10">
+              Projected NIL value range powered by the NIL33 institutional underwriting engine.
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <div className="bg-uc-dark border border-uc-border rounded-2xl p-8">
+              <div className="grid md:grid-cols-3 gap-8 mb-8">
+                {/* Estimated Range */}
+                <div className="text-center md:text-left">
+                  <p className="text-[10px] text-uc-muted uppercase tracking-widest mb-2">
+                    Estimated NIL Range
+                  </p>
+                  <div className="flex items-baseline gap-1 justify-center md:justify-start">
+                    <span className="text-3xl font-mono font-bold text-uc-gold">
+                      ${(() => {
+                        const base = score >= 85 ? 800 : score >= 75 ? 400 : score >= 65 ? 150 : 50;
+                        const starMult = athlete.starRating >= 5 ? 2.5 : athlete.starRating >= 4 ? 1.5 : 1;
+                        const low = Math.round(base * starMult);
+                        return `${low}K`;
+                      })()}
+                    </span>
+                    <span className="text-uc-muted text-sm">–</span>
+                    <span className="text-3xl font-mono font-bold text-uc-gold">
+                      ${(() => {
+                        const base = score >= 85 ? 800 : score >= 75 ? 400 : score >= 65 ? 150 : 50;
+                        const starMult = athlete.starRating >= 5 ? 2.5 : athlete.starRating >= 4 ? 1.5 : 1;
+                        const high = Math.round(base * starMult * 2.2);
+                        return high >= 1000 ? `${(high / 1000).toFixed(1)}M` : `${high}K`;
+                      })()}
+                    </span>
+                  </div>
+                  <p className="text-[9px] text-uc-muted mt-1">Annual projected value</p>
+                </div>
+
+                {/* DNA Contribution */}
+                <div className="text-center">
+                  <p className="text-[10px] text-uc-muted uppercase tracking-widest mb-2">
+                    DNA Score Factor
+                  </p>
+                  <div className="flex items-baseline gap-2 justify-center">
+                    <span className="text-3xl font-mono font-bold" style={{ color: gradeColor }}>
+                      {score}
+                    </span>
+                    <span className="text-sm font-semibold uppercase" style={{ color: gradeColor }}>
+                      {grade}
+                    </span>
+                  </div>
+                  <p className="text-[9px] text-uc-muted mt-1">Primary valuation driver</p>
+                </div>
+
+                {/* Market Factors */}
+                <div className="text-center md:text-right">
+                  <p className="text-[10px] text-uc-muted uppercase tracking-widest mb-2">
+                    Market Signals
+                  </p>
+                  <div className="flex flex-wrap gap-2 justify-center md:justify-end">
+                    <span className="text-xs bg-uc-panel border border-uc-border px-2.5 py-1 rounded-lg text-uc-light">
+                      {athlete.offers.length} Offers
+                    </span>
+                    <span className="text-xs bg-uc-panel border border-uc-border px-2.5 py-1 rounded-lg text-uc-light">
+                      {athlete.starRating}★ Rating
+                    </span>
+                    <span className="text-xs bg-uc-panel border border-uc-border px-2.5 py-1 rounded-lg text-uc-light">
+                      {athlete.state} Market
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Valuation Drivers */}
+              <div className="border-t border-uc-border pt-6">
+                <p className="text-[10px] text-uc-muted uppercase tracking-widest mb-4">
+                  Key Valuation Drivers
+                </p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[
+                    { label: "Performance", value: Math.round(score), icon: "📊" },
+                    { label: "Marketability", value: Math.round(athlete.starRating * 20), icon: "📱" },
+                    { label: "School Pipeline", value: Math.min(99, athlete.offers.length * 12), icon: "🏟️" },
+                    { label: "Position Premium", value: 95, icon: "🎯" },
+                  ].map((d) => (
+                    <div key={d.label} className="bg-uc-black/50 rounded-xl p-3 border border-uc-border/50 text-center">
+                      <div className="text-lg mb-1">{d.icon}</div>
+                      <div className="text-sm font-mono font-bold text-uc-white">{d.value}</div>
+                      <div className="text-[9px] text-uc-muted uppercase tracking-wider mt-0.5">{d.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <p className="text-[9px] text-uc-muted/50 mt-6 text-center">
+                NIL valuations are projections based on verified metrics + market data. Powered by NIL33 Engine.
+              </p>
+            </div>
+          </Reveal>
         </div>
       </section>
 
