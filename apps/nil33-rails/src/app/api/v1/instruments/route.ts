@@ -41,14 +41,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Validation failed", issues: parsed.error.issues }, { status: 422 });
   }
 
-  const instrument = await prisma.instrument.create({ data: parsed.data });
+  const d = parsed.data;
+  const instrument = await prisma.instrument.create({
+    data: {
+      spvId: d.spvId,
+      name: d.name,
+      instrumentType: d.type.toUpperCase().replace(/ /g, "_"),
+      totalIssuanceAmtCents: d.offeringSizeCents,
+      minSubscriptionCents: d.minTicketCents,
+      participationRateBps: d.concentrationLimitPct, // bps field
+      holdingPeriodDays: d.holdingPeriodDays,
+    },
+  });
 
   await appendAuditEvent({
     action: "instrument.created",
     entityType: "instrument",
     entityId: instrument.id,
     actorId: session.user.id,
-    snapshotAfter: instrument as Record<string, unknown>,
+    snapshotAfter: JSON.parse(JSON.stringify(instrument)),
   });
 
   return NextResponse.json(instrument, { status: 201 });

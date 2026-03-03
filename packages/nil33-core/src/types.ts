@@ -282,6 +282,8 @@ export type TransferCheckReasonCode =
   | "CONCENTRATION_LIMIT_EXCEEDED"
   | "INVESTOR_NOT_ON_WHITELIST"
   | "INSTRUMENT_CLOSED"
+  | "KYC_NOT_APPROVED"
+  | "AML_FLAG"
   | "OK";
 
 export interface TransferCheckResult {

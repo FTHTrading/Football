@@ -42,11 +42,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Validation failed", issues: parsed.error.issues }, { status: 422 });
   }
 
-  const { instrumentId, periodStart, periodEnd, grossRevenueCents, participationRateBps, managementFeeCents } =
-    parsed.data;
+  const { instrumentId, periodStart, periodEnd, totalRevenueCents } = parsed.data;
 
-  const participationCents = Math.floor((grossRevenueCents * participationRateBps) / 10_000);
-  const mgmtFee = managementFeeCents ?? 0;
+  // Look up participation rate from the instrument
+  const instrument = await prisma.instrument.findUnique({ where: { id: instrumentId } });
+  if (!instrument) {
+    return NextResponse.json({ error: "Instrument not found" }, { status: 404 });
+  }
+
+  const grossRevenueCents = totalRevenueCents;
+  const participationCents = Math.floor((grossRevenueCents * instrument.participationRateBps) / 10_000);
+  const mgmtFee = 0;
   const netDistributableCents = participationCents - mgmtFee;
 
   // Build waterfall lines from funded subscriptions
@@ -91,7 +97,7 @@ export async function POST(req: NextRequest) {
     entityType: "distribution",
     entityId: distribution.id,
     actorId: session.user.id,
-    snapshotAfter: { netDistributableCents, lineCount: distribution.lines.length } as Record<string, unknown>,
+    snapshotAfter: { netDistributableCents, lineCount: distribution.lines.length },
   });
 
   return NextResponse.json(distribution, { status: 201 });

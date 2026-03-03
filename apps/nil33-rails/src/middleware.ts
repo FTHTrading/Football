@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import type { NextRequest } from "next/server";
 
 const PUBLIC_PATHS = ["/login", "/api/auth"];
 
-export default auth(function middleware(req: NextRequest & { auth: { user?: { role?: string } } | null }) {
+export default auth((req) => {
   const { pathname } = req.nextUrl;
 
   // Allow public paths

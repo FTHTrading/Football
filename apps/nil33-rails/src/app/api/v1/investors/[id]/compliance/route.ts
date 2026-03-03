@@ -4,18 +4,28 @@ import { prisma } from "@/lib/prisma";
 import { ComplianceGate } from "@nil33/compliance-gate";
 import { appendAuditEvent } from "@/lib/audit";
 import type { ComplianceContext } from "@nil33/compliance-gate";
+import type { Investor, Instrument } from "@nil33/core";
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const investor = await prisma.investor.findUnique({ where: { id: params.id } });
+  const { id } = await params;
+  const investor = await prisma.investor.findUnique({ where: { id } });
   if (!investor) return NextResponse.json({ error: "Investor not found" }, { status: 404 });
 
   const body = await req.json().catch(() => ({}));
-  const instrument = body.instrumentId
-    ? await prisma.instrument.findUnique({ where: { id: body.instrumentId } })
-    : null;
+  if (!body.instrumentId) {
+    return NextResponse.json({ error: "instrumentId is required" }, { status: 422 });
+  }
+
+  const dbInstrument = await prisma.instrument.findUnique({ where: { id: body.instrumentId } });
+  if (!dbInstrument) {
+    return NextResponse.json({ error: "Instrument not found" }, { status: 404 });
+  }
 
   const subscriptions = await prisma.subscription.findMany({
     where: { investorId: investor.id, status: "FUNDED" },
@@ -23,23 +33,53 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   });
   const totalInvested = subscriptions.reduce((s, sub) => s + sub.amountCents, 0);
 
-  const ctx: ComplianceContext = {
-    investorId: investor.id,
-    kycStatus: investor.kycStatus as "PENDING" | "IN_REVIEW" | "APPROVED" | "REJECTED",
-    accreditationStatus: investor.accreditationStatus as "PENDING" | "VERIFIED" | "EXPIRED" | "FAILED",
-    accreditationExpiresAt: investor.accreditationExpiresAt ?? undefined,
-    jurisdictionCountry: investor.jurisdictionCountry,
-    jurisdictionState: investor.jurisdictionState ?? undefined,
+  // Map DB rows → domain types expected by ComplianceGate
+  const investorDomain: Investor = {
+    id: investor.id,
+    entityType: investor.entityType.toLowerCase() as Investor["entityType"],
+    legalName: investor.legalName,
+    ein: null,
+    jurisdiction: investor.jurisdictionCountry,
+    kycStatus: investor.kycStatus.toLowerCase() as Investor["kycStatus"],
+    kycCompletedAt: investor.kycCompletedAt,
+    accreditationStatus: investor.accreditationStatus.toLowerCase() as Investor["accreditationStatus"],
+    accreditationExpiry: investor.accreditationExpiresAt ?? null,
     riskFlags: investor.riskFlags,
-    instrumentStatus: instrument?.status as string | undefined,
-    concentrationLimitBps: investor.concentrationLimitBps,
-    currentPositionCents: totalInvested,
-    proposedAmountCents: body.proposedAmountCents ?? 0,
-    totalPortfolioCents: investor.totalInvestedCents,
+    contactEmail: investor.email,
+    contactName: investor.legalName,
+    createdAt: investor.createdAt,
+    updatedAt: investor.updatedAt,
   };
 
-  const gate = new ComplianceGate(ctx);
-  const result = gate.checkEligibility();
+  const instrumentDomain: Instrument = {
+    id: dbInstrument.id,
+    spvId: dbInstrument.spvId,
+    name: dbInstrument.name,
+    type: dbInstrument.instrumentType.toLowerCase() as Instrument["type"],
+    status: dbInstrument.status.toLowerCase() as Instrument["status"],
+    offeringSizeCents: dbInstrument.totalIssuanceAmtCents,
+    minTicketCents: dbInstrument.minSubscriptionCents,
+    maxTicketCents: null,
+    targetYield: null,
+    maturityMonths: null,
+    eligibilityRules: [],
+    holdingPeriodDays: dbInstrument.holdingPeriodDays,
+    concentrationLimitPct: dbInstrument.participationRateBps,
+    offeringDocId: null,
+    createdAt: dbInstrument.createdAt,
+    updatedAt: dbInstrument.updatedAt,
+    closedAt: null,
+  };
+
+  const ctx: ComplianceContext = {
+    investor: investorDomain,
+    instrument: instrumentDomain,
+    currentInvestorTotalCents: totalInvested + (body.proposedAmountCents ?? 0),
+    currentRaisedCents: totalInvested,
+  };
+
+  const gate = new ComplianceGate();
+  const result = gate.checkEligibility(ctx);
 
   // Persist check record
   await prisma.complianceCheck.create({
@@ -50,7 +90,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       passed: result.allowed,
       reasonCode: result.reasonCode ?? null,
       detail: result.detail ?? null,
-      snapshotJson: ctx as Record<string, unknown>,
+      snapshotJson: JSON.parse(JSON.stringify(ctx)),
     },
   });
 
@@ -59,7 +99,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     entityType: "investor",
     entityId: investor.id,
     actorId: session.user.id,
-    snapshotAfter: result as unknown as Record<string, unknown>,
+    snapshotAfter: JSON.parse(JSON.stringify(result)),
   });
 
   return NextResponse.json(result);

@@ -42,14 +42,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Validation failed", issues: parsed.error.issues }, { status: 422 });
   }
 
-  const investor = await prisma.investor.create({ data: parsed.data });
+  const d = parsed.data;
+  const investor = await prisma.investor.create({
+    data: {
+      legalName: d.legalName,
+      email: d.contactEmail,
+      entityType: d.entityType.toUpperCase(),
+      jurisdictionCountry: d.jurisdiction,
+    },
+  });
 
   await appendAuditEvent({
     action: "investor.created",
     entityType: "investor",
     entityId: investor.id,
     actorId: session.user.id,
-    snapshotAfter: investor as Record<string, unknown>,
+    snapshotAfter: JSON.parse(JSON.stringify(investor)),
   });
 
   return NextResponse.json(investor, { status: 201 });
