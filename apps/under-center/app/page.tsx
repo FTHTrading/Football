@@ -6,10 +6,12 @@ import {
   dnaGrade,
   dnaGradeColor,
 } from "@/lib/athletes";
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import Stars from "@/components/Stars";
+import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
 
 /* ─── Metric Bar (small, horizontal) ─── */
 function MetricBar({
@@ -185,16 +187,9 @@ function AthleteCard({
 /*  PAGE                                                        */
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 export default function Home() {
-  const [scrolled, setScrolled] = useState(false);
   const [search, setSearch] = useState("");
   const [classFilter, setClassFilter] = useState("All");
   const [starFilter, setStarFilter] = useState("All");
-
-  useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
-  }, []);
 
   /* Dynamic stats from all athletes */
   const bestRelease = Math.min(...athletes.map((a) => a.metrics.releaseTime));
@@ -223,60 +218,7 @@ export default function Home() {
 
   return (
     <>
-      {/* ─── Nav ─── */}
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? "bg-uc-black/90 backdrop-blur-xl border-b border-uc-border"
-            : "bg-transparent"
-        }`}
-      >
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-uc-gold/10 border border-uc-gold/20 flex items-center justify-center">
-              <span className="text-uc-gold font-bold text-sm">UC</span>
-            </div>
-            <span className="text-uc-white font-semibold tracking-tight">
-              Under Center
-            </span>
-          </div>
-          <div className="flex items-center gap-6">
-            <a
-              href="#profiles"
-              className="text-sm text-uc-muted hover:text-uc-white transition-colors"
-            >
-              Profiles
-            </a>
-            <Link
-              href="/rankings"
-              className="text-sm text-uc-muted hover:text-uc-white transition-colors"
-            >
-              Rankings
-            </Link>
-            <Link
-              href="/compare"
-              className="text-sm text-uc-muted hover:text-uc-white transition-colors"
-            >
-              Compare
-            </Link>
-            <Link
-              href="/lab"
-              className="text-sm text-uc-muted hover:text-uc-white transition-colors"
-            >
-              DNA Lab
-            </Link>
-            <Link
-              href="/methodology"
-              className="text-sm text-uc-muted hover:text-uc-white transition-colors"
-            >
-              Methodology
-            </Link>
-            <button className="text-sm bg-uc-gold/10 text-uc-gold border border-uc-gold/20 px-4 py-1.5 rounded-lg hover:bg-uc-gold/20 transition-colors cursor-pointer">
-              Request Invite
-            </button>
-          </div>
-        </div>
-      </nav>
+      <Nav />
 
       {/* ─── Hero ─── */}
       <section className="relative min-h-screen flex items-center justify-center px-6">
@@ -587,42 +529,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── Footer ─── */}
-      <footer className="border-t border-uc-border py-12 px-6">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-uc-gold/10 border border-uc-gold/20 flex items-center justify-center">
-              <span className="text-uc-gold font-bold text-xs">UC</span>
-            </div>
-            <span className="text-uc-white font-medium text-sm">
-              Under Center
-            </span>
-          </div>
-          <p className="text-xs text-uc-muted">
-            © {new Date().getFullYear()} Under Center. All rights reserved.
-          </p>
-          <div className="flex items-center gap-6">
-            <a
-              href="#"
-              className="text-xs text-uc-muted hover:text-uc-white transition-colors"
-            >
-              Privacy
-            </a>
-            <a
-              href="#"
-              className="text-xs text-uc-muted hover:text-uc-white transition-colors"
-            >
-              Terms
-            </a>
-            <a
-              href="#"
-              className="text-xs text-uc-muted hover:text-uc-white transition-colors"
-            >
-              Contact
-            </a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }

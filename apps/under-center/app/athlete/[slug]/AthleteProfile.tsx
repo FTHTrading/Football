@@ -5,6 +5,9 @@ import { computeDnaScore, dnaGrade, dnaGradeColor, getRadarData } from "@/lib/at
 import RadarChart from "@/components/RadarChart";
 import Reveal, { useReveal } from "@/components/Reveal";
 import Stars from "@/components/Stars";
+import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
+import { useWatchlist } from "@/app/watchlist/WatchlistView";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -55,6 +58,7 @@ function GradeBar({
 export default function AthleteProfile({ athlete }: { athlete: Athlete }) {
   const metricsRef = useRef<HTMLDivElement>(null);
   const [metricsVisible, setMetricsVisible] = useState(false);
+  const { isWatched, toggle: toggleWatch } = useWatchlist();
 
   const score = computeDnaScore(athlete.metrics);
   const grade = dnaGrade(score);
@@ -82,46 +86,7 @@ export default function AthleteProfile({ athlete }: { athlete: Athlete }) {
 
   return (
     <>
-      {/* ─── Nav ─── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-uc-black/90 backdrop-blur-xl border-b border-uc-border">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
-          >
-            <div className="w-7 h-7 rounded-lg bg-uc-gold/10 border border-uc-gold/20 flex items-center justify-center">
-              <span className="text-uc-gold font-bold text-xs">UC</span>
-            </div>
-            <span className="text-uc-white font-semibold text-sm tracking-tight">
-              Under Center
-            </span>
-          </Link>
-          <Link
-            href={`/card/${athlete.slug}`}
-            className="text-xs bg-uc-gold/10 text-uc-gold border border-uc-gold/20 px-4 py-1.5 rounded-lg hover:bg-uc-gold/20 transition-colors"
-          >
-            Share Card
-          </Link>
-          <Link
-            href="/rankings"
-            className="text-xs text-uc-muted hover:text-uc-white transition-colors"
-          >
-            Rankings
-          </Link>
-          <Link
-            href={`/compare?a=${athlete.slug}`}
-            className="text-xs text-uc-muted hover:text-uc-white transition-colors"
-          >
-            Compare
-          </Link>
-          <Link
-            href="/lab"
-            className="text-xs text-uc-muted hover:text-uc-white transition-colors"
-          >
-            DNA Lab
-          </Link>
-        </div>
-      </nav>
+      <Nav />
 
       {/* ─── Hero ─── */}
       <section className="pt-28 pb-12 px-6 relative">
@@ -173,8 +138,8 @@ export default function AthleteProfile({ athlete }: { athlete: Athlete }) {
                 </div>
               </div>
 
-              {/* Recruiting Status Badge */}
-              <div className="shrink-0 text-center">
+              {/* Recruiting Status + Watch */}
+              <div className="shrink-0 flex flex-col items-center gap-3">
                 <div
                   className="px-6 py-3 rounded-xl border text-sm font-semibold"
                   style={{
@@ -185,9 +150,32 @@ export default function AthleteProfile({ athlete }: { athlete: Athlete }) {
                 >
                   {athlete.recruitingStatus}
                 </div>
-                <p className="text-[10px] text-uc-muted mt-2 uppercase tracking-wider">
+                <p className="text-[10px] text-uc-muted uppercase tracking-wider">
                   Recruiting Status
                 </p>
+                <button
+                  onClick={() => toggleWatch(athlete.slug)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                    isWatched(athlete.slug)
+                      ? "bg-uc-gold/10 border-uc-gold/30 text-uc-gold"
+                      : "bg-uc-dark border-uc-border text-uc-muted hover:border-uc-gold/20 hover:text-uc-gold"
+                  }`}
+                >
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill={isWatched(athlete.slug) ? "currentColor" : "none"}
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+                    />
+                  </svg>
+                  {isWatched(athlete.slug) ? "Watching" : "Watch"}
+                </button>
               </div>
             </div>
           </Reveal>
@@ -626,25 +614,7 @@ export default function AthleteProfile({ athlete }: { athlete: Athlete }) {
         </div>
       </section>
 
-      {/* ─── Footer ─── */}
-      <footer className="border-t border-uc-border py-10 px-6">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <Link
-            href="/"
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-          >
-            <div className="w-6 h-6 rounded bg-uc-gold/10 border border-uc-gold/20 flex items-center justify-center">
-              <span className="text-uc-gold font-bold text-[10px]">UC</span>
-            </div>
-            <span className="text-uc-white font-medium text-sm">
-              Under Center
-            </span>
-          </Link>
-          <p className="text-xs text-uc-muted">
-            © {new Date().getFullYear()} Under Center. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }

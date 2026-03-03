@@ -12,6 +12,8 @@ import RadarChart from "@/components/RadarChart";
 import Reveal from "@/components/Reveal";
 import Stars from "@/components/Stars";
 import Link from "next/link";
+import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
 import { useState, useMemo } from "react";
 
 /* ─── Sort Options ─── */
@@ -70,36 +72,7 @@ export default function RankingsView() {
 
   return (
     <>
-      {/* ─── Nav ─── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-uc-black/90 backdrop-blur-xl border-b border-uc-border">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
-          >
-            <div className="w-7 h-7 rounded-lg bg-uc-gold/10 border border-uc-gold/20 flex items-center justify-center">
-              <span className="text-uc-gold font-bold text-xs">UC</span>
-            </div>
-            <span className="text-uc-white font-semibold text-sm tracking-tight">
-              Under Center
-            </span>
-          </Link>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/compare"
-              className="text-xs text-uc-muted hover:text-uc-white transition-colors"
-            >
-              Compare
-            </Link>
-            <Link
-              href="/rankings"
-              className="text-xs text-uc-gold font-semibold"
-            >
-              Rankings
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Nav />
 
       {/* ─── Hero ─── */}
       <section className="pt-24 pb-8 px-6">
@@ -193,25 +166,7 @@ export default function RankingsView() {
         </div>
       </section>
 
-      {/* ─── Footer ─── */}
-      <footer className="border-t border-uc-border py-10 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <Link
-            href="/"
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-          >
-            <div className="w-6 h-6 rounded bg-uc-gold/10 border border-uc-gold/20 flex items-center justify-center">
-              <span className="text-uc-gold font-bold text-[10px]">UC</span>
-            </div>
-            <span className="text-uc-white font-medium text-sm">
-              Under Center
-            </span>
-          </Link>
-          <p className="text-xs text-uc-muted">
-            © {new Date().getFullYear()} Under Center. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }
