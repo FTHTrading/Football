@@ -1,0 +1,9 @@
+# Build outputs
+dist/
+
+# LaTeX auxiliary files
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz

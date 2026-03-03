@@ -1,0 +1,1606 @@
+{
+  "genome": {
+    "genomeId": "471eb564bc7d93a2b49a548c9d93b1e2",
+    "signalSchemaHash": "86677a79d9082da9ebbd1acfa41cd0c11cde4aafd4a95394f8b620f3c3b6b8d7",
+    "weightProfileHash": "09f0489bec2c123b5c558af2d48ddec4ce2e6d712e5733dd61cce927d6c7788c",
+    "thresholdHash": "65ba5fb0f5d59d71c47f4f664e3db2ba7f9aa453e12ceb81f1e7b755cc682dad",
+    "stressMatrixHash": "57d60a5445cb4e1f1ec76b90c974a4c802688f7351fcb9c7a352d5cc09c91768",
+    "covenantRulesHash": "817d7cd1c32ec9d96d351b86af4cad032a378a9d36f6481f06a91a7344a228fd",
+    "flagRulesHash": "1782ada99ce850291622dd0e4b9ea0d9018199c3904118b58ebcd283e0e9a985",
+    "valuationModelHash": "fc7058e76083366e114c918e867d165655d10b66f7bc45408e49f0ec17e17f87",
+    "createdAt": "2026-03-03T07:04:53.072Z",
+    "version": "1.0.0"
+  },
+  "metadata": {
+    "title": "NIL33 Genome v1.0 — Research Snapshot",
+    "version": "1.0.0",
+    "authors": [
+      "Kevan Fehr"
+    ],
+    "description": "Complete model specification for the NIL33 deterministic underwriting engine, genome version 1.0.0. Includes signal schema, weight profiles, grade thresholds, stress scenarios, covenant rules, flag rules, and synthetic verification vectors.",
+    "createdAt": "2026-03-03T07:04:53.072Z",
+    "license": "All rights reserved"
+  },
+  "signalSchema": [
+    {
+      "signalId": "contract_tenure_renewal",
+      "dimension": "revenue_durability",
+      "description": "Duration and renewal track record of existing NIL contracts"
+    },
+    {
+      "signalId": "earning_trajectory_vs_cohort",
+      "dimension": "revenue_durability",
+      "description": "Earnings growth compared to sport/position peer group"
+    },
+    {
+      "signalId": "market_depth_demand",
+      "dimension": "revenue_durability",
+      "description": "Breadth and depth of sponsor/brand demand for the athlete"
+    },
+    {
+      "signalId": "revenue_source_diversification",
+      "dimension": "revenue_durability",
+      "description": "Concentration risk across revenue streams"
+    },
+    {
+      "signalId": "season_adjusted_earnings",
+      "dimension": "revenue_durability",
+      "description": "Earnings normalized for sport seasonality"
+    },
+    {
+      "signalId": "off_field_revenue_stability",
+      "dimension": "revenue_durability",
+      "description": "Non-competition revenue stability (media, appearances, IP)"
+    },
+    {
+      "signalId": "post_career_transition",
+      "dimension": "revenue_durability",
+      "description": "Estimated ability to generate post-eligibility income"
+    },
+    {
+      "signalId": "top3_sponsor_dependency",
+      "dimension": "sponsor_concentration",
+      "description": "Revenue concentration in top-3 sponsors"
+    },
+    {
+      "signalId": "category_diversity_index",
+      "dimension": "sponsor_concentration",
+      "description": "Diversity of sponsor industry categories"
+    },
+    {
+      "signalId": "renewal_rate_vs_industry",
+      "dimension": "sponsor_concentration",
+      "description": "Contract renewal rate vs NIL industry average"
+    },
+    {
+      "signalId": "sponsor_credit_quality",
+      "dimension": "sponsor_concentration",
+      "description": "Creditworthiness of sponsor counterparties"
+    },
+    {
+      "signalId": "contract_duration_distribution",
+      "dimension": "sponsor_concentration",
+      "description": "Weighted average remaining contract term"
+    },
+    {
+      "signalId": "authentic_reach_vs_followers",
+      "dimension": "engagement_quality",
+      "description": "True audience engagement vs raw follower count"
+    },
+    {
+      "signalId": "conversion_clickthrough",
+      "dimension": "engagement_quality",
+      "description": "Sponsor content conversion and click-through rates"
+    },
+    {
+      "signalId": "audience_demographic_alignment",
+      "dimension": "engagement_quality",
+      "description": "Audience demographics match to sponsor targets"
+    },
+    {
+      "signalId": "content_consistency",
+      "dimension": "engagement_quality",
+      "description": "Regularity and quality of content output"
+    },
+    {
+      "signalId": "platform_diversification",
+      "dimension": "engagement_quality",
+      "description": "Distribution across social/media platforms"
+    },
+    {
+      "signalId": "brand_safety_index",
+      "dimension": "engagement_quality",
+      "description": "Content brand safety classification score"
+    },
+    {
+      "signalId": "ncaa_eligibility_status",
+      "dimension": "eligibility_risk",
+      "description": "Current NCAA/conference eligibility standing"
+    },
+    {
+      "signalId": "transfer_portal_probability",
+      "dimension": "eligibility_risk",
+      "description": "Estimated probability of entering transfer portal"
+    },
+    {
+      "signalId": "draft_timeline_declaration",
+      "dimension": "eligibility_risk",
+      "description": "Proximity to professional draft declaration"
+    },
+    {
+      "signalId": "academic_standing",
+      "dimension": "eligibility_risk",
+      "description": "Academic eligibility and progress toward degree"
+    },
+    {
+      "signalId": "conference_realignment_impact",
+      "dimension": "eligibility_risk",
+      "description": "Exposure to conference realignment disruption"
+    },
+    {
+      "signalId": "position_specific_injury_rate",
+      "dimension": "injury_availability",
+      "description": "Historical injury rate for sport/position"
+    },
+    {
+      "signalId": "historical_medical_record",
+      "dimension": "injury_availability",
+      "description": "Athlete-specific injury history"
+    },
+    {
+      "signalId": "workload_snap_count_trends",
+      "dimension": "injury_availability",
+      "description": "Playing time trends and workload management"
+    },
+    {
+      "signalId": "recovery_timeline_model",
+      "dimension": "injury_availability",
+      "description": "Expected recovery timeline for position workload"
+    },
+    {
+      "signalId": "insurance_availability",
+      "dimension": "injury_availability",
+      "description": "Availability and cost of disability/injury insurance"
+    },
+    {
+      "signalId": "sentiment_analysis",
+      "dimension": "reputational_volatility",
+      "description": "Public sentiment trend analysis"
+    },
+    {
+      "signalId": "controversy_exposure_index",
+      "dimension": "reputational_volatility",
+      "description": "Exposure to controversy and negative media"
+    },
+    {
+      "signalId": "brand_safety_classification",
+      "dimension": "reputational_volatility",
+      "description": "Brand safety tier classification"
+    },
+    {
+      "signalId": "media_cycle_resilience",
+      "dimension": "reputational_volatility",
+      "description": "Ability to weather negative media cycles"
+    },
+    {
+      "signalId": "community_standing",
+      "dimension": "reputational_volatility",
+      "description": "Standing in local/school community"
+    }
+  ],
+  "weightProfiles": [
+    {
+      "instrumentType": "revenue_participation_note",
+      "label": "Revenue Participation Note",
+      "dimensionWeights": {
+        "revenue_durability": 0.3,
+        "sponsor_concentration": 0.2,
+        "engagement_quality": 0.15,
+        "eligibility_risk": 0.15,
+        "injury_availability": 0.1,
+        "reputational_volatility": 0.1
+      },
+      "signalOverrides": {},
+      "version": "2026.Q1",
+      "effectiveDate": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "instrumentType": "portfolio_tranche_note",
+      "label": "Portfolio Tranche Note",
+      "dimensionWeights": {
+        "revenue_durability": 0.2,
+        "sponsor_concentration": 0.2,
+        "engagement_quality": 0.15,
+        "eligibility_risk": 0.15,
+        "injury_availability": 0.15,
+        "reputational_volatility": 0.15
+      },
+      "signalOverrides": {},
+      "version": "2026.Q1",
+      "effectiveDate": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "gradeThresholds": [
+    {
+      "grade": "A+",
+      "minScore": 95
+    },
+    {
+      "grade": "A",
+      "minScore": 90
+    },
+    {
+      "grade": "A-",
+      "minScore": 85
+    },
+    {
+      "grade": "B+",
+      "minScore": 80
+    },
+    {
+      "grade": "B",
+      "minScore": 75
+    },
+    {
+      "grade": "B-",
+      "minScore": 70
+    },
+    {
+      "grade": "C+",
+      "minScore": 65
+    },
+    {
+      "grade": "C",
+      "minScore": 60
+    },
+    {
+      "grade": "C-",
+      "minScore": 55
+    },
+    {
+      "grade": "D",
+      "minScore": 45
+    },
+    {
+      "grade": "F",
+      "minScore": 0
+    }
+  ],
+  "stressScenarios": [
+    {
+      "id": "stress-injury-star",
+      "name": "Star Player Season-Ending Injury",
+      "shocks": [
+        {
+          "dimension": "injury_availability",
+          "shockPct": -4000
+        },
+        {
+          "dimension": "engagement_quality",
+          "shockPct": -2000
+        },
+        {
+          "dimension": "revenue_durability",
+          "shockPct": -1500
+        }
+      ]
+    },
+    {
+      "id": "stress-conference-realignment",
+      "name": "Conference Realignment Disruption",
+      "shocks": [
+        {
+          "dimension": "eligibility_risk",
+          "shockPct": -2500
+        },
+        {
+          "dimension": "sponsor_concentration",
+          "shockPct": -2000
+        },
+        {
+          "dimension": "revenue_durability",
+          "shockPct": -1000
+        }
+      ]
+    },
+    {
+      "id": "stress-nil-regulation",
+      "name": "Adverse NIL Regulatory Change",
+      "shocks": [
+        {
+          "dimension": "eligibility_risk",
+          "shockPct": -3500
+        },
+        {
+          "dimension": "revenue_durability",
+          "shockPct": -2000
+        },
+        {
+          "dimension": "engagement_quality",
+          "shockPct": -1000
+        }
+      ]
+    },
+    {
+      "id": "stress-sponsor-withdrawal",
+      "name": "Major Sponsor Category Withdrawal",
+      "shocks": [
+        {
+          "dimension": "sponsor_concentration",
+          "shockPct": -3500
+        },
+        {
+          "dimension": "revenue_durability",
+          "shockPct": -2500
+        }
+      ]
+    },
+    {
+      "id": "stress-transfer-wave",
+      "name": "Transfer Portal Wave",
+      "shocks": [
+        {
+          "dimension": "eligibility_risk",
+          "shockPct": -3000
+        },
+        {
+          "dimension": "sponsor_concentration",
+          "shockPct": -1500
+        },
+        {
+          "dimension": "engagement_quality",
+          "shockPct": -1500
+        }
+      ]
+    },
+    {
+      "id": "stress-economic-downturn",
+      "name": "Macro Economic Downturn",
+      "shocks": [
+        {
+          "dimension": "revenue_durability",
+          "shockPct": -3000
+        },
+        {
+          "dimension": "sponsor_concentration",
+          "shockPct": -2500
+        },
+        {
+          "dimension": "reputational_volatility",
+          "shockPct": -1000
+        }
+      ]
+    }
+  ],
+  "covenantRuleSummary": [
+    {
+      "type": "financial",
+      "description": "Early redemption at par",
+      "triggerType": "composite_below"
+    },
+    {
+      "type": "financial",
+      "description": "Facility size cap",
+      "triggerType": "composite_below"
+    },
+    {
+      "type": "financial",
+      "description": "Revenue monitoring",
+      "triggerType": "dimension_below"
+    },
+    {
+      "type": "financial",
+      "description": "Sponsor diversification",
+      "triggerType": "flag_code"
+    },
+    {
+      "type": "behavioral",
+      "description": "Morality clause",
+      "triggerType": "flag_code"
+    },
+    {
+      "type": "behavioral",
+      "description": "Content review protocol",
+      "triggerType": "flag_code"
+    },
+    {
+      "type": "behavioral",
+      "description": "Reputational monitoring",
+      "triggerType": "dimension_below"
+    },
+    {
+      "type": "eligibility",
+      "description": "NCAA eligibility attestation",
+      "triggerType": "flag_code"
+    },
+    {
+      "type": "eligibility",
+      "description": "Transfer clause",
+      "triggerType": "flag_code"
+    },
+    {
+      "type": "eligibility",
+      "description": "Insurance requirement",
+      "triggerType": "flag_code"
+    },
+    {
+      "type": "reporting",
+      "description": "Enhanced reporting",
+      "triggerType": "critical_flags_any"
+    },
+    {
+      "type": "reporting",
+      "description": "Caution-level reporting",
+      "triggerType": "flag_severity_count"
+    },
+    {
+      "type": "reporting",
+      "description": "Watchlist reporting",
+      "triggerType": "composite_below"
+    }
+  ],
+  "flagRuleSummary": [
+    {
+      "code": "HIGH_SPONSOR_CONCENTRATION",
+      "signalId": "top3_sponsor_dependency",
+      "dimension": "sponsor_concentration",
+      "severity": "critical",
+      "threshold": "< 40"
+    },
+    {
+      "code": "ELIGIBILITY_AT_RISK",
+      "signalId": "ncaa_eligibility_status",
+      "dimension": "eligibility_risk",
+      "severity": "critical",
+      "threshold": "< 50"
+    },
+    {
+      "code": "TRANSFER_PORTAL_RISK",
+      "signalId": "transfer_portal_probability",
+      "dimension": "eligibility_risk",
+      "severity": "caution",
+      "threshold": "< 40"
+    },
+    {
+      "code": "REPUTATION_RISK",
+      "signalId": "controversy_exposure_index",
+      "dimension": "reputational_volatility",
+      "severity": "caution",
+      "threshold": "< 35"
+    },
+    {
+      "code": "HIGH_INJURY_RISK",
+      "signalId": "position_specific_injury_rate",
+      "dimension": "injury_availability",
+      "severity": "caution",
+      "threshold": "< 30"
+    },
+    {
+      "code": "LOW_REVENUE_DIVERSITY",
+      "signalId": "revenue_source_diversification",
+      "dimension": "revenue_durability",
+      "severity": "watch",
+      "threshold": "< 35"
+    },
+    {
+      "code": "BRAND_SAFETY_CONCERN",
+      "signalId": "brand_safety_index",
+      "dimension": "engagement_quality",
+      "severity": "watch",
+      "threshold": "< 40"
+    },
+    {
+      "code": "WEAK_REVENUE_DURABILITY",
+      "signalId": null,
+      "dimension": "revenue_durability",
+      "severity": "critical",
+      "threshold": "< 45"
+    },
+    {
+      "code": "ELIGIBILITY_DIMENSION_FAIL",
+      "signalId": null,
+      "dimension": "eligibility_risk",
+      "severity": "critical",
+      "threshold": "< 40"
+    },
+    {
+      "code": "VOLATILE_REPUTATION",
+      "signalId": null,
+      "dimension": "reputational_volatility",
+      "severity": "caution",
+      "threshold": "< 40"
+    }
+  ],
+  "syntheticSamples": [
+    {
+      "input": {
+        "athleteId": "synthetic-elite",
+        "athlete": {
+          "firstName": "Synthetic",
+          "lastName": "Elite",
+          "sport": "Football",
+          "school": "Research University",
+          "position": "QB",
+          "gradYear": 2027
+        },
+        "signals": [
+          {
+            "signalId": "contract_tenure_renewal",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "earning_trajectory_vs_cohort",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "market_depth_demand",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "revenue_source_diversification",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "season_adjusted_earnings",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "off_field_revenue_stability",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "post_career_transition",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "top3_sponsor_dependency",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "category_diversity_index",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "renewal_rate_vs_industry",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "sponsor_credit_quality",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "contract_duration_distribution",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "authentic_reach_vs_followers",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "conversion_clickthrough",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "audience_demographic_alignment",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "content_consistency",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "platform_diversification",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "brand_safety_index",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "ncaa_eligibility_status",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "transfer_portal_probability",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "draft_timeline_declaration",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "academic_standing",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "conference_realignment_impact",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "position_specific_injury_rate",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "historical_medical_record",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "workload_snap_count_trends",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "recovery_timeline_model",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "insurance_availability",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "sentiment_analysis",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "controversy_exposure_index",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "brand_safety_classification",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "media_cycle_resilience",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "community_standing",
+            "rawScore": 92,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          }
+        ],
+        "observedAt": "2026-01-01T00:00:00.000Z"
+      },
+      "expectedComposite": 91.99,
+      "expectedGrade": "A",
+      "expectedFlagCount": 0,
+      "expectedCovenantCount": 0
+    },
+    {
+      "input": {
+        "athleteId": "synthetic-strong",
+        "athlete": {
+          "firstName": "Synthetic",
+          "lastName": "Strong",
+          "sport": "Football",
+          "school": "Research University",
+          "position": "QB",
+          "gradYear": 2027
+        },
+        "signals": [
+          {
+            "signalId": "contract_tenure_renewal",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "earning_trajectory_vs_cohort",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "market_depth_demand",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "revenue_source_diversification",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "season_adjusted_earnings",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "off_field_revenue_stability",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "post_career_transition",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "top3_sponsor_dependency",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "category_diversity_index",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "renewal_rate_vs_industry",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "sponsor_credit_quality",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "contract_duration_distribution",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "authentic_reach_vs_followers",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "conversion_clickthrough",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "audience_demographic_alignment",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "content_consistency",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "platform_diversification",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "brand_safety_index",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "ncaa_eligibility_status",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "transfer_portal_probability",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "draft_timeline_declaration",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "academic_standing",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "conference_realignment_impact",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "position_specific_injury_rate",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "historical_medical_record",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "workload_snap_count_trends",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "recovery_timeline_model",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "insurance_availability",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "sentiment_analysis",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "controversy_exposure_index",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "brand_safety_classification",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "media_cycle_resilience",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "community_standing",
+            "rawScore": 78,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          }
+        ],
+        "observedAt": "2026-01-01T00:00:00.000Z"
+      },
+      "expectedComposite": 77.99,
+      "expectedGrade": "B",
+      "expectedFlagCount": 0,
+      "expectedCovenantCount": 0
+    },
+    {
+      "input": {
+        "athleteId": "synthetic-average",
+        "athlete": {
+          "firstName": "Synthetic",
+          "lastName": "Average",
+          "sport": "Football",
+          "school": "Research University",
+          "position": "QB",
+          "gradYear": 2027
+        },
+        "signals": [
+          {
+            "signalId": "contract_tenure_renewal",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "earning_trajectory_vs_cohort",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "market_depth_demand",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "revenue_source_diversification",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "season_adjusted_earnings",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "off_field_revenue_stability",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "post_career_transition",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "top3_sponsor_dependency",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "category_diversity_index",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "renewal_rate_vs_industry",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "sponsor_credit_quality",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "contract_duration_distribution",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "authentic_reach_vs_followers",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "conversion_clickthrough",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "audience_demographic_alignment",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "content_consistency",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "platform_diversification",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "brand_safety_index",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "ncaa_eligibility_status",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "transfer_portal_probability",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "draft_timeline_declaration",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "academic_standing",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "conference_realignment_impact",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "position_specific_injury_rate",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "historical_medical_record",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "workload_snap_count_trends",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "recovery_timeline_model",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "insurance_availability",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "sentiment_analysis",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "controversy_exposure_index",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "brand_safety_classification",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "media_cycle_resilience",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "community_standing",
+            "rawScore": 60,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          }
+        ],
+        "observedAt": "2026-01-01T00:00:00.000Z"
+      },
+      "expectedComposite": 60,
+      "expectedGrade": "C",
+      "expectedFlagCount": 0,
+      "expectedCovenantCount": 2
+    },
+    {
+      "input": {
+        "athleteId": "synthetic-below-average",
+        "athlete": {
+          "firstName": "Synthetic",
+          "lastName": "Below Average",
+          "sport": "Football",
+          "school": "Research University",
+          "position": "QB",
+          "gradYear": 2027
+        },
+        "signals": [
+          {
+            "signalId": "contract_tenure_renewal",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "earning_trajectory_vs_cohort",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "market_depth_demand",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "revenue_source_diversification",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "season_adjusted_earnings",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "off_field_revenue_stability",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "post_career_transition",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "top3_sponsor_dependency",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "category_diversity_index",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "renewal_rate_vs_industry",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "sponsor_credit_quality",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "contract_duration_distribution",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "authentic_reach_vs_followers",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "conversion_clickthrough",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "audience_demographic_alignment",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "content_consistency",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "platform_diversification",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "brand_safety_index",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "ncaa_eligibility_status",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "transfer_portal_probability",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "draft_timeline_declaration",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "academic_standing",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "conference_realignment_impact",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "position_specific_injury_rate",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "historical_medical_record",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "workload_snap_count_trends",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "recovery_timeline_model",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "insurance_availability",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "sentiment_analysis",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "controversy_exposure_index",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "brand_safety_classification",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "media_cycle_resilience",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "community_standing",
+            "rawScore": 45,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          }
+        ],
+        "observedAt": "2026-01-01T00:00:00.000Z"
+      },
+      "expectedComposite": 45,
+      "expectedGrade": "D",
+      "expectedFlagCount": 1,
+      "expectedCovenantCount": 7
+    },
+    {
+      "input": {
+        "athleteId": "synthetic-weak",
+        "athlete": {
+          "firstName": "Synthetic",
+          "lastName": "Weak",
+          "sport": "Football",
+          "school": "Research University",
+          "position": "QB",
+          "gradYear": 2027
+        },
+        "signals": [
+          {
+            "signalId": "contract_tenure_renewal",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "earning_trajectory_vs_cohort",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "market_depth_demand",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "revenue_source_diversification",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "season_adjusted_earnings",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "off_field_revenue_stability",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "post_career_transition",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "top3_sponsor_dependency",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "category_diversity_index",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "renewal_rate_vs_industry",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "sponsor_credit_quality",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "contract_duration_distribution",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "authentic_reach_vs_followers",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "conversion_clickthrough",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "audience_demographic_alignment",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "content_consistency",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "platform_diversification",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "brand_safety_index",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "ncaa_eligibility_status",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "transfer_portal_probability",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "draft_timeline_declaration",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "academic_standing",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "conference_realignment_impact",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "position_specific_injury_rate",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "historical_medical_record",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "workload_snap_count_trends",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "recovery_timeline_model",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "insurance_availability",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "sentiment_analysis",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "controversy_exposure_index",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "brand_safety_classification",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "media_cycle_resilience",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          },
+          {
+            "signalId": "community_standing",
+            "rawScore": 28,
+            "confidence": 0.9,
+            "dataSource": "synthetic"
+          }
+        ],
+        "observedAt": "2026-01-01T00:00:00.000Z"
+      },
+      "expectedComposite": 28,
+      "expectedGrade": "F",
+      "expectedFlagCount": 10,
+      "expectedCovenantCount": 13
+    }
+  ]
+}

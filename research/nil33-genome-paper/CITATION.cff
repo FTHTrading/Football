@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use this software or reference this paper, please cite it as below."
+title: "NIL33: A Deterministic Underwriting Engine with Cryptographic Model Identity for Athlete-Backed Structured Securities"
+type: software
+authors:
+  - given-names: Kevan
+    family-names: Fehr
+    affiliation: FTH Trading
+version: 1.0.0
+date-released: "2026-03-15"
+repository-code: "https://github.com/FTHTrading/Football"
+license: "All rights reserved"
+keywords:
+  - NIL
+  - Name Image Likeness
+  - structured finance
+  - underwriting
+  - model identity
+  - genome signature
+  - reproducibility
+  - Monte Carlo VaR
+  - deterministic scoring
+  - athlete-backed securities
+abstract: >-
+  NIL33 is a deterministic underwriting engine for structured securities
+  backed by collegiate athlete Name, Image, and Likeness (NIL) revenue
+  streams. The system introduces a 33-signal, six-dimension scoring
+  ontology with cryptographic model identity (Genome Signature),
+  genome-stamped capital lifecycle objects, and portfolio-level
+  evolutionary analytics. Implemented in strict-mode TypeScript with
+  75 automated tests and zero runtime dependencies beyond SHA-256.

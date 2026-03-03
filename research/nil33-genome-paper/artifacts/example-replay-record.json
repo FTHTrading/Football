@@ -1,0 +1,247 @@
+{
+  "genome": {
+    "genomeId": "471eb564bc7d93a2b49a548c9d93b1e2",
+    "signalSchemaHash": "86677a79d9082da9ebbd1acfa41cd0c11cde4aafd4a95394f8b620f3c3b6b8d7",
+    "weightProfileHash": "09f0489bec2c123b5c558af2d48ddec4ce2e6d712e5733dd61cce927d6c7788c",
+    "thresholdHash": "65ba5fb0f5d59d71c47f4f664e3db2ba7f9aa453e12ceb81f1e7b755cc682dad",
+    "stressMatrixHash": "57d60a5445cb4e1f1ec76b90c974a4c802688f7351fcb9c7a352d5cc09c91768",
+    "covenantRulesHash": "817d7cd1c32ec9d96d351b86af4cad032a378a9d36f6481f06a91a7344a228fd",
+    "flagRulesHash": "1782ada99ce850291622dd0e4b9ea0d9018199c3904118b58ebcd283e0e9a985",
+    "valuationModelHash": "fc7058e76083366e114c918e867d165655d10b66f7bc45408e49f0ec17e17f87",
+    "createdAt": "2026-03-03T07:04:53.072Z",
+    "version": "1.0.0"
+  },
+  "athleteInput": {
+    "athleteId": "synthetic-elite",
+    "athlete": {
+      "firstName": "Synthetic",
+      "lastName": "Elite",
+      "sport": "Football",
+      "school": "Research University",
+      "position": "QB",
+      "gradYear": 2027
+    },
+    "signals": [
+      {
+        "signalId": "contract_tenure_renewal",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "earning_trajectory_vs_cohort",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "market_depth_demand",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "revenue_source_diversification",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "season_adjusted_earnings",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "off_field_revenue_stability",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "post_career_transition",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "top3_sponsor_dependency",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "category_diversity_index",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "renewal_rate_vs_industry",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "sponsor_credit_quality",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "contract_duration_distribution",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "authentic_reach_vs_followers",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "conversion_clickthrough",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "audience_demographic_alignment",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "content_consistency",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "platform_diversification",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "brand_safety_index",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "ncaa_eligibility_status",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "transfer_portal_probability",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "draft_timeline_declaration",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "academic_standing",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "conference_realignment_impact",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "position_specific_injury_rate",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "historical_medical_record",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "workload_snap_count_trends",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "recovery_timeline_model",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "insurance_availability",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "sentiment_analysis",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "controversy_exposure_index",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "brand_safety_classification",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "media_cycle_resilience",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      },
+      {
+        "signalId": "community_standing",
+        "rawScore": 92,
+        "confidence": 0.9,
+        "dataSource": "synthetic"
+      }
+    ],
+    "observedAt": "2026-01-01T00:00:00.000Z"
+  },
+  "weightProfile": {
+    "instrumentType": "revenue_participation_note",
+    "label": "Revenue Participation Note",
+    "dimensionWeights": {
+      "revenue_durability": 0.3,
+      "sponsor_concentration": 0.2,
+      "engagement_quality": 0.15,
+      "eligibility_risk": 0.15,
+      "injury_availability": 0.1,
+      "reputational_volatility": 0.1
+    },
+    "signalOverrides": {},
+    "version": "2026.Q1",
+    "effectiveDate": "2026-01-01T00:00:00.000Z"
+  },
+  "referenceFacilityCents": 10000000,
+  "valuationMethodology": "hybrid",
+  "complianceClearance": null,
+  "analystNotes": null,
+  "monteCarloSeed": null,
+  "generatedAt": "2026-03-03T07:04:53.123Z"
+}
