@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "./dist-seed",
+    "rootDir": ".",
+    "paths": {
+      "@nil33/core": ["../../packages/nil33-core/src"],
+      "@nil33/audit-ledger": ["../../packages/audit-ledger/src"]
+    },
+    "baseUrl": "."
+  },
+  "include": ["prisma/**/*"],
+  "exclude": ["node_modules"]
+}

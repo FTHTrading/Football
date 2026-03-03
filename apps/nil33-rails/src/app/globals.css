@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  }
+
+  * {
+    box-sizing: border-box;
+    border-color: theme("colors.surface.border");
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: theme("colors.surface.DEFAULT");
+    color: theme("colors.rails.text");
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: theme("colors.surface.border"); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: theme("colors.rails.muted"); }
+}
+
+@layer components {
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset;
+  }
+
+  .badge-green  { @apply bg-rails-green/10 text-rails-green ring-rails-green/30; }
+  .badge-red    { @apply bg-rails-red/10 text-rails-red ring-rails-red/30; }
+  .badge-yellow { @apply bg-rails-gold/10 text-rails-gold ring-rails-gold/30; }
+  .badge-muted  { @apply bg-surface-muted text-rails-text-dim ring-surface-border; }
+  .badge-cyan   { @apply bg-rails-cyan/10 text-rails-cyan ring-rails-cyan/30; }
+
+  .card {
+    @apply rounded-xl border border-surface-border bg-surface-card p-5;
+  }
+
+  .stat-card {
+    @apply card flex flex-col gap-1;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-lg bg-rails-green px-4 py-2 text-sm font-semibold text-surface transition-colors hover:bg-rails-green-dim focus:outline-none focus:ring-2 focus:ring-rails-green/50;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center gap-2 rounded-lg border border-surface-border px-4 py-2 text-sm font-medium text-rails-text-dim transition-colors hover:border-rails-muted hover:text-rails-text;
+  }
+
+  .input {
+    @apply w-full rounded-lg border border-surface-border bg-surface-muted px-3 py-2 text-sm text-rails-text placeholder-rails-text-dim focus:border-rails-green focus:outline-none focus:ring-1 focus:ring-rails-green/40;
+  }
+
+  .table-row-hover {
+    @apply transition-colors hover:bg-surface-muted/60 cursor-pointer;
+  }
+}

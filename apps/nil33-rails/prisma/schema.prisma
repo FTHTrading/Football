@@ -1,0 +1,391 @@
+// NIL33 Rails — Prisma Schema
+// All monetary amounts stored as cents (Int) to avoid floating point.
+// Concentration limits stored in basis points (2500 = 25%).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Auth ──────────────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  passwordHash  String
+  role          UserRole  @default(VIEWER)
+  mfaEnabled    Boolean   @default(false)
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions          Session[]
+  auditEvents       LedgerEvent[]
+  complianceChecks  ComplianceCheck[]
+
+  @@map("users")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ISSUER_ADMIN
+  COMPLIANCE_OFFICER
+  DISTRIBUTION_MANAGER
+  INVESTOR_RELATIONS
+  VIEWER
+}
+
+// ─── Issuers / SPVs ───────────────────────────────────────────────────────────
+
+model Spv {
+  id                    String      @id @default(cuid())
+  legalName             String
+  ein                   String?     @unique
+  jurisdiction          String
+  formationType         String       @default("LLC")
+  status                SpvStatus   @default(DRAFT)
+  registeredAgentName   String?
+  registeredAgentAddr   String?
+  bankAccountLast4      String?
+  custodianName         String?
+  notes                 String?
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  athletes     Athlete[]
+  instruments  Instrument[]
+
+  @@map("spvs")
+}
+
+enum SpvStatus {
+  DRAFT
+  ACTIVE
+  SUSPENDED
+  DISSOLVED
+}
+
+// ─── Athletes ─────────────────────────────────────────────────────────────────
+
+model Athlete {
+  id             String        @id @default(cuid())
+  spvId          String
+  displayName    String
+  sport          String
+  school         String
+  position       String?
+  classYear      String?
+  nilContractUrl String?
+  bio            String?
+  imageUrl       String?
+  status         AthleteStatus @default(ACTIVE)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  spv           Spv             @relation(fields: [spvId], references: [id])
+  nilContracts  NilContract[]
+  metrics       AthleteMetric[]
+
+  @@map("athletes")
+}
+
+enum AthleteStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model NilContract {
+  id              String             @id @default(cuid())
+  athleteId       String
+  brandName       String
+  dealType        String
+  annualValueCents Int
+  startDate       DateTime
+  endDate         DateTime?
+  contractUrl     String?
+  status          NilContractStatus  @default(ACTIVE)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  athlete Athlete @relation(fields: [athleteId], references: [id])
+
+  @@map("nil_contracts")
+}
+
+enum NilContractStatus {
+  ACTIVE
+  EXPIRED
+  TERMINATED
+  PENDING
+}
+
+model AthleteMetric {
+  id         String   @id @default(cuid())
+  athleteId  String
+  metricKey  String
+  metricVal  String
+  recordedAt DateTime @default(now())
+
+  athlete Athlete @relation(fields: [athleteId], references: [id])
+
+  @@map("athlete_metrics")
+}
+
+// ─── Instruments (Revenue Participation Notes) ────────────────────────────────
+
+model Instrument {
+  id                      String           @id @default(cuid())
+  spvId                   String
+  cusip                   String?          @unique
+  isin                    String?          @unique
+  name                    String
+  description             String?
+  instrumentType          String           @default("REVENUE_PARTICIPATION_NOTE")
+  totalIssuanceAmtCents   Int
+  minSubscriptionCents    Int              @default(100000)  // $1,000
+  participationRateBps    Int              // e.g. 5000 = 50%
+  hurdle                  Int              @default(0)
+  cappedReturnBps         Int?             // null = uncapped
+  holdingPeriodDays       Int              @default(365)
+  status                  InstrumentStatus @default(DRAFT)
+  offeringOpenAt          DateTime?
+  offeringCloseAt         DateTime?
+  maturityDate            DateTime?
+  riskRating              String?
+  memorandumUrl           String?
+  createdAt               DateTime         @default(now())
+  updatedAt               DateTime         @updatedAt
+
+  spv            Spv            @relation(fields: [spvId], references: [id])
+  subscriptions  Subscription[]
+  distributions  Distribution[]
+
+  @@map("instruments")
+}
+
+enum InstrumentStatus {
+  DRAFT
+  OPEN
+  CLOSED
+  ACTIVE
+  MATURED
+  CANCELLED
+}
+
+// ─── Investors ────────────────────────────────────────────────────────────────
+
+model Investor {
+  id                      String          @id @default(cuid())
+  legalName               String
+  email                   String          @unique
+  entityType              String          @default("INDIVIDUAL")
+  accreditationStatus     AccreditationStatus @default(PENDING)
+  accreditationExpiresAt  DateTime?
+  kycStatus               KycStatus       @default(PENDING)
+  kycCompletedAt          DateTime?
+  jurisdictionCountry     String          @default("US")
+  jurisdictionState       String?
+  riskFlags               String[]        @default([])
+  totalInvestedCents      Int             @default(0)
+  concentrationLimitBps   Int             @default(2500) // 25% max per instrument
+  notes                   String?
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
+
+  subscriptions     Subscription[]
+  complianceChecks  ComplianceCheck[]
+  wires             WireInstruction[]
+
+  @@map("investors")
+}
+
+enum AccreditationStatus {
+  PENDING
+  VERIFIED
+  EXPIRED
+  FAILED
+}
+
+enum KycStatus {
+  PENDING
+  IN_REVIEW
+  APPROVED
+  REJECTED
+}
+
+model WireInstruction {
+  id             String   @id @default(cuid())
+  investorId     String
+  bankName       String
+  accountLast4   String
+  routingLast4   String
+  label          String?
+  isDefault      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  investor Investor @relation(fields: [investorId], references: [id])
+
+  @@map("wire_instructions")
+}
+
+// ─── Subscriptions ────────────────────────────────────────────────────────────
+
+model Subscription {
+  id                String             @id @default(cuid())
+  instrumentId      String
+  investorId        String
+  amountCents       Int
+  status            SubscriptionStatus @default(PENDING)
+  subscribedAt      DateTime           @default(now())
+  fundedAt          DateTime?
+  cancelledAt       DateTime?
+  transferLockedAt  DateTime?          // when holding period started
+  correlationId     String             @unique @default(cuid())
+  notes             String?
+
+  instrument     Instrument           @relation(fields: [instrumentId], references: [id])
+  investor       Investor             @relation(fields: [investorId], references: [id])
+  distributions  DistributionLine[]
+  complianceCheck ComplianceCheck?
+
+  @@map("subscriptions")
+}
+
+enum SubscriptionStatus {
+  PENDING
+  FUNDED
+  CANCELLED
+  TRANSFERRED
+  MATURED
+}
+
+// ─── Distributions ────────────────────────────────────────────────────────────
+
+model Distribution {
+  id                  String             @id @default(cuid())
+  instrumentId        String
+  periodStart         DateTime
+  periodEnd           DateTime
+  grossRevenueCents   Int
+  participationCents  Int                // gross * participationRate
+  managementFeeCents  Int                @default(0)
+  netDistributableCents Int
+  status              DistributionStatus @default(DRAFT)
+  approvedAt          DateTime?
+  approvedBy          String?
+  executedAt          DateTime?
+  notes               String?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  instrument  Instrument         @relation(fields: [instrumentId], references: [id])
+  lines       DistributionLine[]
+
+  @@map("distributions")
+}
+
+enum DistributionStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  EXECUTING
+  COMPLETE
+  FAILED
+}
+
+model DistributionLine {
+  id              String   @id @default(cuid())
+  distributionId  String
+  subscriptionId  String
+  investorName    String   // denormalized snapshot
+  amountCents     Int
+  ownershipBps    Int
+  status          String   @default("PENDING")
+  wiredAt         DateTime?
+  failureReason   String?
+
+  distribution  Distribution @relation(fields: [distributionId], references: [id])
+  subscription  Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@map("distribution_lines")
+}
+
+// ─── Compliance ───────────────────────────────────────────────────────────────
+
+model ComplianceCheck {
+  id             String   @id @default(cuid())
+  investorId     String
+  subscriptionId String?  @unique
+  checkedById    String?
+  passed         Boolean
+  reasonCode     String?
+  detail         String?
+  snapshotJson   Json?
+  checkedAt      DateTime @default(now())
+
+  investor     Investor      @relation(fields: [investorId], references: [id])
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id])
+  checkedBy    User?         @relation(fields: [checkedById], references: [id])
+
+  @@map("compliance_checks")
+}
+
+// ─── Audit Ledger ─────────────────────────────────────────────────────────────
+
+model LedgerEvent {
+  id              String   @id @default(cuid())
+  action          String   // e.g. "spv.created"
+  entityType      String
+  entityId        String
+  actorId         String?
+  correlationId   String?
+  snapshotBefore  Json?
+  snapshotAfter   Json?
+  beforeHash      String?
+  afterHash       String?
+  metadata        Json?
+  occurredAt      DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([actorId])
+  @@index([occurredAt])
+  @@map("ledger_events")
+}
+
+// ─── Documents ────────────────────────────────────────────────────────────────
+
+model Document {
+  id           String   @id @default(cuid())
+  entityType   String
+  entityId     String
+  docType      String   // "PPM", "SUBSCRIPTION_AGREEMENT", "K1", etc.
+  label        String
+  storageKey   String   // S3 / object storage key
+  mimeType     String   @default("application/pdf")
+  sizeBytes    Int?
+  version      Int      @default(1)
+  uploadedById String?
+  uploadedAt   DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@map("documents")
+}

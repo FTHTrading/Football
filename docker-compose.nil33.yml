@@ -1,0 +1,57 @@
+# NIL33 Rails — Docker Compose
+# Run: docker compose -f docker-compose.nil33.yml up -d
+# Stop: docker compose -f docker-compose.nil33.yml down
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nil33_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nil33
+      POSTGRES_PASSWORD: nil33secret
+      POSTGRES_DB: nil33_rails
+    ports:
+      - "5436:5432"
+    volumes:
+      - nil33_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nil33 -d nil33_rails"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: nil33_redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - nil33_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Uncomment for local object storage (document uploads)
+  # minio:
+  #   image: minio/minio:latest
+  #   container_name: nil33_minio
+  #   restart: unless-stopped
+  #   environment:
+  #     MINIO_ROOT_USER: nil33minio
+  #     MINIO_ROOT_PASSWORD: nil33miniosecret
+  #   ports:
+  #     - "9000:9000"
+  #     - "9001:9001"
+  #   volumes:
+  #     - nil33_minio_data:/data
+  #   command: server /data --console-address ":9001"
+
+volumes:
+  nil33_postgres_data:
+  nil33_redis_data:
+  # nil33_minio_data:
