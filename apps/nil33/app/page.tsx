@@ -1,16 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import Section, { SectionHeader } from "../components/Section";
-import { FeatureCard } from "../components/Card";
-import Card from "../components/Card";
 import Button from "../components/Button";
 import CodePreview, { DataRow, DataDivider } from "../components/CodePreview";
-import Badge from "../components/Badge";
-import { InlineStat } from "../components/Stat";
-import { ScoreBar } from "../components/ScoreDisplay";
 
 /* ═══ Animated counter ═══ */
 function Counter({ end, suffix = "", prefix = "", duration = 2000 }: { end: number; suffix?: string; prefix?: string; duration?: number }) {
@@ -37,163 +30,127 @@ function Counter({ end, suffix = "", prefix = "", duration = 2000 }: { end: numb
   return <span ref={ref}>{prefix}{val.toLocaleString()}{suffix}</span>;
 }
 
-/* ═══ Rotating words ═══ */
-function RotatingWord({ words }: { words: string[] }) {
-  const [i, setI] = useState(0);
-  useEffect(() => { const t = setInterval(() => setI(p => (p + 1) % words.length), 2400); return () => clearInterval(t); }, [words.length]);
-  return (
-    <span className="inline-block relative h-[1.2em] overflow-hidden align-bottom">
-      {words.map((w, idx) => (
-        <span key={w} className={`absolute left-0 transition-all duration-500 ${idx === i ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"}`}>{w}</span>
-      ))}
-    </span>
-  );
-}
-
-/* ═══ Typing effect ═══ */
-function TypeWriter({ text, speed = 40 }: { text: string; speed?: number }) {
-  const [displayed, setDisplayed] = useState("");
-  const [done, setDone] = useState(false);
-  const ref = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
-      obs.disconnect();
-      let idx = 0;
-      const iv = setInterval(() => {
-        idx++;
-        setDisplayed(text.slice(0, idx));
-        if (idx >= text.length) { clearInterval(iv); setDone(true); }
-      }, speed);
-    }, { threshold: 0.3 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [text, speed]);
-  return <span ref={ref}>{displayed}{!done && <span className="animate-pulse text-nil-green">|</span>}</span>;
-}
-
-/* ═══ Verified athletes — real NIL data ═══ */
-const VERIFIED_ATHLETES = [
+/* ═══ Architecture layers ═══ */
+const ARCHITECTURE_LAYERS = [
   {
-    id: "arch-manning", name: "Arch Manning", sport: "Football", pos: "QB", school: "Texas Longhorns", state: "Texas",
-    conference: "SEC", year: "Junior", rating: 5.0, image: "/images/athlete-action.png",
-    nil: { composite: 96, low: 3200000, high: 4500000, social: 91, athletic: 97, market: 99, brand: 96 },
+    num: "01",
+    title: "Athlete Registry",
+    subtitle: "Identity · Metrics · Verification",
+    desc: "Structured athlete profiles with verified identity, performance metrics, social reach, and brand alignment data. The canonical source for athlete capital assessment.",
+    color: "var(--color-nil-gold)",
   },
   {
-    id: "jeremiah-smith", name: "Jeremiah Smith", sport: "Football", pos: "WR", school: "Ohio State Buckeyes", state: "Ohio",
-    conference: "Big Ten", year: "Sophomore", rating: 5.0, image: "/images/qb4.png",
-    nil: { composite: 94, low: 4200000, high: 5600000, social: 92, athletic: 98, market: 93, brand: 91 },
+    num: "02",
+    title: "33-Signal Underwriting",
+    subtitle: "Scoring · Valuation · Risk",
+    desc: "Proprietary 33-signal engine scores every athlete across revenue durability, sponsor concentration, engagement quality, eligibility risk, and reputational volatility.",
+    color: "var(--color-nil-blue)",
   },
   {
-    id: "livvy-dunne", name: "Livvy Dunne", sport: "Gymnastics", pos: "All-Around", school: "LSU Tigers", state: "Louisiana",
-    conference: "SEC", year: "Senior", rating: 5.0, image: "/images/qb3.png",
-    nil: { composite: 95, low: 3800000, high: 5200000, social: 99, athletic: 88, market: 95, brand: 99 },
+    num: "03",
+    title: "Portfolio Intelligence",
+    subtitle: "VaR · Concentration · Forecasting",
+    desc: "Portfolio-level analytics: sport/conference concentration, brand exposure overlap, cohort performance tracking, cashflow calendar, and stress-test modeling.",
+    color: "var(--color-nil-emerald)",
   },
   {
-    id: "juju-watkins", name: "JuJu Watkins", sport: "Basketball", pos: "Guard", school: "USC Trojans", state: "California",
-    conference: "Big Ten", year: "Junior", rating: 5.0, image: "/images/qb5.png",
-    nil: { composite: 90, low: 1800000, high: 2800000, social: 89, athletic: 95, market: 88, brand: 87 },
+    num: "04",
+    title: "Deal Execution",
+    subtitle: "Structuring · Settlement · Custody",
+    desc: "Product factory for NIL-linked instruments — revenue participation notes, structured advances, sponsor-backed facilities. Automated settlement and reconciliation.",
+    color: "var(--color-nil-gold)",
   },
   {
-    id: "bryce-underwood", name: "Bryce Underwood", sport: "Football", pos: "QB", school: "Michigan Wolverines", state: "Michigan",
-    conference: "Big Ten", year: "Freshman", rating: 5.0, image: "/images/qb2.png",
-    nil: { composite: 93, low: 8500000, high: 12000000, social: 78, athletic: 96, market: 97, brand: 88 },
+    num: "05",
+    title: "Governance & Reporting",
+    subtitle: "Compliance · Audit · Documentation",
+    desc: "50-state compliance engine, BD supervision workflows, SEC-ready audit trails, investor reporting, and regulatory documentation. Every action timestamped and signed.",
+    color: "var(--color-nil-purple)",
   },
   {
-    id: "aj-dybantsa", name: "AJ Dybantsa", sport: "Basketball", pos: "Small Forward", school: "BYU Cougars", state: "Utah",
-    conference: "Big 12", year: "Freshman", rating: 5.0, image: "/images/qb.png",
-    nil: { composite: 91, low: 4500000, high: 6200000, social: 87, athletic: 96, market: 90, brand: 89 },
+    num: "06",
+    title: "Capital & Distribution",
+    subtitle: "Investors · Allocation · Returns",
+    desc: "LP/GP structuring, capital call workflow, distribution waterfall, investor portal, K-1 generation, and NAV calculation. Institutional-grade fund administration.",
+    color: "var(--color-nil-blue)",
   },
 ];
 
-/* ═══ Compliance states data ═══ */
-const COMPLIANCE_STATES = [
-  { state: "FL", status: "active", law: "§ 1006.74" },
-  { state: "TX", status: "active", law: "Ed Code § 51.9246" },
-  { state: "CA", status: "active", law: "SB 206" },
-  { state: "GA", status: "active", law: "§ 20-3-681" },
-  { state: "AL", status: "active", law: "§ 16-22-40" },
-  { state: "OH", status: "active", law: "SB 187" },
-  { state: "PA", status: "active", law: "Act 26" },
-  { state: "MI", status: "active", law: "SB 301" },
-  { state: "LA", status: "active", law: "SB 60" },
-  { state: "TN", status: "active", law: "SB 1423" },
-  { state: "SC", status: "active", law: "SB 685" },
-  { state: "NC", status: "active", law: "SB 725" },
-  { state: "OR", status: "active", law: "SB 5" },
-  { state: "CO", status: "active", law: "SB 20-123" },
-  { state: "NE", status: "active", law: "LB 962" },
-  { state: "MS", status: "active", law: "SB 2313" },
-  { state: "OK", status: "active", law: "SB 48" },
-  { state: "KY", status: "active", law: "HB 382" },
-  { state: "AZ", status: "active", law: "SB 1296" },
-  { state: "NV", status: "active", law: "SB 354" },
+/* ═══ Target agencies ═══ */
+const TARGET_AGENCIES = [
+  "CAA Sports", "Wasserman", "Excel Sports", "Klutch Sports", "Roc Nation Sports",
+  "WME Sports", "Athletes First", "Octagon", "Landmark Sports", "Priority Sports",
 ];
 
 export default function Home() {
-  const featured = VERIFIED_ATHLETES[0];
-
   return (
     <>
-      {/* ═══ 1 · HERO — Cinematic full-bleed ═══ */}
+      {/* ═══ 1 · HERO — Institutional, full-bleed ═══ */}
       <section className="relative min-h-[100vh] flex items-center overflow-hidden">
         {/* Background layers */}
-        <div className="absolute inset-0">
-          <Image src="/images/qb.png" alt="" fill className="object-cover object-top" priority />
-          <div className="absolute inset-0 bg-gradient-to-r from-nil-black via-nil-black/90 to-nil-black/30" />
-          <div className="absolute inset-0 bg-gradient-to-t from-nil-black via-transparent to-nil-black/70" />
-          {/* Animated glow orb */}
-          <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] rounded-full bg-nil-green/[0.04] blur-[120px] animate-pulse-ring" />
-          <div className="absolute bottom-1/3 left-1/3 w-[400px] h-[400px] rounded-full bg-nil-cyan/[0.03] blur-[100px] animate-pulse-ring" style={{ animationDelay: "1.2s" }} />
+        <div className="absolute inset-0 bg-nil-black">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_50%,rgba(198,167,94,0.04),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_30%,rgba(30,79,255,0.03),transparent_50%)]" />
+          {/* Grid pattern */}
+          <div className="absolute inset-0 opacity-[0.03]" style={{
+            backgroundImage: "linear-gradient(rgba(198,167,94,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(198,167,94,0.3) 1px, transparent 1px)",
+            backgroundSize: "80px 80px",
+          }} />
         </div>
 
         <div className="relative z-10 max-w-[1200px] mx-auto px-6 pt-32 pb-24 w-full">
-          <div className="max-w-3xl">
+          <div className="max-w-4xl">
             {/* Status badge */}
-            <div className="inline-flex items-center gap-2 bg-nil-green/[0.08] border border-nil-green/20 rounded-full px-4 py-1.5 mb-8 animate-fade-down">
-              <span className="w-2 h-2 rounded-full bg-nil-green animate-pulse" />
-              <span className="text-nil-green text-xs font-semibold tracking-wide">ENGINE v3.2 — 50 STATES ACTIVE</span>
+            <div className="inline-flex items-center gap-2 bg-nil-gold/[0.08] border border-nil-gold/20 rounded-full px-4 py-1.5 mb-8 animate-fade-down">
+              <span className="w-2 h-2 rounded-full bg-nil-gold animate-pulse" />
+              <span className="text-nil-gold text-xs font-semibold tracking-wide">INSTITUTIONAL INFRASTRUCTURE · 50 STATES</span>
             </div>
 
             <h1 className="space-y-2">
-              <span className="block text-hero text-nil-white">EVERY</span>
-              <span className="block text-hero text-nil-white">DOLLAR</span>
-              <span className="block text-hero gradient-text">ACCOUNTABLE.</span>
+              <span className="block text-[clamp(2.5rem,5.5vw,4.5rem)] font-extrabold text-nil-white leading-[1.05] tracking-tight">
+                THE PE OPERATING SYSTEM
+              </span>
+              <span className="block text-[clamp(2.5rem,5.5vw,4.5rem)] font-extrabold leading-[1.05] tracking-tight">
+                <span className="text-nil-white">FOR </span>
+                <span className="gradient-text">ELITE SPORTS AGENCIES.</span>
+              </span>
             </h1>
 
-            <p className="mt-8 text-xl text-nil-muted max-w-lg leading-relaxed">
-              Score athletes across{" "}
-              <RotatingWord words={["33 factors", "4 categories", "50 states", "every conference", "every deal"]} />
-              <br />
-              before capital moves. Built in Rust. Signed with Ed25519.
+            <p className="mt-8 text-xl text-nil-muted max-w-2xl leading-relaxed">
+              Underwriting, compliance, and portfolio intelligence infrastructure
+              for NIL-linked alternative investments. Built for agencies that
+              originate. Trusted by broker-dealers that distribute.
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Button href="/demo" size="lg">Score a Deal →</Button>
-              <Button href="/athletes" variant="ghost" size="lg">View Verified Athletes</Button>
+              <Button href="mailto:partnerships@nil33.com?subject=NIL33%20Partnership%20Inquiry" size="lg" external>
+                Request Access →
+              </Button>
+              <Button href="/products" variant="secondary" size="lg">
+                View Platform
+              </Button>
             </div>
 
             {/* Trust indicators */}
-            <div className="mt-12 flex items-center gap-6 text-xs text-nil-muted">
-              <span className="flex items-center gap-1.5"><span className="text-nil-green">✓</span> Deterministic scoring</span>
-              <span className="flex items-center gap-1.5"><span className="text-nil-green">✓</span> Cryptographic receipts</span>
-              <span className="flex items-center gap-1.5"><span className="text-nil-green">✓</span> 50-state compliance</span>
+            <div className="mt-12 flex flex-wrap items-center gap-6 text-xs text-nil-muted">
+              <span className="flex items-center gap-1.5"><span className="text-nil-gold">◆</span> 33-Signal Underwriting</span>
+              <span className="flex items-center gap-1.5"><span className="text-nil-blue">◆</span> Portfolio Intelligence</span>
+              <span className="flex items-center gap-1.5"><span className="text-nil-purple">◆</span> 50-State Compliance</span>
+              <span className="flex items-center gap-1.5"><span className="text-nil-emerald">◆</span> BD Supervision Ready</span>
             </div>
           </div>
 
-          {/* Counter tiles — elevated */}
+          {/* Counter tiles */}
           <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { value: 33, suffix: "", label: "Scoring Factors", color: "text-nil-green", border: "border-nil-green/20" },
-              { value: 50, suffix: "+", label: "State Rulesets", color: "text-nil-cyan", border: "border-nil-cyan/20" },
-              { value: 2400000, prefix: "$", suffix: "", label: "Deals Scored", color: "text-nil-gold", border: "border-nil-gold/20" },
-              { value: 0, suffix: "", label: "Overpays Missed", color: "text-nil-purple", border: "border-nil-purple/20", isStatic: true },
+              { value: 33, suffix: "", label: "Underwriting Signals", color: "text-nil-gold", border: "border-nil-gold/20" },
+              { value: 50, suffix: "+", label: "State Rulesets", color: "text-nil-blue", border: "border-nil-blue/20" },
+              { value: 6, suffix: "", label: "Architecture Layers", color: "text-nil-emerald", border: "border-nil-emerald/20" },
+              { value: 0, suffix: "", label: "Compliance Gaps", color: "text-nil-purple", border: "border-nil-purple/20", isStatic: true },
             ].map((t) => (
               <div key={t.label} className={`glass rounded-2xl p-5 border ${t.border} card-lift`}>
                 <p className={`font-mono text-3xl sm:text-4xl font-extrabold ${t.color}`}>
-                  {t.isStatic ? "0" : <Counter end={t.value} suffix={t.suffix} prefix={t.prefix || ""} />}
+                  {"isStatic" in t ? "0" : <Counter end={t.value} suffix={t.suffix} prefix={""} />}
                 </p>
                 <p className="text-nil-muted text-[10px] mt-1.5 tracking-[0.15em] uppercase font-medium">{t.label}</p>
               </div>
@@ -202,33 +159,46 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ 2 · BROADCAST TICKER ═══ */}
-      <div className="border-y border-nil-green/10 bg-nil-dark/80 overflow-hidden py-3">
+      {/* ═══ 2 · BROADCAST TICKER — Institutional tone ═══ */}
+      <div className="border-y border-nil-gold/10 bg-nil-dark/80 overflow-hidden py-3">
         <div className="flex animate-marquee whitespace-nowrap gap-12 text-[13px] font-mono">
           {[...Array(2)].map((_, rep) => (
-            <div key={rep} className="flex gap-12 shrink-0">
-              <span><span className="text-nil-green">▲</span> Arch Manning — <span className="text-nil-green font-bold">96</span>/99 — $3.2M–$4.5M — <span className="text-nil-green">TX: Pass</span></span>
-              <span><span className="text-nil-cyan">▲</span> Livvy Dunne — <span className="text-nil-cyan font-bold">95</span>/99 — $3.8M–$5.2M — <span className="text-nil-green">LA: Pass</span></span>
-              <span><span className="text-nil-gold">▲</span> Jeremiah Smith — <span className="text-nil-gold font-bold">94</span>/99 — $4.2M–$5.6M — <span className="text-nil-green">OH: Pass</span></span>
-              <span><span className="text-nil-purple">▲</span> Bryce Underwood — <span className="text-nil-purple font-bold">93</span>/99 — $8.5M–$12M — <span className="text-nil-green">MI: Pass</span></span>
-              <span className="text-nil-green/60">NIL33 ENGINE v3.2 · Ed25519 SIGNED · 50-STATE COMPLIANT</span>
+            <div key={rep} className="flex gap-12 shrink-0 text-nil-muted/70">
+              <span><span className="text-nil-gold">◆</span> 33-SIGNAL UNDERWRITING ENGINE</span>
+              <span><span className="text-nil-blue">◆</span> PORTFOLIO VAR MODELING</span>
+              <span><span className="text-nil-purple">◆</span> 50-STATE COMPLIANCE AUTOMATION</span>
+              <span><span className="text-nil-emerald">◆</span> INSTITUTIONAL AUDIT TRAIL</span>
+              <span><span className="text-nil-gold">◆</span> SPV STRUCTURING & SETTLEMENT</span>
+              <span><span className="text-nil-blue">◆</span> BD SUPERVISION WORKFLOW</span>
+              <span className="text-nil-gold/40">NIL33 CAPITAL INTELLIGENCE PLATFORM</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ═══ 3 · SOCIAL PROOF — Numbers that command ═══ */}
-      <section className="py-20 px-6 bg-nil-dark/40">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center stagger">
+      {/* ═══ 3 · POSITIONING STATEMENT ═══ */}
+      <section className="py-24 px-6 bg-nil-dark/40">
+        <div className="max-w-[900px] mx-auto text-center">
+          <p className="text-overline mb-6">WHY NIL33</p>
+          <h2 className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-extrabold text-nil-white leading-tight mb-8">
+            Athlete capital is a{" "}
+            <span className="gradient-text">$1.7B asset class</span>{" "}
+            running on spreadsheets and handshakes.
+          </h2>
+          <p className="text-nil-muted text-lg leading-relaxed max-w-2xl mx-auto mb-12">
+            Elite sports agencies control the origination pipeline — the athletes, the relationships,
+            the deal flow. But they lack the institutional infrastructure to structure, underwrite,
+            and distribute athlete-linked capital products. NIL33 builds the rails.
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
-              { value: "$52.7M+", label: "Capital Scored", sub: "Total deal value evaluated" },
-              { value: "10", label: "Verified Athletes", sub: "NIL33 verified pipeline" },
-              { value: "20+", label: "Active States", sub: "Compliance rulesets loaded" },
-              { value: "0", label: "Missed Overpays", sub: "Every dollar accounted" },
+              { value: "$1.7B+", label: "NIL Market Size", sub: "And accelerating" },
+              { value: "6", label: "Product Families", sub: "Structured for distribution" },
+              { value: "33", label: "Scoring Signals", sub: "Per athlete assessment" },
+              { value: "50+", label: "Jurisdictions", sub: "Compliance coverage" },
             ].map((s) => (
               <div key={s.label} className="group">
-                <p className="text-nil-white font-mono text-4xl sm:text-5xl font-extrabold tracking-tight group-hover:text-nil-green transition-colors">
+                <p className="text-nil-white font-mono text-3xl sm:text-4xl font-extrabold tracking-tight group-hover:text-nil-gold transition-colors">
                   {s.value}
                 </p>
                 <p className="text-nil-white text-sm font-semibold mt-2">{s.label}</p>
@@ -239,76 +209,276 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ 4 · THREE ENGINES — The Core ═══ */}
+      {/* ═══ 4 · ARCHITECTURE — 6 Layers ═══ */}
       <Section>
         <SectionHeader
-          overline="The platform"
-          title="Three engines. One decision layer."
-          subtitle="Every deal runs through valuation, compliance, and documentation before a dollar moves."
+          center
+          overline="Architecture"
+          title="Six layers. One institutional stack."
+          subtitle="From athlete data ingestion to investor distribution — every layer purpose-built for compliance, auditability, and scale."
         />
-        <div className="grid md:grid-cols-3 gap-6 stagger">
-          {[
-            {
-              num: "01", color: "var(--color-nil-green)", borderColor: "border-nil-green/20",
-              title: "Valuation Engine",
-              desc: "33 weighted factors — social reach, athletic performance, conference market, brand alignment — produce a composite score and dollar range.",
-              detail: "Score: 91/99 → $168K–$218K",
-              icon: "◆",
-            },
-            {
-              num: "02", color: "var(--color-nil-cyan)", borderColor: "border-nil-cyan/20",
-              title: "Compliance Engine",
-              desc: "Instant check against the athlete's state NIL law, conference rules, and current NCAA guidelines. Pass, review, or fail — with citations.",
-              detail: "FL: Pass · IND: Pass · NCAA: Pass",
-              icon: "◈",
-            },
-            {
-              num: "03", color: "var(--color-nil-purple)", borderColor: "border-nil-purple/20",
-              title: "Deal Receipts",
-              desc: "Every deal gets a timestamped, cryptographically signed record. Show your board, your donors, or the NCAA exactly what you evaluated.",
-              detail: "NIL33-2026-00847 · Ed25519",
-              icon: "◇",
-            },
-          ].map((engine) => (
-            <div key={engine.num} className={`rounded-2xl border ${engine.borderColor} bg-nil-dark/60 p-7 card-lift group`}>
-              <div className="flex items-center gap-3 mb-5">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 stagger">
+          {ARCHITECTURE_LAYERS.map((layer) => (
+            <div key={layer.num} className="rounded-2xl border border-nil-border/60 bg-nil-dark/60 p-7 card-lift group">
+              <div className="flex items-center gap-3 mb-4">
                 <span
                   className="w-11 h-11 rounded-xl flex items-center justify-center font-mono text-sm font-bold border"
-                  style={{ color: engine.color, borderColor: engine.color, backgroundColor: `color-mix(in srgb, ${engine.color} 8%, transparent)` }}
+                  style={{
+                    color: layer.color,
+                    borderColor: layer.color,
+                    backgroundColor: `color-mix(in srgb, ${layer.color} 8%, transparent)`,
+                  }}
                 >
-                  {engine.num}
+                  {layer.num}
                 </span>
-                <h3 className="text-nil-white font-semibold text-lg">{engine.title}</h3>
+                <div>
+                  <h3 className="text-nil-white font-semibold text-base">{layer.title}</h3>
+                  <p className="text-nil-muted text-[10px] uppercase tracking-wider">{layer.subtitle}</p>
+                </div>
               </div>
-              <p className="text-nil-muted text-sm leading-relaxed mb-5">{engine.desc}</p>
-              <div className="bg-nil-black/60 rounded-xl px-4 py-2.5 border border-nil-border/30">
-                <p className="font-mono text-xs" style={{ color: engine.color }}>{engine.detail}</p>
-              </div>
+              <p className="text-nil-muted text-sm leading-relaxed">{layer.desc}</p>
             </div>
           ))}
         </div>
       </Section>
 
-      {/* ═══ 5 · VERIFICATION PIPELINE ═══ */}
+      {/* ═══ 5 · DUAL AUDIENCE — Agencies & Broker-Dealers ═══ */}
+      <Section dark>
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* For Agencies */}
+          <div className="rounded-2xl border border-nil-gold/20 bg-nil-black/60 p-8 sm:p-10">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="w-10 h-10 rounded-xl bg-nil-gold/10 border border-nil-gold/20 flex items-center justify-center">
+                <span className="text-nil-gold text-lg">◆</span>
+              </span>
+              <div>
+                <p className="text-nil-gold text-[10px] font-bold tracking-[0.15em] uppercase">Supply Side</p>
+                <h3 className="text-nil-white font-bold text-xl">For Elite Agencies</h3>
+              </div>
+            </div>
+            <p className="text-nil-muted text-sm leading-relaxed mb-6">
+              You control the supply — the athletes, the relationships, the origination pipeline.
+              NIL33 gives you the infrastructure to turn that access into structured capital products.
+            </p>
+            <div className="space-y-3 mb-8">
+              {[
+                "Athlete capital dashboard with 33-signal scoring",
+                "Structured advance & revenue participation tools",
+                "Portfolio intelligence — concentration, exposure, VaR",
+                "Sponsor optimization & brand valuation analytics",
+                "Automated underwriting memo generation",
+              ].map((item) => (
+                <div key={item} className="flex items-start gap-2.5">
+                  <span className="text-nil-gold text-xs mt-0.5">◆</span>
+                  <span className="text-nil-text text-sm">{item}</span>
+                </div>
+              ))}
+            </div>
+            <Button href="mailto:partnerships@nil33.com?subject=Agency%20Partnership" variant="primary" size="sm" external>
+              Agency Partnership →
+            </Button>
+          </div>
+
+          {/* For Broker-Dealers */}
+          <div className="rounded-2xl border border-nil-blue/20 bg-nil-black/60 p-8 sm:p-10">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="w-10 h-10 rounded-xl bg-nil-blue/10 border border-nil-blue/20 flex items-center justify-center">
+                <span className="text-nil-blue text-lg">◈</span>
+              </span>
+              <div>
+                <p className="text-nil-blue text-[10px] font-bold tracking-[0.15em] uppercase">Distribution Side</p>
+                <h3 className="text-nil-white font-bold text-xl">For Broker-Dealers</h3>
+              </div>
+            </div>
+            <p className="text-nil-muted text-sm leading-relaxed mb-6">
+              You need supervision, compliance, and auditability before touching athlete-linked
+              products. NIL33 provides the infrastructure your compliance team requires.
+            </p>
+            <div className="space-y-3 mb-8">
+              {[
+                "BD supervision & suitability workflow",
+                "50-state compliance automation with citations",
+                "SEC-ready audit trails on every transaction",
+                "Investor reporting & distribution waterfall",
+                "Risk modeling & portfolio stress testing",
+              ].map((item) => (
+                <div key={item} className="flex items-start gap-2.5">
+                  <span className="text-nil-blue text-xs mt-0.5">◈</span>
+                  <span className="text-nil-text text-sm">{item}</span>
+                </div>
+              ))}
+            </div>
+            <Button href="mailto:partnerships@nil33.com?subject=BD%20Partnership" variant="secondary" size="sm" external>
+              BD Partnership →
+            </Button>
+          </div>
+        </div>
+      </Section>
+
+      {/* ═══ 6 · 33-SIGNAL ENGINE — Technical Authority ═══ */}
+      <Section>
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div>
+            <p className="text-overline mb-5">Underwriting</p>
+            <h2 className="text-h1 text-nil-white mb-4">
+              33 signals.
+              <span className="gradient-text"> One score.</span>
+            </h2>
+            <p className="text-nil-muted text-body-lg mb-8 leading-relaxed">
+              Every athlete assessment runs through our proprietary 33-signal underwriting
+              engine. Six risk dimensions, weighted by instrument type, producing a composite
+              score and institutional-grade underwriting memo.
+            </p>
+            <div className="space-y-3">
+              {[
+                { icon: "◆", text: "Revenue durability — contract tenure, earning trajectory, market depth", color: "text-nil-gold" },
+                { icon: "◆", text: "Sponsor concentration — top-3 dependency, category diversity, renewal rates", color: "text-nil-blue" },
+                { icon: "◆", text: "Engagement quality — authentic reach, conversion signals, audience demographics", color: "text-nil-emerald" },
+                { icon: "◆", text: "Eligibility & transfer risk — NCAA status, portal probability, draft timeline", color: "text-nil-purple" },
+                { icon: "◆", text: "Injury & availability — position risk, medical history, workload metrics", color: "text-nil-gold" },
+                { icon: "◆", text: "Reputational volatility — sentiment analysis, controversy exposure, brand safety", color: "text-nil-blue" },
+              ].map((item) => (
+                <div key={item.text} className="flex items-start gap-3">
+                  <span className={`${item.color} text-xs mt-1`}>{item.icon}</span>
+                  <span className="text-nil-text text-sm">{item.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <CodePreview title="nil33 underwrite --athlete $ID --instrument rev-participation">
+            <div className="space-y-0.5 text-[13px]">
+              <DataRow label="Athlete" value="Arch Manning — QB, Texas Longhorns" />
+              <DataRow label="Instrument" value="Revenue Participation Note" />
+              <DataRow label="Assessment" value={<span className="text-nil-gold font-bold text-xl">94</span>} />
+              <DataDivider />
+              <DataRow label="Revenue Durability" value={<span className="text-nil-gold">91/99</span>} />
+              <DataRow label="Sponsor Concentration" value={<span className="text-nil-blue">88/99</span>} />
+              <DataRow label="Engagement Quality" value={<span className="text-nil-emerald">95/99</span>} />
+              <DataRow label="Eligibility Risk" value={<span className="text-nil-gold">97/99</span>} />
+              <DataRow label="Injury/Availability" value={<span className="text-nil-purple">89/99</span>} />
+              <DataRow label="Reputational Vol" value={<span className="text-nil-blue">93/99</span>} />
+              <DataDivider />
+              <DataRow label="Facility Size" value="$3.2M–$4.5M" />
+              <DataRow label="Compliance" value={<span className="text-nil-emerald font-bold">50/50 States — Pass</span>} />
+              <DataRow label="Memo Status" value={<span className="text-nil-gold">Generated · PDF Ready</span>} />
+            </div>
+          </CodePreview>
+        </div>
+      </Section>
+
+      {/* ═══ 7 · COMPLIANCE & GOVERNANCE ═══ */}
+      <section className="py-24 px-6 bg-nil-dark/60 border-y border-nil-border/30">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="text-center mb-14">
+            <p className="text-overline mb-5">Governance</p>
+            <h2 className="text-h1 text-nil-white mb-4">
+              50-state compliance.{" "}
+              <span className="gradient-text-blue">Institutional audit trail.</span>
+            </h2>
+            <p className="text-nil-muted text-body-lg max-w-2xl mx-auto">
+              Every transaction, every assessment, every distribution — timestamped, signed,
+              and audit-ready. NIL33 maintains structured compliance rulesets for every
+              jurisdiction with active NIL legislation.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                title: "50-State Engine",
+                desc: "Structured rulesets covering state NIL statutes, conference regulations, NCAA guidelines, and SEC requirements. Updated as legislation evolves.",
+                detail: "Automated compliance check on every transaction",
+                color: "var(--color-nil-gold)",
+                border: "border-nil-gold/20",
+              },
+              {
+                title: "BD Supervision",
+                desc: "Suitability assessment, concentration limits, risk tolerance matching, and supervisory approval workflow for broker-dealer distribution.",
+                detail: "Pre-trade compliance · Post-trade surveillance",
+                color: "var(--color-nil-blue)",
+                border: "border-nil-blue/20",
+              },
+              {
+                title: "Audit Infrastructure",
+                desc: "Append-only ledger, cryptographic signatures, document versioning. Every action generates a permanent, tamper-evident record.",
+                detail: "SHA-256 hashing · Ed25519 signatures",
+                color: "var(--color-nil-purple)",
+                border: "border-nil-purple/20",
+              },
+            ].map((item) => (
+              <div key={item.title} className={`rounded-2xl border ${item.border} bg-nil-dark/60 p-7 card-lift`}>
+                <div className="flex items-center gap-3 mb-5">
+                  <span
+                    className="w-11 h-11 rounded-xl flex items-center justify-center text-2xl"
+                    style={{
+                      color: item.color,
+                      backgroundColor: `color-mix(in srgb, ${item.color} 8%, transparent)`,
+                      border: `1px solid color-mix(in srgb, ${item.color} 20%, transparent)`,
+                    }}
+                  >
+                    ◈
+                  </span>
+                  <h3 className="text-nil-white font-semibold text-lg">{item.title}</h3>
+                </div>
+                <p className="text-nil-muted text-sm leading-relaxed mb-5">{item.desc}</p>
+                <div className="bg-nil-black/60 rounded-xl px-4 py-2.5 border border-nil-border/30">
+                  <p className="font-mono text-xs" style={{ color: item.color }}>{item.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ 8 · PRODUCT FAMILIES ═══ */}
+      <Section>
+        <SectionHeader
+          center
+          overline="Products"
+          title="Six product families. Structured for scale."
+          subtitle="Each product type maps to specific athlete revenue streams, risk profiles, and investor appetites. All built on shared underwriting and compliance infrastructure."
+        />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger">
+          {[
+            { title: "Revenue Participation Notes", desc: "Fractional interest in athlete NIL revenue streams. Quarterly distributions tied to verified earnings.", icon: "01" },
+            { title: "Structured Advances", desc: "Capital advances against future NIL earnings with structured repayment schedules and covenant protections.", icon: "02" },
+            { title: "Sponsor-Backed Facilities", desc: "Credit facilities collateralized by contracted sponsorship revenue. Known cashflows, reduced risk.", icon: "03" },
+            { title: "Portfolio Instruments", desc: "Diversified exposure across athlete cohorts — by sport, conference, or revenue type. Portfolio-level risk management.", icon: "04" },
+            { title: "Agency Credit Lines", desc: "Working capital facilities for agencies, secured against portfolio-level athlete revenue projections.", icon: "05" },
+            { title: "Data & Analytics Licenses", desc: "API access to 33-signal scoring, portfolio intelligence, and compliance infrastructure for institutional partners.", icon: "06" },
+          ].map((product) => (
+            <div key={product.icon} className="rounded-2xl border border-nil-border/60 bg-nil-dark/60 p-7 hover:border-nil-gold/20 transition-all card-lift">
+              <span className="font-mono text-sm font-bold text-nil-gold mb-4 block">{product.icon}</span>
+              <h3 className="text-nil-white font-semibold text-lg mb-2">{product.title}</h3>
+              <p className="text-nil-muted text-sm leading-relaxed">{product.desc}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ═══ 9 · AGENCY ECOSYSTEM ═══ */}
       <Section dark>
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div>
-            <p className="text-overline mb-5">Verified Pipeline</p>
+            <p className="text-overline mb-5">Ecosystem</p>
             <h2 className="text-h1 text-nil-white mb-4">
-              Identity verified.
-              <span className="gradient-text"> NIL33 valued.</span>
+              Built for the agencies that
+              <span className="gradient-text"> control the supply.</span>
             </h2>
             <p className="text-nil-muted text-body-lg mb-8 leading-relaxed">
-              Every athlete scored by NIL33 goes through our identity verification
-              pipeline. Metrics captured, hashed, and cryptographically signed
-              before a single dollar is discussed.
+              The top 10 sports agencies represent thousands of elite athletes and billions
+              in aggregate NIL value. NIL33 provides the institutional infrastructure
+              that turns agency relationships into structured capital products.
             </p>
             <div className="space-y-4">
               {[
-                { step: "01", text: "NIL33 captures and verifies athlete identity & metrics", color: "text-nil-cyan" },
-                { step: "02", text: "Identity hash created with SHA-256 + Ed25519 signature", color: "text-nil-green" },
-                { step: "03", text: "Verified identity feeds into 33-factor scoring engine", color: "text-nil-gold" },
-                { step: "04", text: "Valuation, compliance check, and receipt generated", color: "text-nil-purple" },
+                { step: "01", text: "Agency onboards athlete roster to NIL33 registry", color: "text-nil-gold" },
+                { step: "02", text: "33-signal engine scores each athlete across 6 risk dimensions", color: "text-nil-blue" },
+                { step: "03", text: "Portfolio intelligence identifies optimal structuring", color: "text-nil-emerald" },
+                { step: "04", text: "Product factory generates investor-ready instruments", color: "text-nil-purple" },
+                { step: "05", text: "Compliance engine clears 50-state regulatory requirements", color: "text-nil-gold" },
+                { step: "06", text: "BD partners distribute to qualified investors", color: "text-nil-blue" },
               ].map((s) => (
                 <div key={s.step} className="flex items-start gap-4 group">
                   <span className={`font-mono text-sm font-bold ${s.color} mt-0.5 w-6`}>{s.step}</span>
@@ -320,64 +490,37 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Featured athlete card — elevated */}
-          <div className="relative">
-            {/* Glow behind card */}
-            <div className="absolute -inset-4 bg-nil-green/[0.03] rounded-3xl blur-2xl" />
-            <div className="relative rounded-2xl overflow-hidden border border-nil-border/60 bg-nil-dark/80 glow-green">
-              <div className="relative h-64 sm:h-80">
-                <Image src={featured.image} alt={featured.name} fill className="object-cover object-top" />
-                <div className="absolute inset-0 bg-gradient-to-t from-nil-dark via-nil-dark/30 to-transparent" />
-                <div className="absolute top-4 right-4 flex gap-2">
-                  <Badge status="pass" label="Verified" />
-                  <span className="bg-nil-gold/20 text-nil-gold text-[10px] font-bold px-2.5 py-1 rounded-full border border-nil-gold/30">
-                    ★ {featured.rating}
-                  </span>
+          {/* Target agencies */}
+          <div className="space-y-6">
+            <p className="text-nil-muted text-xs uppercase tracking-[0.15em] font-semibold">Target Agency Partners</p>
+            <div className="grid grid-cols-2 gap-3">
+              {TARGET_AGENCIES.map((agency) => (
+                <div key={agency} className="bg-nil-black/60 border border-nil-border/40 rounded-xl px-5 py-4 text-center hover:border-nil-gold/20 transition-colors">
+                  <span className="text-nil-white text-sm font-medium">{agency}</span>
                 </div>
-                <div className="absolute bottom-4 left-5">
-                  <p className="text-nil-white font-extrabold text-2xl">{featured.name}</p>
-                  <p className="text-nil-muted text-sm">{featured.sport} · {featured.pos} · {featured.school} · {featured.year}</p>
+              ))}
+            </div>
+            <div className="bg-nil-black/40 border border-nil-gold/10 rounded-2xl p-6 mt-6">
+              <p className="text-nil-gold text-[10px] font-bold tracking-[0.15em] uppercase mb-3">Agency Value Proposition</p>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-nil-muted">Portfolio scoring</span>
+                  <span className="text-nil-white font-mono">Full roster analytics</span>
                 </div>
-              </div>
-
-              <div className="p-6 space-y-5">
-                {/* UC Metrics */}
-                <div>
-                  <p className="text-nil-cyan text-[10px] font-bold tracking-[0.15em] uppercase mb-3">NIL33 Factor Scores</p>
-                  <div className="grid grid-cols-4 gap-3">
-                    {[
-                      { label: "Social", value: `${featured.nil.social}`, unit: "/99" },
-                      { label: "Athletic", value: `${featured.nil.athletic}`, unit: "/99" },
-                      { label: "Market", value: `${featured.nil.market}`, unit: "/99" },
-                      { label: "Brand", value: `${featured.nil.brand}`, unit: "/99" },
-                    ].map((m) => (
-                      <div key={m.label} className="text-center bg-nil-black/40 rounded-xl py-3 border border-nil-border/20">
-                        <p className="text-nil-white font-mono text-lg font-bold">{m.value}</p>
-                        <p className="text-nil-muted text-[9px] uppercase tracking-wide">{m.label}</p>
-                      </div>
-                    ))}
-                  </div>
+                <div className="h-px bg-nil-border/20" />
+                <div className="flex justify-between">
+                  <span className="text-nil-muted">Revenue monetization</span>
+                  <span className="text-nil-white font-mono">6 product families</span>
                 </div>
-
-                <div className="h-px bg-nil-border/40" />
-
-                {/* NIL33 Valuation */}
-                <div>
-                  <p className="text-nil-green text-[10px] font-bold tracking-[0.15em] uppercase mb-3">NIL33 Valuation</p>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-nil-muted text-sm">Composite Score</span>
-                    <span className="text-nil-green font-mono text-3xl font-extrabold glow-green-text">{featured.nil.composite}<span className="text-nil-muted text-sm font-normal">/99</span></span>
-                  </div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-nil-muted text-sm">Fair Value Range</span>
-                    <span className="text-nil-white font-mono text-sm font-bold">${featured.nil.low.toLocaleString()} – ${featured.nil.high.toLocaleString()}</span>
-                  </div>
-                  <div className="space-y-2">
-                    <ScoreBar label="Social" value={featured.nil.social} color="var(--color-nil-green)" />
-                    <ScoreBar label="Athletic" value={featured.nil.athletic} color="var(--color-nil-cyan)" />
-                    <ScoreBar label="Market" value={featured.nil.market} color="var(--color-nil-purple)" />
-                    <ScoreBar label="Brand" value={featured.nil.brand} color="var(--color-nil-gold)" />
-                  </div>
+                <div className="h-px bg-nil-border/20" />
+                <div className="flex justify-between">
+                  <span className="text-nil-muted">Compliance burden</span>
+                  <span className="text-nil-emerald font-mono">Automated</span>
+                </div>
+                <div className="h-px bg-nil-border/20" />
+                <div className="flex justify-between">
+                  <span className="text-nil-muted">Time to market</span>
+                  <span className="text-nil-gold font-mono">Weeks, not months</span>
                 </div>
               </div>
             </div>
@@ -385,362 +528,81 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* ═══ 6 · LIVE DEAL SCORING — Terminal Output ═══ */}
-      <Section>
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <SectionHeader
-              overline="Live output"
-              title="What a scored deal looks like."
-              subtitle={`Arch Manning — 5-star QB, Texas Longhorns. Verified and scored by NIL33. Every deal your collective evaluates produces a structured, auditable record like this.`}
-            />
-            <div className="flex flex-wrap items-center gap-3 mt-8">
-              <Badge status="pass" label="TX State Law" />
-              <Badge status="pass" label="SEC" />
-              <Badge status="pass" label="NCAA Guidelines" />
-            </div>
-            <div className="mt-6">
-              <Button href="/demo" variant="ghost" size="sm">Try with your own athlete →</Button>
-            </div>
-          </div>
-
-          <div className="relative">
-            <div className="absolute -inset-2 bg-nil-green/[0.02] rounded-2xl blur-xl" />
-            <div className="relative">
-              <CodePreview title="nil33 score-deal --athlete manning --output json">
-                <div className="space-y-0.5 text-[13px]">
-                  <DataRow label="Athlete" value="Arch Manning — QB, Texas Longhorns" />
-                  <DataRow label="Verified" value={<span className="text-nil-cyan">✓ SHA-256 + Ed25519</span>} />
-                  <DataRow label="Composite Score" value={<span className="text-nil-green font-bold text-xl">96</span>} />
-                  <DataRow label="Valuation Band" value="$3,200,000 – $4,500,000" />
-                  <DataRow label="Proposed Deal" value={<span className="text-nil-white">$3,800,000</span>} />
-                  <DataDivider />
-                  <DataRow label="Overpay" value={<span className="text-nil-green font-bold">$0 — within range</span>} />
-                  <DataRow label="State Law" value={<span className="text-nil-green">Pass — TX Ed Code § 51.9246</span>} />
-                  <DataRow label="NCAA" value={<span className="text-nil-green">Pass — within fair value</span>} />
-                  <DataDivider />
-                  <DataRow label="Receipt ID" value="NIL33-2026-00101" />
-                  <DataRow label="Timestamp" value={new Date().toISOString().split("T")[0]} />
-                  <DataRow label="Signature" value={<span className="text-nil-purple text-xs">ed25519:a4f8…d7f2</span>} />
-                </div>
-              </CodePreview>
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      {/* ═══ 7 · COMPLIANCE MAP — 50 States ═══ */}
-      <section className="py-24 px-6 bg-nil-dark/60 border-y border-nil-border/30">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="text-center mb-14">
-            <p className="text-overline mb-5">Regulatory Coverage</p>
-            <h2 className="text-h1 text-nil-white mb-4">50-state compliance. Always current.</h2>
-            <p className="text-nil-muted text-body-lg max-w-xl mx-auto">
-              NIL33 maintains structured rulesets for every state with active NIL legislation.
-              Updated as laws change. Versioned for audit trails.
-            </p>
-          </div>
-
-          {/* State grid */}
-          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-10 gap-2 mb-10 stagger">
-            {COMPLIANCE_STATES.map((s) => (
-              <div
-                key={s.state}
-                className="group relative bg-nil-black/60 border border-nil-green/20 rounded-xl p-3 text-center card-lift cursor-default"
-              >
-                <p className="text-nil-white font-mono text-sm font-bold">{s.state}</p>
-                <p className="text-nil-green text-[8px] font-semibold uppercase tracking-wider mt-0.5">Active</p>
-                {/* Tooltip */}
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-nil-dark border border-nil-border/60 rounded-lg px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
-                  <p className="text-nil-white text-xs font-medium">{s.state} — {s.law}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-8 text-sm">
-            <span className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-sm bg-nil-green/30 border border-nil-green/40" />
-              <span className="text-nil-muted">Active NIL Statute</span>
-            </span>
-            <span className="text-nil-muted">·</span>
-            <span className="text-nil-muted font-mono text-xs">Rulesets versioned · Timestamped · Auditable</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ 8 · VERIFIED ROSTER ═══ */}
-      <Section>
-        <SectionHeader
-          center
-          overline="Verified Athletes"
-          title="Verified athletes. NIL33 valuations."
-          subtitle="Every athlete on this roster has been identity-verified, metrics-captured, and scored through the NIL33 engine."
-        />
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 stagger">
-          {VERIFIED_ATHLETES.map((a) => (
-            <Link key={a.id} href="/athletes" className="group">
-              <div className="rounded-2xl border border-nil-border/60 bg-nil-dark/60 overflow-hidden hover:border-nil-green/30 transition-all card-lift">
-                <div className="relative h-52">
-                  <Image src={a.image} alt={a.name} fill className="object-cover object-top group-hover:scale-105 transition-transform duration-700" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-nil-dark via-nil-dark/20 to-transparent" />
-                  <div className="absolute top-3 right-3">
-                    <span className="bg-nil-green/20 text-nil-green text-[10px] font-bold px-2.5 py-1 rounded-full border border-nil-green/30 font-mono">
-                      {a.nil.composite}/99
-                    </span>
-                  </div>
-                  <div className="absolute top-3 left-3">
-                    <span className="bg-nil-black/60 text-nil-gold text-[9px] font-bold px-2 py-0.5 rounded-full border border-nil-gold/20">
-                      ★ {a.rating}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-5">
-                  <div className="flex items-start justify-between mb-1">
-                    <div>
-                      <p className="text-nil-white font-semibold text-[15px]">{a.name}</p>
-                      <p className="text-nil-muted text-xs">{a.sport} · {a.pos} · {a.school}</p>
-                    </div>
-                  </div>
-                  <div className="mt-3 flex items-center justify-between">
-                    <span className="text-nil-green font-mono text-sm font-bold">${a.nil.low >= 1000000 ? `${(a.nil.low / 1000000).toFixed(1)}M` : `${(a.nil.low / 1000).toFixed(0)}K`}–${a.nil.high >= 1000000 ? `${(a.nil.high / 1000000).toFixed(1)}M` : `${(a.nil.high / 1000).toFixed(0)}K`}</span>
-                    <span className="text-[9px] text-nil-muted uppercase tracking-wider">Fair Value</span>
-                  </div>
-                  <div className="mt-3 grid grid-cols-4 gap-1.5">
-                    {[
-                      { label: "SOC", val: a.nil.social, color: "bg-nil-green" },
-                      { label: "ATH", val: a.nil.athletic, color: "bg-nil-cyan" },
-                      { label: "MKT", val: a.nil.market, color: "bg-nil-purple" },
-                      { label: "BRD", val: a.nil.brand, color: "bg-nil-gold" },
-                    ].map((bar) => (
-                      <div key={bar.label}>
-                        <div className="h-1 rounded-full bg-nil-border/40 overflow-hidden">
-                          <div className={`h-full rounded-full ${bar.color}`} style={{ width: `${bar.val}%` }} />
-                        </div>
-                        <p className="text-nil-muted text-[8px] text-center mt-1 font-mono">{bar.val}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-        <div className="mt-10 text-center">
-          <Button href="/athletes" variant="secondary" size="lg">View Full Roster →</Button>
-        </div>
-      </Section>
-
-      {/* ═══ 9 · PROBLEM / SOLUTION ═══ */}
-      <Section dark>
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
-          <div>
-            <SectionHeader
-              title="The problem is capital without discipline."
-            />
-            <div className="space-y-6 text-[15px] text-nil-muted leading-relaxed">
-              <p>
-                Collectives spend $500K–$5M per cycle on athlete deals with no fair-market
-                reference. Agents set the price. Collectives pay it. Nobody documents
-                whether it was right.
-              </p>
-              <p>
-                When the board asks how the money was spent, you pull up a spreadsheet.
-                When the NCAA asks for deal documentation, you don&apos;t have any.
-                When a state attorney general investigates NIL compliance, you hope
-                you&apos;re covered.
-              </p>
-              <p className="text-nil-white font-medium text-lg">
-                NIL33 gives you the number, the compliance check, and the paper trail —
-                before you wire the money.
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            {[
-              { before: "Agent says '$120K for this WR.' You have no counter.", after: "NIL33 scores the athlete at 67/99 — fair value is $48K–$62K.", color: "var(--color-nil-green)" },
-              { before: "Board wants to see how $1.2M was allocated.", after: "Every deal has a signed receipt. Export the entire portfolio.", color: "var(--color-nil-cyan)" },
-              { before: "NCAA sends an enforcement letter.", after: "Each transaction is timestamped, signed, and audit-ready.", color: "var(--color-nil-purple)" },
-            ].map((item, i) => (
-              <div key={i} className="bg-nil-black/40 border border-nil-border/40 rounded-2xl p-6">
-                <div className="flex items-start gap-3 mb-3">
-                  <span className="text-nil-red text-xs font-bold mt-0.5">✕</span>
-                  <p className="text-nil-muted text-sm">{item.before}</p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-nil-green text-xs font-bold mt-0.5">✓</span>
-                  <p className="text-nil-text text-sm font-medium">{item.after}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Section>
-
-      {/* ═══ 10 · WHY RUST — Technical Authority ═══ */}
-      <section className="py-24 px-6 border-y border-nil-border/30">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <p className="text-overline mb-5">Engineering</p>
-              <h2 className="text-h1 text-nil-white mb-4">
-                Why Rust. Why Ed25519.
-                <span className="gradient-text"> Why it matters.</span>
-              </h2>
-              <p className="text-nil-muted text-body-lg mb-8">
-                NIL33 isn&apos;t a spreadsheet with a logo. It&apos;s a deterministic
-                scoring engine compiled from Rust — where the same inputs always produce
-                the same output, and every result is cryptographically signed.
-              </p>
-              <div className="space-y-3">
-                {[
-                  { icon: "◆", text: "Integer arithmetic — no floating-point drift or rounding errors", color: "text-nil-green" },
-                  { icon: "◆", text: "Sub-millisecond scoring — score 1,000 deals in under a second", color: "text-nil-cyan" },
-                  { icon: "◆", text: "Ed25519 signatures — tamper-evident, verifiable, court-ready", color: "text-nil-purple" },
-                  { icon: "◆", text: "Memory-safe — no buffer overflows, no undefined behavior", color: "text-nil-gold" },
-                  { icon: "◆", text: "WASM-compatible — client-side verification in the browser", color: "text-nil-orange" },
-                ].map((item) => (
-                  <div key={item.text} className="flex items-start gap-3">
-                    <span className={`${item.color} text-xs mt-1`}>{item.icon}</span>
-                    <span className="text-nil-text text-sm">{item.text}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <CodePreview title="score_deal.rs — Rust Scoring Engine">
-              <div className="font-mono text-xs text-nil-text space-y-1">
-                <p className="text-nil-muted">{"// Deterministic: same inputs → same output"}</p>
-                <p className="text-nil-muted">{"// Integer arithmetic only — no f64"}</p>
-                <p className="mt-2"><span className="text-nil-cyan">pub fn</span> <span className="text-nil-green">score_deal</span>(</p>
-                <p className="pl-4">profile: <span className="text-nil-gold">&AthleteProfile</span>,</p>
-                <p className="pl-4">proposal: <span className="text-nil-gold">&DealProposal</span>,</p>
-                <p className="pl-4">rules: <span className="text-nil-gold">&ComplianceRuleset</span>,</p>
-                <p>) -&gt; <span className="text-nil-gold">Result</span>&lt;<span className="text-nil-green">ScoredDeal</span>, <span className="text-nil-red">EngineError</span>&gt; {"{"}</p>
-                <p className="pl-4"><span className="text-nil-cyan">let</span> social = <span className="text-nil-green">compute_social</span>(&profile.social);</p>
-                <p className="pl-4"><span className="text-nil-cyan">let</span> athletic = <span className="text-nil-green">compute_athletic</span>(&profile.stats);</p>
-                <p className="pl-4"><span className="text-nil-cyan">let</span> market = <span className="text-nil-green">compute_market</span>(&profile.market);</p>
-                <p className="pl-4"><span className="text-nil-cyan">let</span> brand = <span className="text-nil-green">compute_brand</span>(&profile.brand);</p>
-                <p className="pl-4 mt-2"><span className="text-nil-cyan">let</span> composite = <span className="text-nil-green">weighted_sum</span>(</p>
-                <p className="pl-8">[social, athletic, market, brand],</p>
-                <p className="pl-8">[<span className="text-nil-gold">25</span>, <span className="text-nil-gold">30</span>, <span className="text-nil-gold">25</span>, <span className="text-nil-gold">20</span>]</p>
-                <p className="pl-4">);</p>
-                <p className="pl-4 mt-2"><span className="text-nil-cyan">let</span> receipt = <span className="text-nil-green">sign_receipt</span>(</p>
-                <p className="pl-8">&scored, &<span className="text-nil-purple">SIGNING_KEY</span></p>
-                <p className="pl-4">);</p>
-                <p className="pl-4 mt-2"><span className="text-nil-cyan">Ok</span>(<span className="text-nil-green">ScoredDeal</span> {"{ composite, receipt }"});</p>
-                <p>{"}"}</p>
-              </div>
-            </CodePreview>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ 11 · SMART CONTRACTS & ATHLETE PROTECTION ═══ */}
-      <Section>
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <SectionHeader
-              overline="Self-Executing Deals"
-              title="Solidity contracts. Automatic payouts. Zero middlemen."
-              subtitle="NIL33 uses on-chain smart contracts so deals execute themselves — milestones hit, payments fire, receipts generated. Athletes get paid on time, every time."
-            />
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button href="/product" variant="ghost" size="sm">How it works →</Button>
-              <Button href="/demo" variant="ghost" size="sm">Run a demo →</Button>
-            </div>
-          </div>
-          <div className="bg-nil-black border border-nil-border/60 rounded-2xl p-8 glow-green">
-            <InlineStat label="Contract execution" value="Automatic" />
-            <InlineStat label="Payout trigger" value="Milestone-based" />
-            <div className="h-px bg-nil-border/40 my-3" />
-            <InlineStat label="Settlement time" value="<60 sec" valueColor="var(--color-nil-green)" />
-            <div className="h-px bg-nil-border/40 my-3" />
-            <InlineStat label="Disputes from missed payouts" value="0" valueColor="var(--color-nil-green)" />
-            <div className="h-px bg-nil-border/40 my-3" />
-            <InlineStat label="Every deal on-chain" value="Immutable" valueColor="var(--color-nil-cyan)" />
-          </div>
-        </div>
-      </Section>
-
-      {/* ═══ 12 · BUILT FOR ═══ */}
-      <Section dark>
-        <SectionHeader
-          center
-          overline="Built for"
-          title="Every stakeholder in the NIL ecosystem."
-        />
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 stagger">
-          {[
-            { title: "Collectives", desc: "Validate deals, document decisions, protect capital. Every dollar accounted for.", href: "/collectives", icon: "◆", color: "text-nil-green" },
-            { title: "Compliance Officers", desc: "50-state law checks, conference rules, NCAA tracking. Instant verdicts.", href: "/product", icon: "◈", color: "text-nil-cyan" },
-            { title: "Board Members", desc: "Audit-ready receipts for every dollar allocated. Export-ready reports.", href: "/product", icon: "◇", color: "text-nil-purple" },
-            { title: "Developers", desc: "REST API, Rust engine, deterministic scoring. Build on top of NIL33.", href: "/developers", icon: "◆", color: "text-nil-gold" },
-          ].map((item) => (
-            <Link key={item.title} href={item.href} className="group">
-              <div className="bg-nil-dark/60 border border-nil-border/60 rounded-2xl p-7 h-full hover:border-nil-green/20 transition-all card-lift">
-                <span className={`${item.color} text-2xl block mb-4`}>{item.icon}</span>
-                <h3 className="text-nil-white font-semibold text-lg mb-2 group-hover:text-nil-green transition-colors">{item.title}</h3>
-                <p className="text-nil-muted text-sm leading-relaxed">{item.desc}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </Section>
-
-      {/* ═══ 13 · TESTIMONIALS / CASE STUDY ═══ */}
+      {/* ═══ 10 · THE THESIS ═══ */}
       <section className="py-24 px-6 border-y border-nil-border/30 bg-nil-dark/30">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="text-center mb-14">
-            <p className="text-overline mb-5">Case Study</p>
-            <h2 className="text-h1 text-nil-white mb-4">How NIL33 saved a collective $107K on one deal.</h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
+        <div className="max-w-[900px] mx-auto text-center">
+          <p className="text-overline mb-6">THE THESIS</p>
+          <h2 className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-extrabold text-nil-white leading-tight mb-8">
+            Not a sports app. Not a marketplace.{" "}
+            <span className="gradient-text">Underwriting + compliance infrastructure.</span>
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8 mt-12">
             <div className="bg-nil-black/60 border border-nil-border/40 rounded-2xl p-8">
-              <p className="text-nil-red font-mono text-4xl font-extrabold mb-2">$195K</p>
-              <p className="text-nil-muted text-sm mb-4">Agent&apos;s asking price for a 4-star WR</p>
-              <p className="text-nil-muted text-xs leading-relaxed">Based on &quot;market comps&quot; — no structured data, no factor analysis, no compliance check.</p>
+              <p className="text-nil-muted text-sm mb-3 font-semibold">What exists today</p>
+              <p className="text-nil-red/80 font-mono text-lg font-bold mb-4">Spreadsheets</p>
+              <p className="text-nil-muted text-xs leading-relaxed">
+                Agencies value athletes with gut feel. BDs have no compliance framework for NIL products.
+                Investors have no underwriting data. Everyone guesses.
+              </p>
             </div>
-            <div className="bg-nil-black/60 border border-nil-green/20 rounded-2xl p-8 glow-green">
-              <p className="text-nil-green font-mono text-4xl font-extrabold mb-2">$88K</p>
-              <p className="text-nil-text text-sm mb-4">NIL33 fair value assessment</p>
-              <p className="text-nil-muted text-xs leading-relaxed">Composite 72/99 — strong athletic but low social reach and limited market. Valuation band: $78K–$98K.</p>
+            <div className="bg-nil-black/60 border border-nil-gold/20 rounded-2xl p-8 glow-gold">
+              <p className="text-nil-gold text-sm mb-3 font-semibold">What NIL33 builds</p>
+              <p className="text-nil-gold font-mono text-lg font-bold mb-4">Infrastructure</p>
+              <p className="text-nil-muted text-xs leading-relaxed">
+                Systematic underwriting. Automated compliance. Portfolio analytics.
+                Settlement rails. The institutional stack that makes athlete capital
+                investable.
+              </p>
             </div>
             <div className="bg-nil-black/60 border border-nil-border/40 rounded-2xl p-8">
-              <p className="text-nil-gold font-mono text-4xl font-extrabold mb-2">$107K</p>
-              <p className="text-nil-text text-sm mb-4">Capital preserved</p>
-              <p className="text-nil-muted text-xs leading-relaxed">Collective negotiated from data. Final deal: $91K — within NIL33 fair value band. Receipt generated, compliance verified.</p>
+              <p className="text-nil-muted text-sm mb-3 font-semibold">What this enables</p>
+              <p className="text-nil-blue font-mono text-lg font-bold mb-4">Scale</p>
+              <p className="text-nil-muted text-xs leading-relaxed">
+                Agencies originate at volume. BDs distribute with confidence.
+                Investors allocate with data. A new asset class becomes institutional.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ═══ 14 · CTA — Cinematic ═══ */}
-      <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
-          <Image src="/images/qb-69.png" alt="" fill className="object-cover object-center" />
-          <div className="absolute inset-0 bg-nil-black/80" />
-          <div className="absolute inset-0 bg-gradient-to-t from-nil-black via-transparent to-nil-black/60" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-nil-green/[0.04] blur-[150px]" />
+      {/* ═══ 11 · CTA — Institutional ═══ */}
+      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-nil-black">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,rgba(198,167,94,0.06),transparent_60%)]" />
+          {/* Grid pattern */}
+          <div className="absolute inset-0 opacity-[0.02]" style={{
+            backgroundImage: "linear-gradient(rgba(198,167,94,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(198,167,94,0.4) 1px, transparent 1px)",
+            backgroundSize: "60px 60px",
+          }} />
         </div>
         <div className="relative z-10 text-center px-6 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-nil-green/[0.08] border border-nil-green/20 rounded-full px-4 py-1.5 mb-8">
-            <span className="w-2 h-2 rounded-full bg-nil-green animate-pulse" />
-            <span className="text-nil-green text-xs font-semibold tracking-wide">FREE — NO SIGN-UP REQUIRED</span>
+          <div className="inline-flex items-center gap-2 bg-nil-gold/[0.08] border border-nil-gold/20 rounded-full px-4 py-1.5 mb-8">
+            <span className="w-2 h-2 rounded-full bg-nil-gold animate-pulse" />
+            <span className="text-nil-gold text-xs font-semibold tracking-wide">NOW ACCEPTING PARTNERSHIP INQUIRIES</span>
           </div>
-          <h2 className="text-[clamp(2.5rem,6vw,4.5rem)] font-extrabold text-nil-white leading-[1.05] mb-6">
-            Score your first deal.<br />
-            <span className="gradient-text">Before the money moves.</span>
+          <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-extrabold text-nil-white leading-[1.1] mb-6">
+            The infrastructure layer for<br />
+            <span className="gradient-text">athlete capital markets.</span>
           </h2>
-          <p className="text-nil-muted text-lg mb-10 max-w-md mx-auto">
-            Verified athletes. NIL33 scored. 33 factors. 50 states. Zero guesswork.
+          <p className="text-nil-muted text-lg mb-10 max-w-lg mx-auto">
+            Whether you&apos;re an agency looking to monetize athlete capital or a broker-dealer
+            seeking compliant distribution rails — NIL33 is your operating system.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <Button href="/demo" size="lg">Open Demo →</Button>
-            <Button href="mailto:partnerships@nil33.com?subject=NIL33%20Partnership" variant="secondary" size="lg" external>
-              Talk to Us
+            <Button href="mailto:partnerships@nil33.com?subject=NIL33%20Partnership%20Inquiry" size="lg" external>
+              Request Access →
             </Button>
+            <Button href="/products" variant="secondary" size="lg">
+              Explore the Platform
+            </Button>
+          </div>
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-xs text-nil-muted/50 font-mono">
+            <span>Elite Sports Agencies</span>
+            <span className="text-nil-gold/30">·</span>
+            <span>Registered Broker-Dealers</span>
+            <span className="text-nil-gold/30">·</span>
+            <span>Institutional Investors</span>
           </div>
         </div>
       </section>

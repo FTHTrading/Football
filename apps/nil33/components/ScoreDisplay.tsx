@@ -11,8 +11,8 @@ export default function ScoreRing({ score, size = 120, strokeWidth = 6, label }:
   const offset = circumference - (score / 99) * circumference;
 
   const color =
-    score >= 75 ? "var(--color-nil-green)" :
-    score >= 50 ? "var(--color-nil-cyan)" :
+    score >= 75 ? "var(--color-nil-emerald)" :
+    score >= 50 ? "var(--color-nil-blue)" :
     score >= 30 ? "var(--color-nil-gold)" :
     "var(--color-nil-red)";
 
@@ -59,7 +59,7 @@ interface ScoreBarProps {
   color?: string;
 }
 
-export function ScoreBar({ label, value, color = "var(--color-nil-green)" }: ScoreBarProps) {
+export function ScoreBar({ label, value, color = "var(--color-nil-gold)" }: ScoreBarProps) {
   return (
     <div className="flex items-center gap-3">
       <span className="text-nil-muted text-xs w-20 capitalize shrink-0">{label}</span>

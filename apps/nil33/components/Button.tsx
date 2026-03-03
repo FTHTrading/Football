@@ -15,8 +15,8 @@ interface ButtonProps {
 const base = "inline-flex items-center justify-center font-semibold transition-all rounded-xl";
 
 const variants = {
-  primary: "bg-nil-green text-nil-black hover:bg-nil-green/90 hover:shadow-[0_0_24px_rgba(0,255,136,0.15)]",
-  secondary: "bg-nil-dark border border-nil-border text-nil-white hover:border-nil-green/30 hover:bg-nil-gray/50",
+  primary: "bg-nil-gold text-nil-black hover:bg-nil-gold/90 hover:shadow-[0_0_24px_rgba(198,167,94,0.15)]",
+  secondary: "bg-nil-dark border border-nil-border text-nil-white hover:border-nil-gold/30 hover:bg-nil-gray/50",
   ghost: "text-nil-muted hover:text-nil-white",
 };
 

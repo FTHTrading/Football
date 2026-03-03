@@ -4,30 +4,30 @@ import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 
 export const metadata: Metadata = {
-  title: "NIL33 — Capital Discipline Software for NIL Collectives | Norcross, GA",
+  title: "NIL33 — Underwriting & Compliance Rails for NIL-Linked Alternative Investments",
   description:
-    "NIL33 is capital discipline software for NIL collectives. Validate athlete valuations, check 50-state compliance, and prevent overpay — before you sign the deal. Based in Norcross, Georgia.",
+    "NIL33 is the institutional operating system for athlete capital markets. 33-signal underwriting, 50-state compliance, portfolio intelligence, and settlement infrastructure for elite sports agencies and broker-dealers.",
   keywords: [
-    "NIL valuation software",
-    "NIL compliance tool",
-    "NIL collective software",
-    "NIL overpay prevention",
-    "NIL capital allocation",
-    "NIL deal validation",
-    "collective NIL management",
-    "Georgia NIL compliance",
+    "NIL alternative investments",
+    "athlete capital underwriting",
+    "NIL compliance infrastructure",
+    "sports agency capital platform",
+    "NIL structured products",
+    "athlete revenue underwriting",
+    "NIL broker-dealer compliance",
+    "athlete portfolio intelligence",
     "NIL33",
-    "NIL valuation tool for collectives",
-    "NIL compliance scoring",
-    "athlete fair market value",
-    "NIL deal compliance check",
-    "50 state NIL rules",
-    "NCAA NIL compliance",
+    "NIL institutional platform",
+    "athlete valuation engine",
+    "NIL SPV management",
+    "50 state NIL compliance",
     "SEC NIL compliance",
-    "NIL ROI tool",
-    "NIL capital discipline",
-    "Norcross sports tech",
-    "Atlanta NIL software",
+    "NIL settlement infrastructure",
+    "athlete capital markets",
+    "NIL deal structuring",
+    "sports agency software",
+    "athlete alternative assets",
+    "institutional NIL platform",
   ],
   authors: [{ name: "UnyKorn", url: "https://nil33.com" }],
   creator: "NIL33 — A UnyKorn Company",
@@ -47,9 +47,9 @@ export const metadata: Metadata = {
     canonical: "https://nil33.com",
   },
   openGraph: {
-    title: "NIL33 — Capital Discipline Software for NIL Collectives",
+    title: "NIL33 — Institutional Infrastructure for Athlete Capital Markets",
     description:
-      "Validate athlete valuations, check 50-state compliance, and prevent overpay — before you sign the deal. Built for collectives. Based in Norcross, GA.",
+      "33-signal underwriting engine, 50-state compliance, portfolio intelligence, and settlement rails. Built for elite sports agencies and broker-dealers.",
     url: "https://nil33.com",
     siteName: "NIL33",
     type: "website",
@@ -59,18 +59,18 @@ export const metadata: Metadata = {
         url: "https://nil33.com/nil33-og.png",
         width: 1200,
         height: 630,
-        alt: "NIL33 — Identity · Value · Legacy",
+        alt: "NIL33 — The PE Operating System for Athlete Capital",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "NIL33 — Capital Discipline Software for Collectives",
+    title: "NIL33 — Underwriting & Compliance for Athlete Capital",
     description:
-      "Validate athlete valuations, check compliance, prevent overpay. Built for NIL collectives. Norcross, GA.",
+      "33-signal underwriting, portfolio intelligence, 50-state compliance. Built for elite sports agencies and broker-dealers.",
     images: ["https://nil33.com/nil33-og.png"],
   },
-  category: "Sports Technology",
+  category: "Financial Technology",
   other: {
     "geo.region": "US-GA",
     "geo.placename": "Norcross",
@@ -88,7 +88,7 @@ function SchemaOrg() {
     url: "https://nil33.com",
     logo: "https://nil33.com/nil33-logo-light.png",
     description:
-      "Capital discipline software for NIL collectives — athlete valuation, 50-state compliance, and deal validation. Prevent overpay. Prove compliance.",
+      "Institutional underwriting and compliance infrastructure for NIL-linked alternative investments. 33-signal scoring, portfolio intelligence, and settlement rails for elite sports agencies and broker-dealers.",
     address: {
       "@type": "PostalAddress",
       streetAddress: "5655 Peachtree Parkway",
@@ -125,10 +125,10 @@ function SchemaOrg() {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     name: "NIL33",
-    applicationCategory: "Business Software",
+    applicationCategory: "FinancialApplication",
     operatingSystem: "Web",
     description:
-      "Capital discipline software for NIL collectives. Validate athlete valuations, check 50-state compliance, and prevent overpay before signing.",
+      "Institutional operating system for athlete capital markets. 33-signal underwriting, 50-state compliance, portfolio intelligence, and settlement infrastructure.",
     url: "https://nil33.com",
     offers: {
       "@type": "Offer",
@@ -163,7 +163,7 @@ function SchemaOrg() {
     url: "https://nil33.com",
     priceRange: "$$",
     description:
-      "Capital discipline software company based in Norcross, Georgia. NIL valuation, compliance scoring, and deal validation for collectives and institutions.",
+      "Institutional financial technology company based in Norcross, Georgia. Underwriting, compliance, and portfolio intelligence infrastructure for athlete capital markets.",
   };
 
   return (

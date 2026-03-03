@@ -4,7 +4,7 @@ interface CardProps {
   children: ReactNode;
   className?: string;
   hover?: boolean;
-  /** Accent color for top border — use nil-green, nil-cyan, nil-purple, nil-gold */
+  /** Accent color for top border — use nil-gold, nil-blue, nil-purple, nil-emerald */
   accent?: string;
 }
 
@@ -33,7 +33,7 @@ interface FeatureCardProps {
   children?: ReactNode;
 }
 
-export function FeatureCard({ number, numberColor = "var(--color-nil-green)", title, description, detail, children }: FeatureCardProps) {
+export function FeatureCard({ number, numberColor = "var(--color-nil-gold)", title, description, detail, children }: FeatureCardProps) {
   return (
     <Card hover className="flex flex-col">
       {number && (

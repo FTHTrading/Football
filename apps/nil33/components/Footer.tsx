@@ -4,17 +4,17 @@ const columns = [
   {
     title: "Platform",
     links: [
-      { href: "/product", label: "How it works" },
-      { href: "/demo", label: "Live demo" },
-      { href: "/athletes", label: "Verified roster" },
+      { href: "/products", label: "Product families" },
+      { href: "/underwriting", label: "33-signal engine" },
+      { href: "/compliance", label: "Supervision & audit" },
     ],
   },
   {
     title: "Solutions",
     links: [
-      { href: "/collectives", label: "For collectives" },
-      { href: "/developers", label: "For developers" },
-      { href: "/product", label: "Compliance" },
+      { href: "/partnership", label: "For agencies" },
+      { href: "/partnership", label: "For broker-dealers" },
+      { href: "/reporting", label: "Investor reporting" },
     ],
   },
   {
@@ -42,17 +42,18 @@ export default function Footer() {
           {/* Brand column */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2.5 mb-5">
-              <div className="w-9 h-9 rounded-xl bg-nil-green/10 border border-nil-green/20 flex items-center justify-center">
-                <span className="text-nil-green font-bold text-sm font-mono">33</span>
+              <div className="w-9 h-9 rounded-xl bg-nil-gold/10 border border-nil-gold/20 flex items-center justify-center">
+                <span className="text-nil-gold font-bold text-sm font-mono">33</span>
               </div>
               <div>
                 <span className="text-nil-white font-bold text-sm block leading-tight">NIL33</span>
-                <span className="text-nil-muted text-[9px] tracking-[0.1em] uppercase">Capital Discipline</span>
+                <span className="text-nil-muted text-[9px] tracking-[0.1em] uppercase">Capital Intelligence</span>
               </div>
             </div>
             <p className="text-nil-muted text-xs leading-relaxed max-w-[220px] mb-5">
-              Capital discipline software for NIL collectives. Score every deal.
-              Document every dollar. Stay compliant in every state.
+              Underwriting and compliance infrastructure for NIL-linked
+              alternative investments. Institutional-grade capital rails
+              for elite sports agencies and broker-dealers.
             </p>
             <p className="text-nil-muted/60 text-[10px]">
               5655 Peachtree Parkway<br />
@@ -96,11 +97,11 @@ export default function Footer() {
         {/* Trust bar */}
         <div className="mt-16 pt-8 border-t border-nil-border/20">
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[11px] text-nil-muted/50 font-mono">
-            <span className="flex items-center gap-1.5"><span className="text-nil-green/60">◆</span> Rust Engine</span>
-            <span className="flex items-center gap-1.5"><span className="text-nil-cyan/60">◆</span> Ed25519 Signatures</span>
+            <span className="flex items-center gap-1.5"><span className="text-nil-gold/60">◆</span> 33-Signal Underwriting</span>
+            <span className="flex items-center gap-1.5"><span className="text-nil-blue/60">◆</span> Portfolio Intelligence</span>
             <span className="flex items-center gap-1.5"><span className="text-nil-purple/60">◆</span> 50-State Compliance</span>
-            <span className="flex items-center gap-1.5"><span className="text-nil-gold/60">◆</span> 33-Factor Scoring</span>
-            <span className="flex items-center gap-1.5"><span className="text-nil-green/60">◆</span> Deterministic Output</span>
+            <span className="flex items-center gap-1.5"><span className="text-nil-gold/60">◆</span> Institutional Audit Trail</span>
+            <span className="flex items-center gap-1.5"><span className="text-nil-emerald/60">◆</span> Agency-Grade Reporting</span>
           </div>
         </div>
 
@@ -110,7 +111,7 @@ export default function Footer() {
             © {new Date().getFullYear()} NIL33 — A UnyKorn Company. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-nil-muted/40 text-[11px]">
-            <span>Built with Rust, Next.js, Solidity & Ed25519</span>
+            <span>Institutional infrastructure for athlete capital markets</span>
           </div>
         </div>
       </div>
