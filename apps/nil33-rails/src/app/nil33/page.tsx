@@ -3,22 +3,31 @@ import { formatCents } from "@/lib/utils";
 import Link from "next/link";
 
 async function getDashboardStats() {
-  const [spvCount, instrumentCount, investorCount, distributionCount, auditCount, subscriptions] =
-    await Promise.all([
-      prisma.spv.count(),
-      prisma.instrument.count(),
-      prisma.investor.count(),
-      prisma.distribution.count(),
-      prisma.ledgerEvent.count(),
-      prisma.subscription.findMany({
-        where: { status: "FUNDED" },
-        select: { amountCents: true },
-      }),
-    ]);
+  const [
+    spvCount, instrumentCount, investorCount, distributionCount, auditCount,
+    subscriptions, memoCount, memoAvg, portfolioCount,
+  ] = await Promise.all([
+    prisma.spv.count(),
+    prisma.instrument.count(),
+    prisma.investor.count(),
+    prisma.distribution.count(),
+    prisma.ledgerEvent.count(),
+    prisma.subscription.findMany({
+      where: { status: "FUNDED" },
+      select: { amountCents: true },
+    }),
+    prisma.underwritingMemo.count(),
+    prisma.underwritingMemo.aggregate({ _avg: { compositeScore: true } }),
+    prisma.portfolioSnapshot.count(),
+  ]);
 
   const totalFundedCents = subscriptions.reduce((s, sub) => s + sub.amountCents, 0);
+  const avgScore = memoAvg._avg.compositeScore ?? 0;
 
-  return { spvCount, instrumentCount, investorCount, distributionCount, auditCount, totalFundedCents };
+  return {
+    spvCount, instrumentCount, investorCount, distributionCount, auditCount,
+    totalFundedCents, memoCount, avgScore, portfolioCount,
+  };
 }
 
 async function getRecentAudit() {
@@ -33,11 +42,13 @@ export default async function DashboardPage() {
   const [stats, recentAudit] = await Promise.all([getDashboardStats(), getRecentAudit()]);
 
   const statCards = [
+    { label: "Underwriting Memos", value: stats.memoCount, href: "/nil33/underwriting", color: "text-rails-green" },
+    { label: "Avg Engine Score", value: stats.avgScore > 0 ? stats.avgScore.toFixed(1) : "—", href: "/nil33/underwriting", color: "text-rails-cyan" },
+    { label: "Portfolio Snapshots", value: stats.portfolioCount, href: "/nil33/portfolio", color: "text-rails-gold" },
     { label: "Issuers / SPVs", value: stats.spvCount, href: "/nil33/issuers", color: "text-rails-cyan" },
-    { label: "Instruments", value: stats.instrumentCount, href: "/nil33/instruments", color: "text-rails-green" },
-    { label: "Investors", value: stats.investorCount, href: "/nil33/investors", color: "text-rails-gold" },
     { label: "Total Funded", value: formatCents(stats.totalFundedCents), href: "/nil33/investors", color: "text-rails-green" },
-    { label: "Distributions", value: stats.distributionCount, href: "/nil33/distributions", color: "text-rails-text" },
+    { label: "Instruments", value: stats.instrumentCount, href: "/nil33/instruments", color: "text-rails-text" },
+    { label: "Investors", value: stats.investorCount, href: "/nil33/investors", color: "text-rails-gold" },
     { label: "Audit Events", value: stats.auditCount, href: "/nil33/audit", color: "text-rails-text-dim" },
   ];
 
@@ -52,7 +63,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stat grid */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
         {statCards.map((s) => (
           <Link key={s.label} href={s.href} className="stat-card hover:border-rails-muted transition-colors">
             <span className={`font-mono text-2xl font-bold ${s.color}`}>{s.value}</span>

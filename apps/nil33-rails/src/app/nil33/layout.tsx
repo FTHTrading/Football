@@ -5,6 +5,8 @@ import { signOut } from "@/lib/auth";
 
 const NAV = [
   { href: "/nil33", label: "Dashboard", icon: "▦" },
+  { href: "/nil33/underwriting", label: "Underwriting", icon: "◆" },
+  { href: "/nil33/portfolio", label: "Portfolio Intel", icon: "◇" },
   { href: "/nil33/issuers", label: "Issuers / SPVs", icon: "⬡" },
   { href: "/nil33/instruments", label: "Instruments", icon: "◈" },
   { href: "/nil33/investors", label: "Investors", icon: "◉" },

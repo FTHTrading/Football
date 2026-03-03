@@ -27,6 +27,7 @@ model User {
   sessions          Session[]
   auditEvents       LedgerEvent[]
   complianceChecks  ComplianceCheck[]
+  underwritingMemos UnderwritingMemo[]
 
   @@map("users")
 }
@@ -67,8 +68,10 @@ model Spv {
   createdAt             DateTime    @default(now())
   updatedAt             DateTime    @updatedAt
 
-  athletes     Athlete[]
-  instruments  Instrument[]
+  athletes           Athlete[]
+  instruments        Instrument[]
+  underwritingMemos  UnderwritingMemo[]
+  portfolioSnapshots PortfolioSnapshot[]
 
   @@map("spvs")
 }
@@ -97,9 +100,10 @@ model Athlete {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  spv           Spv             @relation(fields: [spvId], references: [id])
-  nilContracts  NilContract[]
-  metrics       AthleteMetric[]
+  spv               Spv                 @relation(fields: [spvId], references: [id])
+  nilContracts      NilContract[]
+  metrics           AthleteMetric[]
+  underwritingMemos UnderwritingMemo[]
 
   @@map("athletes")
 }
@@ -369,6 +373,82 @@ model LedgerEvent {
   @@index([actorId])
   @@index([occurredAt])
   @@map("ledger_events")
+}
+
+// ─── Underwriting Memos ───────────────────────────────────────────────────────
+
+model UnderwritingMemo {
+  id                  String              @id @default(cuid())
+  athleteId           String
+  spvId               String?
+  genomeId            String              // cryptographic model fingerprint
+  genomeVersion       String              @default("1.0.0")
+  compositeScore      Float
+  grade               String              // "A+", "A", "B+", etc
+  weightProfileType   String              @default("revenue_participation_note")
+  dimensionScores     Json                // { revenue_durability: 82, ... }
+  signalScores        Json                // all 33 signal scores
+  flags               Json                // risk flags array
+  flagCount           Int                 @default(0)
+  criticalFlagCount   Int                 @default(0)
+  covenants           Json                // generated covenant recommendations
+  covenantCount       Int                 @default(0)
+  valuationLowCents   Int
+  valuationMidCents   Int
+  valuationHighCents  Int
+  riskNarrative       String
+  stressResults       Json?               // optional stress test results
+  explainability      Json?               // dimension contribution map
+  replayRecord        Json?               // sealed replay record for reproducibility
+  analystNotes        String?
+  status              MemoStatus          @default(DRAFT)
+  createdById         String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  athlete  Athlete @relation(fields: [athleteId], references: [id])
+  spv      Spv?    @relation(fields: [spvId], references: [id])
+  createdBy User?  @relation(fields: [createdById], references: [id])
+
+  @@index([athleteId])
+  @@index([genomeId])
+  @@index([grade])
+  @@index([createdAt])
+  @@map("underwriting_memos")
+}
+
+enum MemoStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+
+// ─── Portfolio Snapshots ──────────────────────────────────────────────────────
+
+model PortfolioSnapshot {
+  id                      String   @id @default(cuid())
+  spvId                   String
+  genomeId                String
+  totalNavCents           Int
+  athleteCount            Int
+  weightedAvgScore        Float
+  weightedAvgGrade        String
+  concentrationHhi        Float?   // Herfindahl–Hirschman Index
+  stressResults           Json?    // all-scenario stress test results
+  monteCarloVarCents      Int?     // seeded MC VaR
+  monteCarloCvarCents     Int?     // expected shortfall
+  monteCarloSeed          Int?
+  monteCarloConfig        Json?
+  portfolioDetail         Json     // per-athlete breakdown
+  createdAt               DateTime @default(now())
+
+  spv Spv @relation(fields: [spvId], references: [id])
+
+  @@index([spvId])
+  @@index([createdAt])
+  @@map("portfolio_snapshots")
 }
 
 // ─── Documents ────────────────────────────────────────────────────────────────
