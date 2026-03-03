@@ -15,7 +15,11 @@
     "dev:uc": "cd apps/under-center && npm run dev",
     "build:qbdna": "cd apps/qbdna && npm run build",
     "build:nil33": "cd apps/nil33 && npm run build",
-    "build:uc": "cd apps/under-center && npm run build"
+    "build:uc": "cd apps/under-center && npm run build",
+    "dev:nil33-rails": "cd apps/nil33-rails && npm run dev",
+    "build:nil33-rails": "cd apps/nil33-rails && npm run build",
+    "up:nil33": "docker compose -f docker-compose.nil33.yml up -d",
+    "down:nil33": "docker compose -f docker-compose.nil33.yml down"
   },
   "devDependencies": {
     "turbo": "^2.5.0"
