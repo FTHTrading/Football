@@ -1,6 +1,8 @@
 "use client";
 
 import type { Athlete } from "@/lib/athletes";
+import { computeDnaScore, dnaGrade, dnaGradeColor, getRadarData } from "@/lib/athletes";
+import RadarChart from "@/components/RadarChart";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -115,6 +117,10 @@ export default function AthleteProfile({ athlete }: { athlete: Athlete }) {
   const metricsRef = useRef<HTMLDivElement>(null);
   const [metricsVisible, setMetricsVisible] = useState(false);
 
+  const score = computeDnaScore(athlete.metrics);
+  const grade = dnaGrade(score);
+  const gradeColor = dnaGradeColor(score);
+
   useEffect(() => {
     const el = metricsRef.current;
     if (!el) return;
@@ -156,6 +162,18 @@ export default function AthleteProfile({ athlete }: { athlete: Athlete }) {
             className="text-xs bg-uc-gold/10 text-uc-gold border border-uc-gold/20 px-4 py-1.5 rounded-lg hover:bg-uc-gold/20 transition-colors"
           >
             Share Card
+          </Link>
+          <Link
+            href="/rankings"
+            className="text-xs text-uc-muted hover:text-uc-white transition-colors"
+          >
+            Rankings
+          </Link>
+          <Link
+            href={`/compare?a=${athlete.slug}`}
+            className="text-xs text-uc-muted hover:text-uc-white transition-colors"
+          >
+            Compare
           </Link>
         </div>
       </nav>
@@ -260,6 +278,58 @@ export default function AthleteProfile({ athlete }: { athlete: Athlete }) {
                   </div>
                 </div>
               ))}
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ─── QB DNA Score ─── */}
+      <section className="py-16 px-6 bg-uc-dark border-y border-uc-border">
+        <div className="max-w-5xl mx-auto">
+          <Reveal>
+            <div className="flex flex-col md:flex-row items-center gap-12">
+              {/* Radar Chart */}
+              <div className="shrink-0">
+                <RadarChart
+                  data={getRadarData(athlete.metrics)}
+                  color={athlete.accentColor}
+                  size={280}
+                />
+              </div>
+
+              {/* DNA Score Card */}
+              <div className="flex-1 text-center md:text-left">
+                <p className="text-[10px] text-uc-muted uppercase tracking-widest mb-3">
+                  Composite DNA Score
+                </p>
+                <div className="flex items-baseline gap-3 justify-center md:justify-start mb-2">
+                  <span
+                    className="text-6xl font-mono font-bold"
+                    style={{ color: gradeColor }}
+                  >
+                    {score}
+                  </span>
+                  <span
+                    className="text-lg font-semibold uppercase tracking-wider"
+                    style={{ color: gradeColor }}
+                  >
+                    {grade}
+                  </span>
+                </div>
+                <p className="text-uc-muted text-sm max-w-md">
+                  Weighted composite across all 8 verified metrics — arm
+                  strength, release, accuracy, decision speed, pocket presence,
+                  athleticism, film grade, and mechanics.
+                </p>
+                <div className="mt-6">
+                  <Link
+                    href={`/compare?a=${athlete.slug}`}
+                    className="inline-flex items-center gap-2 text-xs bg-uc-panel border border-uc-border text-uc-light px-5 py-2.5 rounded-xl hover:border-uc-gold/20 transition-colors"
+                  >
+                    Compare with another QB →
+                  </Link>
+                </div>
+              </div>
             </div>
           </Reveal>
         </div>

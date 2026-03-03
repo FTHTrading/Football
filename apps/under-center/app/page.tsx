@@ -1,7 +1,12 @@
 "use client";
 
-import { athletes } from "@/lib/athletes";
-import { useEffect, useRef, useState } from "react";
+import {
+  athletes,
+  computeDnaScore,
+  dnaGrade,
+  dnaGradeColor,
+} from "@/lib/athletes";
+import { useEffect, useRef, useState, useMemo } from "react";
 import Link from "next/link";
 
 /* ─── Intersection Observer Hook ─── */
@@ -107,6 +112,10 @@ function AthleteCard({
   athlete: (typeof athletes)[0];
   index: number;
 }) {
+  const score = computeDnaScore(athlete.metrics);
+  const grade = dnaGrade(score);
+  const gradeColor = dnaGradeColor(score);
+
   return (
     <Reveal delay={index * 0.12}>
       <Link href={`/athlete/${athlete.slug}`}>
@@ -116,6 +125,22 @@ function AthleteCard({
             className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
             style={{ background: athlete.accentColor }}
           />
+
+          {/* DNA Score Badge */}
+          <div className="absolute top-4 right-4 text-center">
+            <div
+              className="text-xl font-mono font-bold"
+              style={{ color: gradeColor }}
+            >
+              {score}
+            </div>
+            <div
+              className="text-[8px] font-semibold uppercase tracking-wider"
+              style={{ color: gradeColor }}
+            >
+              {grade}
+            </div>
+          </div>
 
           {/* Header: Avatar + Info */}
           <div className="flex items-start gap-4 mb-5">
@@ -223,12 +248,40 @@ function AthleteCard({
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
+  const [search, setSearch] = useState("");
+  const [classFilter, setClassFilter] = useState("All");
+  const [starFilter, setStarFilter] = useState("All");
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
   }, []);
+
+  /* Dynamic stats from all athletes */
+  const bestRelease = Math.min(...athletes.map((a) => a.metrics.releaseTime));
+  const bestArm = Math.max(...athletes.map((a) => a.metrics.armStrength));
+  const bestAccuracy = Math.max(...athletes.map((a) => a.metrics.accuracy));
+  const bestDecision = Math.min(...athletes.map((a) => a.metrics.decisionSpeed));
+
+  /* Filtered athletes */
+  const filtered = useMemo(() => {
+    return athletes.filter((a) => {
+      if (search) {
+        const q = search.toLowerCase();
+        if (
+          !a.name.toLowerCase().includes(q) &&
+          !a.highSchool.toLowerCase().includes(q) &&
+          !a.state.toLowerCase().includes(q) &&
+          !a.city.toLowerCase().includes(q)
+        )
+          return false;
+      }
+      if (classFilter !== "All" && a.class !== classFilter) return false;
+      if (starFilter !== "All" && a.starRating !== Number(starFilter)) return false;
+      return true;
+    });
+  }, [search, classFilter, starFilter]);
 
   return (
     <>
@@ -256,6 +309,18 @@ export default function Home() {
             >
               Profiles
             </a>
+            <Link
+              href="/rankings"
+              className="text-sm text-uc-muted hover:text-uc-white transition-colors"
+            >
+              Rankings
+            </Link>
+            <Link
+              href="/compare"
+              className="text-sm text-uc-muted hover:text-uc-white transition-colors"
+            >
+              Compare
+            </Link>
             <a
               href="#how"
               className="text-sm text-uc-muted hover:text-uc-white transition-colors"
@@ -339,10 +404,10 @@ export default function Home() {
           <Reveal>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {[
-                { value: "0.33s", label: "Fastest Release" },
-                { value: "94", label: "Top Arm Grade" },
-                { value: "76%", label: "Best Accuracy" },
-                { value: "155ms", label: "Fastest Decision" },
+                { value: `${bestRelease}s`, label: "Fastest Release" },
+                { value: String(bestArm), label: "Top Arm Grade" },
+                { value: `${bestAccuracy}%`, label: "Best Accuracy" },
+                { value: `${bestDecision}ms`, label: "Fastest Decision" },
               ].map((s) => (
                 <div key={s.label} className="text-center">
                   <div className="text-3xl md:text-4xl font-mono font-bold text-uc-white mb-1">
@@ -360,9 +425,9 @@ export default function Home() {
 
       {/* ─── Verified Profiles ─── */}
       <section id="profiles" className="py-24 px-6">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <Reveal>
-            <div className="text-center mb-16">
+            <div className="text-center mb-10">
               <h2 className="text-3xl sm:text-4xl font-bold text-uc-white mb-4">
                 Verified Profiles
               </h2>
@@ -372,11 +437,88 @@ export default function Home() {
             </div>
           </Reveal>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {athletes.map((athlete, i) => (
+          {/* Search & Filter Controls */}
+          <Reveal delay={0.1}>
+            <div className="flex flex-wrap items-center gap-3 mb-8">
+              {/* Search */}
+              <input
+                type="text"
+                placeholder="Search name, school, state…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="bg-uc-dark border border-uc-border rounded-xl px-4 py-2.5 text-sm text-uc-white placeholder:text-uc-muted outline-none focus:border-uc-gold/30 transition-colors w-64"
+              />
+
+              {/* Class filter */}
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-uc-muted uppercase tracking-wider">
+                  Class
+                </span>
+                {["All", "2026", "2027"].map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setClassFilter(c)}
+                    className={`text-[11px] px-3 py-1.5 rounded-lg border transition-colors cursor-pointer ${
+                      classFilter === c
+                        ? "bg-uc-gold/10 border-uc-gold/30 text-uc-gold"
+                        : "border-uc-border text-uc-muted hover:border-uc-gold/15 hover:text-uc-light"
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+
+              {/* Star filter */}
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-uc-muted uppercase tracking-wider">
+                  Stars
+                </span>
+                {["All", "5", "4", "3"].map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setStarFilter(s)}
+                    className={`text-[11px] px-3 py-1.5 rounded-lg border transition-colors cursor-pointer ${
+                      starFilter === s
+                        ? "bg-uc-gold/10 border-uc-gold/30 text-uc-gold"
+                        : "border-uc-border text-uc-muted hover:border-uc-gold/15 hover:text-uc-light"
+                    }`}
+                  >
+                    {s === "All" ? "All" : `${s}★`}
+                  </button>
+                ))}
+              </div>
+
+              <div className="ml-auto text-[11px] text-uc-muted">
+                {filtered.length} of {athletes.length} athletes
+              </div>
+            </div>
+          </Reveal>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {filtered.map((athlete, i) => (
               <AthleteCard key={athlete.id} athlete={athlete} index={i} />
             ))}
           </div>
+
+          {filtered.length === 0 && (
+            <div className="text-center py-16 text-uc-muted text-sm">
+              No athletes match your search.
+            </div>
+          )}
+
+          {/* View full rankings link */}
+          <Reveal delay={0.2}>
+            <div className="text-center mt-12">
+              <Link
+                href="/rankings"
+                className="inline-flex items-center gap-2 bg-uc-dark border border-uc-border text-uc-light font-medium px-7 py-3 rounded-xl hover:border-uc-gold/30 hover:text-uc-white transition-colors text-sm"
+              >
+                View Full Rankings
+                <span className="text-base">→</span>
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </section>
 
