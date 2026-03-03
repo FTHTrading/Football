@@ -16,8 +16,20 @@ const ACC_BADGE: Record<string, string> = {
   PENDING: "badge-muted",
 };
 
-export default async function InvestorsPage() {
+export default async function InvestorsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; kyc?: string; accreditation?: string }>;
+}) {
+  const { q, kyc, accreditation } = await searchParams;
+
+  const where: Record<string, unknown> = {};
+  if (q) where.legalName = { contains: q, mode: "insensitive" };
+  if (kyc) where.kycStatus = kyc;
+  if (accreditation) where.accreditationStatus = accreditation;
+
   const investors = await prisma.investor.findMany({
+    where,
     orderBy: { createdAt: "desc" },
     include: {
       _count: { select: { subscriptions: true, complianceChecks: true } },
@@ -31,7 +43,36 @@ export default async function InvestorsPage() {
           <h1 className="text-2xl font-bold text-rails-text">Investors</h1>
           <p className="text-sm text-rails-text-dim">Accredited investors with KYC/compliance tracking</p>
         </div>
+        <Link href="/nil33/investors/new" className="btn-primary">+ New Investor</Link>
       </div>
+
+      {/* Filters */}
+      <form className="flex flex-wrap gap-3">
+        <input
+          name="q"
+          className="input w-56"
+          placeholder="Search by name…"
+          defaultValue={q ?? ""}
+        />
+        <select name="kyc" className="input w-36" defaultValue={kyc ?? ""}>
+          <option value="">All KYC</option>
+          {["PENDING", "IN_REVIEW", "APPROVED", "REJECTED"].map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+        <select name="accreditation" className="input w-40" defaultValue={accreditation ?? ""}>
+          <option value="">All Accreditation</option>
+          {["PENDING", "VERIFIED", "EXPIRED", "FAILED"].map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+        <button type="submit" className="btn-outline px-4">Filter</button>
+        {(q || kyc || accreditation) && (
+          <Link href="/nil33/investors" className="text-xs text-rails-text-dim self-center hover:text-rails-text">
+            Clear
+          </Link>
+        )}
+      </form>
 
       <div className="card overflow-hidden p-0">
         <table className="w-full text-sm">

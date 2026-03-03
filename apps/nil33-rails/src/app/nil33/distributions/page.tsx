@@ -11,8 +11,18 @@ const STATUS_BADGE: Record<string, string> = {
   FAILED: "badge-red",
 };
 
-export default async function DistributionsPage() {
+export default async function DistributionsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string }>;
+}) {
+  const { status } = await searchParams;
+
+  const where: Record<string, unknown> = {};
+  if (status) where.status = status;
+
   const distributions = await prisma.distribution.findMany({
+    where,
     orderBy: { createdAt: "desc" },
     include: {
       instrument: { select: { name: true } },
@@ -27,7 +37,24 @@ export default async function DistributionsPage() {
           <h1 className="text-2xl font-bold text-rails-text">Distributions</h1>
           <p className="text-sm text-rails-text-dim">Revenue waterfall runs across funded subscriptions</p>
         </div>
+        <Link href="/nil33/distributions/new" className="btn-primary">+ New Distribution</Link>
       </div>
+
+      {/* Filters */}
+      <form className="flex flex-wrap gap-3">
+        <select name="status" className="input w-44" defaultValue={status ?? ""}>
+          <option value="">All Statuses</option>
+          {["DRAFT", "PENDING_APPROVAL", "APPROVED", "EXECUTING", "COMPLETE", "FAILED"].map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+        <button type="submit" className="btn-outline px-4">Filter</button>
+        {status && (
+          <Link href="/nil33/distributions" className="text-xs text-rails-text-dim self-center hover:text-rails-text">
+            Clear
+          </Link>
+        )}
+      </form>
 
       <div className="card overflow-hidden p-0">
         <table className="w-full text-sm">

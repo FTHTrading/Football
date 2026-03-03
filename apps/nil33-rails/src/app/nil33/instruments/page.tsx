@@ -11,8 +11,19 @@ const STATUS_BADGE: Record<string, string> = {
   CANCELLED: "badge-red",
 };
 
-export default async function InstrumentsPage() {
+export default async function InstrumentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; status?: string }>;
+}) {
+  const { q, status } = await searchParams;
+
+  const where: Record<string, unknown> = {};
+  if (q) where.name = { contains: q, mode: "insensitive" };
+  if (status) where.status = status;
+
   const instruments = await prisma.instrument.findMany({
+    where,
     orderBy: { createdAt: "desc" },
     include: {
       spv: { select: { legalName: true } },
@@ -27,7 +38,30 @@ export default async function InstrumentsPage() {
           <h1 className="text-2xl font-bold text-rails-text">Instruments</h1>
           <p className="text-sm text-rails-text-dim">Revenue participation notes issued by SPVs</p>
         </div>
+        <Link href="/nil33/instruments/new" className="btn-primary">+ New Instrument</Link>
       </div>
+
+      {/* Filters */}
+      <form className="flex flex-wrap gap-3">
+        <input
+          name="q"
+          className="input w-56"
+          placeholder="Search by name…"
+          defaultValue={q ?? ""}
+        />
+        <select name="status" className="input w-40" defaultValue={status ?? ""}>
+          <option value="">All Statuses</option>
+          {["DRAFT", "OPEN", "ACTIVE", "CLOSED", "MATURED", "CANCELLED"].map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+        <button type="submit" className="btn-outline px-4">Filter</button>
+        {(q || status) && (
+          <Link href="/nil33/instruments" className="text-xs text-rails-text-dim self-center hover:text-rails-text">
+            Clear
+          </Link>
+        )}
+      </form>
 
       <div className="card overflow-hidden p-0">
         <table className="w-full text-sm">
