@@ -104,6 +104,7 @@ model Athlete {
   nilContracts      NilContract[]
   metrics           AthleteMetric[]
   underwritingMemos UnderwritingMemo[]
+  underwritingRuns  UnderwritingRun[]
 
   @@map("athletes")
 }
@@ -151,11 +152,32 @@ model AthleteMetric {
   @@map("athlete_metrics")
 }
 
+// ─── Underwriting Runs (Genome → Capital Lifecycle Link) ──────────────────────
+
+model UnderwritingRun {
+  id              String   @id @default(cuid())
+  athleteId       String
+  genomeId        String   // cryptographic model fingerprint (32-hex)
+  genomeVersion   String   @default("1.0.0")
+  snapshotHash    String   // SHA-256 of full GenomeSignature JSON
+  modelConfig     Json?    // frozen weight profile + parameters
+  createdAt       DateTime @default(now())
+
+  athlete       Athlete        @relation(fields: [athleteId], references: [id])
+  instruments   Instrument[]
+  distributions Distribution[]
+
+  @@index([genomeId])
+  @@index([athleteId])
+  @@map("underwriting_runs")
+}
+
 // ─── Instruments (Revenue Participation Notes) ────────────────────────────────
 
 model Instrument {
   id                      String           @id @default(cuid())
   spvId                   String
+  underwritingRunId       String?
   cusip                   String?          @unique
   isin                    String?          @unique
   name                    String
@@ -167,6 +189,8 @@ model Instrument {
   hurdle                  Int              @default(0)
   cappedReturnBps         Int?             // null = uncapped
   holdingPeriodDays       Int              @default(365)
+  genomeId                String?          // cryptographic genome fingerprint at issuance
+  genomeVersion           String?          // human-readable model version
   status                  InstrumentStatus @default(DRAFT)
   offeringOpenAt          DateTime?
   offeringCloseAt         DateTime?
@@ -176,10 +200,12 @@ model Instrument {
   createdAt               DateTime         @default(now())
   updatedAt               DateTime         @updatedAt
 
-  spv            Spv            @relation(fields: [spvId], references: [id])
-  subscriptions  Subscription[]
-  distributions  Distribution[]
+  spv              Spv              @relation(fields: [spvId], references: [id])
+  underwritingRun  UnderwritingRun? @relation(fields: [underwritingRunId], references: [id])
+  subscriptions    Subscription[]
+  distributions    Distribution[]
 
+  @@index([genomeId])
   @@map("instruments")
 }
 
@@ -282,25 +308,30 @@ enum SubscriptionStatus {
 // ─── Distributions ────────────────────────────────────────────────────────────
 
 model Distribution {
-  id                  String             @id @default(cuid())
-  instrumentId        String
-  periodStart         DateTime
-  periodEnd           DateTime
-  grossRevenueCents   Int
-  participationCents  Int                // gross * participationRate
-  managementFeeCents  Int                @default(0)
+  id                    String             @id @default(cuid())
+  instrumentId          String
+  underwritingRunId     String?
+  periodStart           DateTime
+  periodEnd             DateTime
+  grossRevenueCents     Int
+  participationCents    Int                // gross * participationRate
+  managementFeeCents    Int                @default(0)
   netDistributableCents Int
-  status              DistributionStatus @default(DRAFT)
-  approvedAt          DateTime?
-  approvedBy          String?
-  executedAt          DateTime?
-  notes               String?
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @updatedAt
+  genomeId              String?            // genome identity at distribution time
+  genomeVersion         String?            // human-readable model version
+  status                DistributionStatus @default(DRAFT)
+  approvedAt            DateTime?
+  approvedBy            String?
+  executedAt            DateTime?
+  notes                 String?
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
 
-  instrument  Instrument         @relation(fields: [instrumentId], references: [id])
-  lines       DistributionLine[]
+  instrument       Instrument         @relation(fields: [instrumentId], references: [id])
+  underwritingRun  UnderwritingRun?   @relation(fields: [underwritingRunId], references: [id])
+  lines            DistributionLine[]
 
+  @@index([genomeId])
   @@map("distributions")
 }
 

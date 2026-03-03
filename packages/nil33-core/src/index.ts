@@ -8,3 +8,4 @@ export * from "./memo";
 export * from "./genome";
 export * from "./montecarlo";
 export * from "./reproducibility";
+export * from "./portfolioGenome";

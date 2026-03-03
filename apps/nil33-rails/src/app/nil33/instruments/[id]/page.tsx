@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { formatCents, formatDate, formatBps } from "@/lib/utils";
 import Link from "next/link";
+import { ModelIdentityBadge } from "@/components/ModelIdentityBadge";
 
 const SUB_BADGE: Record<string, string> = {
   FUNDED: "badge-green",
@@ -59,7 +60,13 @@ export default async function InstrumentDetailPage({
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-rails-text">{instrument.name}</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-rails-text">{instrument.name}</h1>
+          <ModelIdentityBadge
+            genomeId={instrument.genomeId}
+            genomeVersion={instrument.genomeVersion}
+          />
+        </div>
         <div className="mt-2 flex flex-wrap gap-4 text-xs text-rails-text-dim">
           <Link
             href={`/nil33/issuers/${instrument.spv.id}`}

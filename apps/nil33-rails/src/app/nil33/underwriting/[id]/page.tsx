@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { formatCents, formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ModelIdentityBadge } from "@/components/ModelIdentityBadge";
 
 function gradeBadge(grade: string) {
   const g = grade.replace("+", "").replace("-", "");
@@ -71,6 +72,10 @@ export default async function MemoDetailPage({
           <h1 className="text-2xl font-bold text-rails-text">{memo.athlete.displayName}</h1>
           <span className={`text-lg ${gradeBadge(memo.grade)}`}>{memo.grade}</span>
           <span className={statusBadge(memo.status)}>{memo.status}</span>
+          <ModelIdentityBadge
+            genomeId={memo.genomeId}
+            genomeVersion={memo.genomeVersion}
+          />
         </div>
         <p className="mt-1 text-sm text-rails-text-dim">
           {memo.athlete.sport} · {memo.athlete.school}

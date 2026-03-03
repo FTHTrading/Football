@@ -51,6 +51,9 @@ export async function POST(req: NextRequest) {
       minSubscriptionCents: d.minTicketCents,
       participationRateBps: d.concentrationLimitPct, // bps field
       holdingPeriodDays: d.holdingPeriodDays,
+      ...(body.genomeId && { genomeId: String(body.genomeId) }),
+      ...(body.genomeVersion && { genomeVersion: String(body.genomeVersion) }),
+      ...(body.underwritingRunId && { underwritingRunId: String(body.underwritingRunId) }),
     },
   });
 

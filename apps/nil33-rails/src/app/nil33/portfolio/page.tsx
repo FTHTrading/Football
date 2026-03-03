@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { formatCents, formatDate, parsePageParam } from "@/lib/utils";
 import Link from "next/link";
+import { ModelIdentityBadge } from "@/components/ModelIdentityBadge";
 
 const PAGE_SIZE = 20;
 
@@ -295,10 +296,10 @@ export default async function PortfolioPage({
                   <p className="font-mono text-rails-text">{expanded.monteCarloSeed}</p>
                 </div>
                 <div>
-                  <span className="text-rails-text-dim">Genome ID</span>
-                  <p className="font-mono text-rails-text truncate" title={expanded.genomeId}>
-                    {expanded.genomeId.slice(0, 16)}…
-                  </p>
+                  <span className="text-rails-text-dim">Genome</span>
+                  <div className="mt-0.5">
+                    <ModelIdentityBadge genomeId={expanded.genomeId} />
+                  </div>
                 </div>
                 <div>
                   <span className="text-rails-text-dim">VaR (95%)</span>

@@ -45,7 +45,10 @@ export async function POST(req: NextRequest) {
   const { instrumentId, periodStart, periodEnd, totalRevenueCents } = parsed.data;
 
   // Look up participation rate from the instrument
-  const instrument = await prisma.instrument.findUnique({ where: { id: instrumentId } });
+  const instrument = await prisma.instrument.findUnique({
+    where: { id: instrumentId },
+    select: { participationRateBps: true, genomeId: true, genomeVersion: true, underwritingRunId: true },
+  });
   if (!instrument) {
     return NextResponse.json({ error: "Instrument not found" }, { status: 404 });
   }
@@ -73,6 +76,10 @@ export async function POST(req: NextRequest) {
       managementFeeCents: mgmtFee,
       netDistributableCents,
       status: "DRAFT",
+      // Inherit genome identity from the instrument (if stamped)
+      ...(instrument.genomeId && { genomeId: instrument.genomeId }),
+      ...(instrument.genomeVersion && { genomeVersion: instrument.genomeVersion }),
+      ...(instrument.underwritingRunId && { underwritingRunId: instrument.underwritingRunId }),
       lines: {
         create: subs.map((sub) => {
           const ownershipBps =
