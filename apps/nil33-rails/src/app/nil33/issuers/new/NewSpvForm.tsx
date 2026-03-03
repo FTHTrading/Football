@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const JURISDICTIONS = ["DE", "CA", "NY", "WY", "FL", "OTHER"] as const;
 const FORMATION_TYPES = ["LLC", "LP", "CORP", "TRUST"] as const;
@@ -169,7 +170,7 @@ export default function NewSpvForm() {
         <button type="submit" className="btn-primary" disabled={loading}>
           {loading ? "Creating…" : "Create SPV"}
         </button>
-        <a href="/nil33/issuers" className="btn-outline">Cancel</a>
+        <Link href="/nil33/issuers" className="btn-outline">Cancel</Link>
       </div>
     </form>
   );

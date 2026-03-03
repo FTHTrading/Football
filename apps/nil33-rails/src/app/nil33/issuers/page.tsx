@@ -22,7 +22,7 @@ export default async function IssuersPage() {
           <h1 className="text-2xl font-bold text-rails-text">Issuers / SPVs</h1>
           <p className="text-sm text-rails-text-dim">Special purpose vehicles that issue instruments</p>
         </div>
-        <a href="/nil33/issuers/new" className="btn-primary">+ New SPV</a>
+        <Link href="/nil33/issuers/new" className="btn-primary">+ New SPV</Link>
       </div>
 
       <div className="card overflow-hidden p-0">

@@ -1,17 +1,19 @@
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 
 export default async function AuditPage({
   searchParams,
 }: {
-  searchParams: { page?: string; action?: string; entityType?: string };
+  searchParams: Promise<{ page?: string; action?: string; entityType?: string }>;
 }) {
-  const page = Math.max(1, parseInt(searchParams.page ?? "1"));
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1"));
   const pageSize = 50;
   const skip = (page - 1) * pageSize;
 
   const where: Record<string, unknown> = {};
-  if (searchParams.action) where.action = { contains: searchParams.action };
-  if (searchParams.entityType) where.entityType = searchParams.entityType;
+  if (params.action) where.action = { contains: params.action };
+  if (params.entityType) where.entityType = params.entityType;
 
   const [events, total] = await Promise.all([
     prisma.ledgerEvent.findMany({
@@ -39,18 +41,18 @@ export default async function AuditPage({
       <form method="GET" className="flex gap-3">
         <input
           name="action"
-          defaultValue={searchParams.action}
+          defaultValue={params.action}
           className="input w-48"
           placeholder="Filter by action…"
         />
         <input
           name="entityType"
-          defaultValue={searchParams.entityType}
+          defaultValue={params.entityType}
           className="input w-40"
           placeholder="Entity type…"
         />
         <button type="submit" className="btn-outline">Filter</button>
-        <a href="/nil33/audit" className="btn-outline">Clear</a>
+        <Link href="/nil33/audit" className="btn-outline">Clear</Link>
       </form>
 
       {/* Table */}
@@ -98,12 +100,12 @@ export default async function AuditPage({
           <span>Page {page} of {totalPages}</span>
           <div className="flex gap-2">
             {page > 1 && (
-              <a href={`?page=${page - 1}&action=${searchParams.action ?? ""}&entityType=${searchParams.entityType ?? ""}`}
-                className="btn-outline py-1">← Prev</a>
+              <Link href={`?page=${page - 1}&action=${params.action ?? ""}&entityType=${params.entityType ?? ""}`}
+                className="btn-outline py-1">← Prev</Link>
             )}
             {page < totalPages && (
-              <a href={`?page=${page + 1}&action=${searchParams.action ?? ""}&entityType=${searchParams.entityType ?? ""}`}
-                className="btn-outline py-1">Next →</a>
+              <Link href={`?page=${page + 1}&action=${params.action ?? ""}&entityType=${params.entityType ?? ""}`}
+                className="btn-outline py-1">Next →</Link>
             )}
           </div>
         </div>

@@ -5,10 +5,12 @@ import { signOut } from "@/lib/auth";
 
 const NAV = [
   { href: "/nil33", label: "Dashboard", icon: "▦" },
+  { href: "/nil33/genome", label: "Genome Console", icon: "⧬" },
+  { href: "/nil33/evaluation", label: "Eval Pipeline", icon: "◈" },
   { href: "/nil33/underwriting", label: "Underwriting", icon: "◆" },
   { href: "/nil33/portfolio", label: "Portfolio Intel", icon: "◇" },
   { href: "/nil33/issuers", label: "Issuers / SPVs", icon: "⬡" },
-  { href: "/nil33/instruments", label: "Instruments", icon: "◈" },
+  { href: "/nil33/instruments", label: "Instruments", icon: "⬢" },
   { href: "/nil33/investors", label: "Investors", icon: "◉" },
   { href: "/nil33/distributions", label: "Distributions", icon: "⋮⋮" },
   { href: "/nil33/audit", label: "Audit Ledger", icon: "⌇" },
